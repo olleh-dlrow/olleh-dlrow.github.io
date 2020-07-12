@@ -15,10 +15,14 @@
 <meta property="og:site_name" content="Hexo">
 <meta property="og:description" content="堆排序&amp;优先队列 目录[toc] 堆排序 堆排序原理 堆是一颗具有特定性质的二叉树。堆的性质：  堆中所有结点的值必须大于或者等于(或小于等于)其孩子结点的值； 堆是一颗完全二叉树。  二叉堆：在二叉堆中，每个结点最多有两个孩子结点，二叉堆一般分为 二叉最小堆  和 二叉最大堆  堆排序函数下面以最小堆为例列举实现二叉堆需要的函数 预备工作1234567891011&#x2F;&#x2F;头文件#includ">
 <meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://yoursite.com/2020/07/12/%E5%A0%86%E6%8E%92%E5%BA%8F&%E4%BC%98%E5%85%88%E9%98%9F%E5%88%97/img%5Cheap_pop1.png">
+<meta property="og:image" content="http://yoursite.com/2020/07/12/%E5%A0%86%E6%8E%92%E5%BA%8F&%E4%BC%98%E5%85%88%E9%98%9F%E5%88%97/img%5Cheap_pop2.png">
+<meta property="og:image" content="http://yoursite.com/2020/07/12/%E5%A0%86%E6%8E%92%E5%BA%8F&%E4%BC%98%E5%85%88%E9%98%9F%E5%88%97/img%5Cheap_pop3.png">
 <meta property="article:published_time" content="2020-07-12T04:05:53.799Z">
-<meta property="article:modified_time" content="2020-07-12T11:51:44.229Z">
+<meta property="article:modified_time" content="2020-07-12T12:31:28.200Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/2020/07/12/%E5%A0%86%E6%8E%92%E5%BA%8F&%E4%BC%98%E5%85%88%E9%98%9F%E5%88%97/img%5Cheap_pop1.png">
   
     <link rel="alternative" href="/atom.xml" title="Hexo" type="application/atom+xml">
   
@@ -230,21 +234,21 @@
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//删除操作</span></span><br><span class="line"><span class="function">ElemType <span class="title">pop</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="comment">//获取最值</span></span><br><span class="line">    ElemType result = Heap[<span class="number">1</span>];</span><br><span class="line">    <span class="comment">//相当于将最后一个结点放到根节点</span></span><br><span class="line">    ElemType x = Heap[SizeOfHeap];</span><br><span class="line">    <span class="keyword">int</span> index = <span class="number">1</span>;</span><br><span class="line">    <span class="comment">//一定要有子节点</span></span><br><span class="line">    <span class="keyword">while</span>(<span class="number">2</span> * index &lt;= SizeOfHeap)&#123;</span><br><span class="line">        <span class="keyword">int</span> LSonIndex = <span class="number">2</span> * index;</span><br><span class="line">        <span class="keyword">int</span> RSonIndex = <span class="number">2</span> * index + <span class="number">1</span>;</span><br><span class="line">        <span class="comment">//比较儿子结点的最值</span></span><br><span class="line">        <span class="keyword">int</span> MinIndex = LSonIndex;</span><br><span class="line">        <span class="keyword">if</span>(RSonIndex &lt;= SizeOfHeap &amp;&amp; Heap[RSonIndex] &lt; Heap[MinIndex])&#123;</span><br><span class="line">            MinIndex = RSonIndex;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//如果没有颠倒就结束</span></span><br><span class="line">        <span class="keyword">if</span>(Heap[MinIndex] &gt;= x)&#123;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        Heap[index] = Heap[MinIndex];</span><br><span class="line">        index = MinIndex;</span><br><span class="line">    &#125;</span><br><span class="line">    Heap[index] = x;</span><br><span class="line">    SizeOfHeap--;</span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p><strong>图解</strong></p>
-<p>![pop](F:\Program Files (x86)\blog\source_posts\heap_pop1.png)</p>
+<p><img src="img%5Cheap_pop1.png" alt="pop"></p>
 <center>初始堆</center>
 
 <br>
 
 <br>
 
-<p>![pop](F:\Program Files (x86)\blog\source_posts\heap_pop2.png)</p>
+<p><img src="img%5Cheap_pop2.png" alt="pop"></p>
 <center>将尾结点移动到根节点</center>
 
 <br>
 
 <br>
 
-<p>![pop](F:\Program Files (x86)\blog\source_posts\heap_pop3.png)</p>
+<p><img src="img%5Cheap_pop3.png" alt="pop"></p>
 <center>平衡二叉堆</center>
 
 <br>

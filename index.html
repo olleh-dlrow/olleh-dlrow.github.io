@@ -228,21 +228,21 @@
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//删除操作</span></span><br><span class="line"><span class="function">ElemType <span class="title">pop</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="comment">//获取最值</span></span><br><span class="line">    ElemType result = Heap[<span class="number">1</span>];</span><br><span class="line">    <span class="comment">//相当于将最后一个结点放到根节点</span></span><br><span class="line">    ElemType x = Heap[SizeOfHeap];</span><br><span class="line">    <span class="keyword">int</span> index = <span class="number">1</span>;</span><br><span class="line">    <span class="comment">//一定要有子节点</span></span><br><span class="line">    <span class="keyword">while</span>(<span class="number">2</span> * index &lt;= SizeOfHeap)&#123;</span><br><span class="line">        <span class="keyword">int</span> LSonIndex = <span class="number">2</span> * index;</span><br><span class="line">        <span class="keyword">int</span> RSonIndex = <span class="number">2</span> * index + <span class="number">1</span>;</span><br><span class="line">        <span class="comment">//比较儿子结点的最值</span></span><br><span class="line">        <span class="keyword">int</span> MinIndex = LSonIndex;</span><br><span class="line">        <span class="keyword">if</span>(RSonIndex &lt;= SizeOfHeap &amp;&amp; Heap[RSonIndex] &lt; Heap[MinIndex])&#123;</span><br><span class="line">            MinIndex = RSonIndex;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//如果没有颠倒就结束</span></span><br><span class="line">        <span class="keyword">if</span>(Heap[MinIndex] &gt;= x)&#123;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        Heap[index] = Heap[MinIndex];</span><br><span class="line">        index = MinIndex;</span><br><span class="line">    &#125;</span><br><span class="line">    Heap[index] = x;</span><br><span class="line">    SizeOfHeap--;</span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p><strong>图解</strong></p>
-<p>![pop](F:\Program Files (x86)\blog\source_posts\heap_pop1.png)</p>
+<p><img src="img%5Cheap_pop1.png" alt="pop"></p>
 <center>初始堆</center>
 
 <br>
 
 <br>
 
-<p>![pop](F:\Program Files (x86)\blog\source_posts\heap_pop2.png)</p>
+<p><img src="img%5Cheap_pop2.png" alt="pop"></p>
 <center>将尾结点移动到根节点</center>
 
 <br>
 
 <br>
 
-<p>![pop](F:\Program Files (x86)\blog\source_posts\heap_pop3.png)</p>
+<p><img src="img%5Cheap_pop3.png" alt="pop"></p>
 <center>平衡二叉堆</center>
 
 <br>
@@ -409,8 +409,8 @@
 </blockquote>
 <h3 id="四、分割线"><a href="#四、分割线" class="headerlink" title="四、分割线"></a>四、分割线</h3><hr>
 <hr>
-<h3 id="五、图片"><a href="#五、图片" class="headerlink" title="五、图片"></a>五、图片</h3><p><img src="%E5%B0%8F%E5%85%AB.jpg" alt="sakura" title="最爱的小八"></p>
-<p>![first](F:\Program Files (x86)\blog\source_posts\first.png)</p>
+<h3 id="五、图片"><a href="#五、图片" class="headerlink" title="五、图片"></a>五、图片</h3><p><img src="img%5C%E5%B0%8F%E5%85%AB.jpg" alt="sakura"></p>
+<p><img src="first.png" alt="first"></p>
 <h3 id="六、超链接"><a href="#六、超链接" class="headerlink" title="六、超链接"></a>六、超链接</h3><p><a href="http://jianshu.com" target="_blank" rel="noopener">简书</a><br><a href="http://baidu.com" target="_blank" rel="noopener">百度</a></p>
 <h3 id="七、列表"><a href="#七、列表" class="headerlink" title="七、列表"></a>七、列表</h3><h4 id="无序列表"><a href="#无序列表" class="headerlink" title="无序列表"></a>无序列表</h4><ul>
 <li>内容1</li>
