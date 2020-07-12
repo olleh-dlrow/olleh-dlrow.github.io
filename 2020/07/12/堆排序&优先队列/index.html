@@ -6,15 +6,17 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://yoursite.com">
-  <title>my first blog | Hexo</title>
+  <title>堆排序&amp;优先队列 | Hexo</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="article">
-<meta property="og:title" content="my first blog">
-<meta property="og:url" content="http://yoursite.com/2020/07/03/my-first-blog/index.html">
+  <meta name="description" content="堆排序&amp;优先队列 目录[toc] 堆排序 堆排序原理 堆是一颗具有特定性质的二叉树。堆的性质：  堆中所有结点的值必须大于或者等于(或小于等于)其孩子结点的值； 堆是一颗完全二叉树。  二叉堆：在二叉堆中，每个结点最多有两个孩子结点，二叉堆一般分为 二叉最小堆  和 二叉最大堆  堆排序函数下面以最小堆为例列举实现二叉堆需要的函数 预备工作1234567891011&#x2F;&#x2F;头文件#includ">
+<meta property="og:type" content="article">
+<meta property="og:title" content="堆排序&amp;优先队列">
+<meta property="og:url" content="http://yoursite.com/2020/07/12/%E5%A0%86%E6%8E%92%E5%BA%8F&%E4%BC%98%E5%85%88%E9%98%9F%E5%88%97/index.html">
 <meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="堆排序&amp;优先队列 目录[toc] 堆排序 堆排序原理 堆是一颗具有特定性质的二叉树。堆的性质：  堆中所有结点的值必须大于或者等于(或小于等于)其孩子结点的值； 堆是一颗完全二叉树。  二叉堆：在二叉堆中，每个结点最多有两个孩子结点，二叉堆一般分为 二叉最小堆  和 二叉最大堆  堆排序函数下面以最小堆为例列举实现二叉堆需要的函数 预备工作1234567891011&#x2F;&#x2F;头文件#includ">
 <meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2020-07-03T13:10:16.000Z">
-<meta property="article:modified_time" content="2020-07-03T13:10:16.356Z">
+<meta property="article:published_time" content="2020-07-12T04:05:53.799Z">
+<meta property="article:modified_time" content="2020-07-12T11:51:44.229Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
   
@@ -152,27 +154,181 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-my-first-blog" class="article article-type-post " itemscope itemprop="blogPost">
+            <article id="post-堆排序&amp;优先队列" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 class="article-title" itemprop="name">
-      my first blog
+      堆排序&amp;优先队列
     </h1>
   
 
         
-        <a href="/2020/07/03/my-first-blog/" class="archive-article-date">
-  	<time datetime="2020-07-03T13:10:16.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-07-03</time>
+        <a href="/2020/07/12/%E5%A0%86%E6%8E%92%E5%BA%8F&%E4%BC%98%E5%85%88%E9%98%9F%E5%88%97/" class="archive-article-date">
+  	<time datetime="2020-07-12T04:05:53.799Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-07-12</time>
 </a>
         
       </header>
     
     <div class="article-entry" itemprop="articleBody">
       
-        
+        <h1 id="堆排序-amp-优先队列"><a href="#堆排序-amp-优先队列" class="headerlink" title="堆排序&amp;优先队列"></a>堆排序&amp;优先队列</h1><hr>
+<p>目录<br>[toc]</p>
+<h2 id="堆排序"><a href="#堆排序" class="headerlink" title="堆排序"></a>堆排序</h2><hr>
+<h3 id="堆排序原理"><a href="#堆排序原理" class="headerlink" title="堆排序原理"></a>堆排序原理</h3><blockquote>
+<p><strong>堆是一颗具有特定性质的二叉树。</strong><br><strong>堆的性质</strong>：</p>
+<ol>
+<li>堆中所有结点的值必须大于或者等于(或小于等于)其孩子结点的值；</li>
+<li>堆是一颗完全二叉树。</li>
+</ol>
+<p><strong>二叉堆</strong>：<br>在二叉堆中，每个结点最多有两个孩子结点，二叉堆一般分为 <em>二叉最小堆</em>  和 <em>二叉最大堆</em><br><br></p>
+</blockquote>
+<h3 id="堆排序函数"><a href="#堆排序函数" class="headerlink" title="堆排序函数"></a>堆排序函数</h3><p>下面以最小堆为例列举实现二叉堆需要的函数</p>
+<h4 id="预备工作"><a href="#预备工作" class="headerlink" title="预备工作"></a>预备工作</h4><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//头文件</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> MAXN 1001</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//自定义元素类型</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="keyword">int</span> ElemType;</span><br><span class="line"></span><br><span class="line"><span class="comment">//最小堆的顺序表</span></span><br><span class="line"><span class="keyword">int</span> SizeOfHeap = <span class="number">0</span>;</span><br><span class="line">ElemType Heap[MAXN];</span><br></pre></td></tr></table></figure>
+
+<h4 id="插入堆函数"><a href="#插入堆函数" class="headerlink" title="插入堆函数"></a>插入堆函数</h4><p>先将插入的结点放在二叉树的末尾，然后根据优先级与其双亲结点进行比较，如果优先级高于双亲结点则将他们交换，直到重新形成二叉堆。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">push</span><span class="params">(ElemType x)</span></span>&#123;</span><br><span class="line">    <span class="comment">//首先插入到最后一个位置</span></span><br><span class="line">    <span class="keyword">int</span> index = ++SizeOfHeap;</span><br><span class="line">    <span class="comment">//向上调整</span></span><br><span class="line">    <span class="keyword">while</span>(index &gt; <span class="number">1</span>)&#123;  <span class="comment">//只有i&gt;1时才有父节点</span></span><br><span class="line">        <span class="keyword">int</span> IndexOfParent = index / <span class="number">2</span>;</span><br><span class="line">        <span class="keyword">if</span>(Heap[IndexOfParent] &lt;= x)&#123;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        Heap[index] = Heap[IndexOfParent];</span><br><span class="line">        index = IndexOfParent;</span><br><span class="line">    &#125;</span><br><span class="line">    Heap[index] = x;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>图解</strong></p>
+<div align="center">
+
+<br>
+<br>
+<br>
+
+
+
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">graph TD</span><br><span class="line">    layer1((2)) --&gt; layer2_1((3))</span><br><span class="line">    layer1((2)) --&gt; layer2_2((6))</span><br><span class="line">    layer2_1((3)) --&gt; layer3_1((5))</span><br><span class="line">    layer2_1((3)) --&gt; layer3_2((4))</span><br></pre></td></tr></table></figure>
+
+<center><font size=4>初始堆</font></center>
+
+<br>
+<br>
+
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">graph TD</span><br><span class="line">    2layer1((2)) --&gt; 2layer2_1((3))</span><br><span class="line">    2layer1((2)) --&gt; 2layer2_2((6))</span><br><span class="line">    2layer2_1((3)) --&gt; 2layer3_1((5))</span><br><span class="line">    2layer2_1((3)) --&gt; 2layer3_2((4))</span><br><span class="line">    2layer2_2((6)) -.-&gt; 2layer3_3((&quot;1(index)&quot;))</span><br><span class="line"></span><br><span class="line">    style 2layer3_3 fill:lightgreen</span><br></pre></td></tr></table></figure>
+<center><font size=4>插入新结点并向上调整</font></center>
+<br>
+<br>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">graph TD</span><br><span class="line">    2layer1((2)) --&gt; 2layer2_1((3))</span><br><span class="line">    2layer1((2)) --&gt; 2layer3_3((&quot;1(index)&quot;))</span><br><span class="line">    2layer2_1((3)) --&gt; 2layer3_1((5))</span><br><span class="line">    2layer2_1((3)) --&gt; 2layer3_2((4))</span><br><span class="line">    2layer3_3((&quot;1(index)&quot;)) --&gt; 2layer2_2((6))</span><br><span class="line">    style 2layer3_3 fill:lightgreen</span><br></pre></td></tr></table></figure>
+<center><font size=4>继续向上调整</font></center>
+<br>
+<br>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">graph TD</span><br><span class="line"></span><br><span class="line">    2layer3_3((&quot;1(index)&quot;)) --&gt; 2layer2_1((3))</span><br><span class="line">    2layer3_3((&quot;1(index)&quot;)) --&gt; 2layer1((2))</span><br><span class="line">    2layer2_1((3)) --&gt; 2layer3_1((5))</span><br><span class="line">    2layer2_1((3)) --&gt; 2layer3_2((4))</span><br><span class="line">    2layer1((2)) --&gt; 2layer2_2((6))</span><br><span class="line">    style 2layer3_3 fill:lightgreen</span><br></pre></td></tr></table></figure>
+<center><font size=4>插入完成</font></center>
+
+<br>
+<br>
+
+</div>
+
+<h4 id="删除最值函数"><a href="#删除最值函数" class="headerlink" title="删除最值函数"></a>删除最值函数</h4><p>先临时保存一份最值，然后将最后一个结点放到根节点，依次向下移动结点直到二叉堆平衡。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//删除操作</span></span><br><span class="line"><span class="function">ElemType <span class="title">pop</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="comment">//获取最值</span></span><br><span class="line">    ElemType result = Heap[<span class="number">1</span>];</span><br><span class="line">    <span class="comment">//相当于将最后一个结点放到根节点</span></span><br><span class="line">    ElemType x = Heap[SizeOfHeap];</span><br><span class="line">    <span class="keyword">int</span> index = <span class="number">1</span>;</span><br><span class="line">    <span class="comment">//一定要有子节点</span></span><br><span class="line">    <span class="keyword">while</span>(<span class="number">2</span> * index &lt;= SizeOfHeap)&#123;</span><br><span class="line">        <span class="keyword">int</span> LSonIndex = <span class="number">2</span> * index;</span><br><span class="line">        <span class="keyword">int</span> RSonIndex = <span class="number">2</span> * index + <span class="number">1</span>;</span><br><span class="line">        <span class="comment">//比较儿子结点的最值</span></span><br><span class="line">        <span class="keyword">int</span> MinIndex = LSonIndex;</span><br><span class="line">        <span class="keyword">if</span>(RSonIndex &lt;= SizeOfHeap &amp;&amp; Heap[RSonIndex] &lt; Heap[MinIndex])&#123;</span><br><span class="line">            MinIndex = RSonIndex;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//如果没有颠倒就结束</span></span><br><span class="line">        <span class="keyword">if</span>(Heap[MinIndex] &gt;= x)&#123;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        Heap[index] = Heap[MinIndex];</span><br><span class="line">        index = MinIndex;</span><br><span class="line">    &#125;</span><br><span class="line">    Heap[index] = x;</span><br><span class="line">    SizeOfHeap--;</span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>图解</strong></p>
+<p>![pop](F:\Program Files (x86)\blog\source_posts\heap_pop1.png)</p>
+<center>初始堆</center>
+
+<br>
+
+<br>
+
+<p>![pop](F:\Program Files (x86)\blog\source_posts\heap_pop2.png)</p>
+<center>将尾结点移动到根节点</center>
+
+<br>
+
+<br>
+
+<p>![pop](F:\Program Files (x86)\blog\source_posts\heap_pop3.png)</p>
+<center>平衡二叉堆</center>
+
+<br>
+
+<br>
+
+<h4 id="获取堆顶元素"><a href="#获取堆顶元素" class="headerlink" title="获取堆顶元素"></a>获取堆顶元素</h4><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//获取堆顶元素</span></span><br><span class="line"><span class="function">ElemType <span class="title">GetTop</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> Heap[<span class="number">0</span>];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<br>
+
+<br>
+
+<h4 id="创建空堆"><a href="#创建空堆" class="headerlink" title="创建空堆"></a>创建空堆</h4><p>使用一个数组来创建空堆</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Build_Heap</span><span class="params">(<span class="keyword">int</span> data[],<span class="keyword">int</span> n)</span></span>&#123;</span><br><span class="line">    <span class="comment">//创建一个空堆</span></span><br><span class="line">    SizeOfHeap = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>;i &lt; n;i++)&#123;</span><br><span class="line">        push(data[i]);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="优先队列"><a href="#优先队列" class="headerlink" title="优先队列"></a>优先队列</h2><h3 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h3><blockquote>
+<p>优先队列也是一种队列，不过优先队列的出队顺序是按照优先级来的</p>
+<p>如果最小的键值元素拥有最高的优先级，那么这种优先队列叫做<em>升序优先队列</em>, 相反，如果最大键值元素具有最高的优先级，这种优先队列叫做<em>降序优先队列</em>。</p>
+<p>优先队列的基本操作类似于二叉堆的基本操作。</p>
+</blockquote>
+<h3 id="优先队列的应用"><a href="#优先队列的应用" class="headerlink" title="优先队列的应用"></a>优先队列的应用</h3><ul>
+<li>数据压缩：Huffman 算法</li>
+<li>最短路径：Dijkstra算法</li>
+<li>最小生成树：Prim算法</li>
+<li>事件驱动仿真：顾客排队算法</li>
+<li>选择问题：查找第k个最小元素</li>
+<li>… …</li>
+</ul>
+<h3 id="优先队列的实现比较"><a href="#优先队列的实现比较" class="headerlink" title="优先队列的实现比较"></a>优先队列的实现比较</h3><table>
+<thead>
+<tr>
+<th>实现</th>
+<th>插入</th>
+<th>删除</th>
+<th>寻找最小值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>无序数组</td>
+<td>1</td>
+<td>n</td>
+<td>n</td>
+</tr>
+<tr>
+<td>无序链表</td>
+<td>1</td>
+<td>n</td>
+<td>n</td>
+</tr>
+<tr>
+<td>有序数组</td>
+<td>n</td>
+<td>1</td>
+<td>1</td>
+</tr>
+<tr>
+<td>有序链表</td>
+<td>n</td>
+<td>1</td>
+<td>1</td>
+</tr>
+<tr>
+<td>二叉搜索树</td>
+<td>log n（平均）</td>
+<td>log n（平均）</td>
+<td>log n（平均）</td>
+</tr>
+<tr>
+<td>平衡二叉搜索树</td>
+<td>log n</td>
+<td>log n</td>
+<td>log n</td>
+</tr>
+<tr>
+<td>二叉堆</td>
+<td>log n</td>
+<td>log n</td>
+<td>1</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="例题"><a href="#例题" class="headerlink" title="例题"></a>例题</h2>
       
 
       
@@ -251,7 +407,7 @@
     <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//pan.baidu.com/share/qrcode?url=http://yoursite.com/2020/07/03/my-first-blog/" alt="微信分享二维码">
+      <img src="//pan.baidu.com/share/qrcode?url=http://yoursite.com/2020/07/12/%E5%A0%86%E6%8E%92%E5%BA%8F&%E4%BC%98%E5%85%88%E9%98%9F%E5%88%97/" alt="微信分享二维码">
     </div>
 </div>
 
