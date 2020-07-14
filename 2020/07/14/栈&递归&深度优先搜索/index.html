@@ -6,17 +6,21 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://yoursite.com">
-  <title>Archives | MyBlog</title>
+  <title>栈&amp;递归&amp;深度优先搜索 | MyBlog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="Shuwen Chen Blog">
-<meta property="og:type" content="website">
-<meta property="og:title" content="MyBlog">
-<meta property="og:url" content="http://yoursite.com/archives/index.html">
+  <meta name="description" content="栈&amp;递归&amp;深度优先搜索栈栈是一种支持先进后出的数据存储结构，也是一种最常见的数据结构。对于一个栈来说，我们只能每次从栈顶压入元素，或者从栈顶取出元素，而内部的其他数据对外是不可访问的。栈一般分为顺序栈和链式栈。 一般用法是，栈最初是空的，栈顶指向NULL或者-1, 当需要有元素压入栈时，则开辟一片新的空间（顺序栈就是当前栈顶的下一个位置），然后将栈顶指之；出栈时，先将该元素赋给其他">
+<meta property="og:type" content="article">
+<meta property="og:title" content="栈&amp;递归&amp;深度优先搜索">
+<meta property="og:url" content="http://yoursite.com/2020/07/14/%E6%A0%88&%E9%80%92%E5%BD%92&%E6%B7%B1%E5%BA%A6%E4%BC%98%E5%85%88%E6%90%9C%E7%B4%A2/index.html">
 <meta property="og:site_name" content="MyBlog">
-<meta property="og:description" content="Shuwen Chen Blog">
+<meta property="og:description" content="栈&amp;递归&amp;深度优先搜索栈栈是一种支持先进后出的数据存储结构，也是一种最常见的数据结构。对于一个栈来说，我们只能每次从栈顶压入元素，或者从栈顶取出元素，而内部的其他数据对外是不可访问的。栈一般分为顺序栈和链式栈。 一般用法是，栈最初是空的，栈顶指向NULL或者-1, 当需要有元素压入栈时，则开辟一片新的空间（顺序栈就是当前栈顶的下一个位置），然后将栈顶指之；出栈时，先将该元素赋给其他">
 <meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://yoursite.com/2020/07/14/%E6%A0%88&%E9%80%92%E5%BD%92&%E6%B7%B1%E5%BA%A6%E4%BC%98%E5%85%88%E6%90%9C%E7%B4%A2/link_stack.png">
+<meta property="article:published_time" content="2020-07-14T07:17:15.138Z">
+<meta property="article:modified_time" content="2020-07-14T08:13:58.849Z">
 <meta property="article:author" content="Shuwen Chen">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/2020/07/14/%E6%A0%88&%E9%80%92%E5%BD%92&%E6%B7%B1%E5%BA%A6%E4%BC%98%E5%85%88%E6%90%9C%E7%B4%A2/link_stack.png">
   
     <link rel="alternative" href="/atom.xml" title="MyBlog" type="application/atom+xml">
   
@@ -152,130 +156,186 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
+            <article id="post-栈&amp;递归&amp;深度优先搜索" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
   
+    <h1 class="article-title" itemprop="name">
+      栈&amp;递归&amp;深度优先搜索
+    </h1>
   
-    
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2020" class="archive-year">2020</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2020/07/14/%E6%A0%88&%E9%80%92%E5%BD%92&%E6%B7%B1%E5%BA%A6%E4%BC%98%E5%85%88%E6%90%9C%E7%B4%A2/" class="archive-article-date">
+
+        
+        <a href="/2020/07/14/%E6%A0%88&%E9%80%92%E5%BD%92&%E6%B7%B1%E5%BA%A6%E4%BC%98%E5%85%88%E6%90%9C%E7%B4%A2/" class="archive-article-date">
   	<time datetime="2020-07-14T07:17:15.138Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-07-14</time>
 </a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2020/07/14/%E6%A0%88&%E9%80%92%E5%BD%92&%E6%B7%B1%E5%BA%A6%E4%BC%98%E5%85%88%E6%90%9C%E7%B4%A2/">栈&amp;递归&amp;深度优先搜索</a>
-    </h1>
-  
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="栈-amp-递归-amp-深度优先搜索"><a href="#栈-amp-递归-amp-深度优先搜索" class="headerlink" title="栈&amp;递归&amp;深度优先搜索"></a>栈&amp;递归&amp;深度优先搜索</h1><h2 id="栈"><a href="#栈" class="headerlink" title="栈"></a>栈</h2><p>栈是一种支持先进后出的数据存储结构，也是一种最常见的数据结构。对于一个栈来说，我们只能每次从栈顶压入元素，或者从栈顶取出元素，而内部的其他数据对外是不可访问的。栈一般分为顺序栈和链式栈。</p>
+<p>一般用法是，栈最初是空的，栈顶指向NULL或者-1, 当需要有元素压入栈时，则开辟一片新的空间（顺序栈就是当前栈顶的下一个位置），然后将栈顶指之；出栈时，先将该元素赋给其他的值或者销毁（顺序栈可略过），然后移动栈顶指针至前一个元素。</p>
+<p><strong>注意</strong>：只有栈不满时才能入栈，只有栈不空时才能出栈。在解决实际问题时，如果push 和pop的算法并没有检查栈顶的位置，很容易造成越界！</p>
+<h3 id="顺序栈"><a href="#顺序栈" class="headerlink" title="顺序栈"></a>顺序栈</h3><blockquote>
+<p>以数组的形式存储数据的栈，除了方便查找以外并没有其他优点（但是一般情况下栈结构是不允许查找栈顶以外元素的），但是如果临时使用栈的话，顺序栈写起来不会十分麻烦，一次常用于小规模使用。缺点就是栈的空间具有限制。</p>
+</blockquote>
+<h4 id="顺序栈的实现"><a href="#顺序栈的实现" class="headerlink" title="顺序栈的实现"></a>顺序栈的实现</h4><blockquote>
+<p>一般情况下，顺序栈只需要一个数组和一个记录栈顶下标的变量就能实现，比较规范的写法如下。</p>
+</blockquote>
+<p><strong>文件：sq_stack.h</strong></p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//从顺序栈开始写起</span></span><br><span class="line"><span class="comment">//顺序栈没有别的优势，就是好写，o(╥﹏╥)o，同时如果突然该需求成链表</span></span><br><span class="line"><span class="comment">//就不用查找那么麻烦</span></span><br><span class="line"><span class="comment">//现在开始吧(*^▽^*)</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifndef</span> SQ_SQTCK_H</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> SQ_SQTCK_H</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">//先定义基本数据类型</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="keyword">int</span> ElemType;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> MAX_SIZE 500</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">node</span>&#123;</span></span><br><span class="line">    <span class="keyword">int</span> top;</span><br><span class="line">    ElemType <span class="built_in">stack</span>[MAX_SIZE];</span><br><span class="line">&#125;Stack;</span><br><span class="line"></span><br><span class="line"><span class="comment">//基本操作</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">init_sq_stack</span><span class="params">(Stack **st)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">is_empty</span><span class="params">(Stack *st)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">push</span><span class="params">(Stack *st, ElemType *x)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">pop</span><span class="params">(Stack *st)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">get_top</span><span class="params">(Stack *st,ElemType *x)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">destory_sq_stack</span><span class="params">(Stack **st)</span></span>;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br></pre></td></tr></table></figure>
 
-        <div class="article-info info-on-right">
-          
-          
+<br>
 
+<p><strong>文件：sq_stack.c</strong></p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">"sq_stack.h"</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">//基本操作</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">init_sq_stack</span><span class="params">(Stack **st)</span></span>&#123;</span><br><span class="line">    *st = (Stack*)<span class="built_in">malloc</span>(<span class="keyword">sizeof</span>(Stack));</span><br><span class="line">    (*st)-&gt;top = <span class="number">-1</span>;</span><br><span class="line">    <span class="built_in">memset</span>((*st)-&gt;<span class="built_in">stack</span>, <span class="number">0</span>, <span class="keyword">sizeof</span>((*st)-&gt;<span class="built_in">stack</span>));</span><br><span class="line">    <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">is_empty</span><span class="params">(Stack *st)</span></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> st-&gt;top == <span class="number">-1</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">push</span><span class="params">(Stack *st, ElemType *x)</span></span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(st-&gt;top == MAX_SIZE - <span class="number">1</span>)&#123;</span><br><span class="line">        perror(<span class="string">"The stack is full!\n"</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    st-&gt;top++;</span><br><span class="line">    st-&gt;<span class="built_in">stack</span>[st-&gt;top] = (*x);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">pop</span><span class="params">(Stack *st)</span></span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(is_empty(st))&#123;</span><br><span class="line">        perror(<span class="string">"The stack is empty!\n"</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    st-&gt;top--;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">get_top</span><span class="params">(Stack *st,ElemType *x)</span></span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(is_empty(st))&#123;</span><br><span class="line">        perror(<span class="string">"The stack is empty!\n"</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    (*x) = st-&gt;<span class="built_in">stack</span>[st-&gt;top];</span><br><span class="line">    <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">destory_sq_stack</span><span class="params">(Stack **st)</span></span>&#123;</span><br><span class="line">    <span class="built_in">free</span>(*st);</span><br><span class="line">    (*st) = <span class="literal">NULL</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="链式栈"><a href="#链式栈" class="headerlink" title="链式栈"></a>链式栈</h3><blockquote>
+<p>链式栈是实现栈的比较理想的存储方式，它不受空间限制。为了方便出栈，链式栈中的结点一般指向它的前一个结点，而栈空时，头结点指向NULL。</p>
+</blockquote>
+<h4 id="链式栈的实现"><a href="#链式栈的实现" class="headerlink" title="链式栈的实现"></a>链式栈的实现</h4><div align="center">
+
+<p><img src="/2020/07/14/%E6%A0%88&%E9%80%92%E5%BD%92&%E6%B7%B1%E5%BA%A6%E4%BC%98%E5%85%88%E6%90%9C%E7%B4%A2/link_stack.png" alt="link_stack"></p>
+<center>链式栈的基本结构</center>
+
+</div>
+
+<p><strong>文件：link_stack.h</strong></p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">ifndef</span> LINK_STACK_H</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> LINK_STACK_H</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//链式栈不受空间的约束，是一种比较理想的栈的结构</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="keyword">int</span> ElemType;</span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">node</span>&#123;</span></span><br><span class="line">    ElemType data;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">node</span> *<span class="title">last</span>;</span></span><br><span class="line">&#125;StNode;</span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">stack</span>&#123;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">node</span> *<span class="title">top</span>;</span></span><br><span class="line">    <span class="keyword">int</span> <span class="built_in">size</span>;</span><br><span class="line">&#125;Stack;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">init_stack</span><span class="params">(Stack **st)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">is_empty</span><span class="params">(Stack *st)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">push</span><span class="params">(Stack *st, ElemType *x)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">pop</span><span class="params">(Stack *st)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">get_top</span><span class="params">(Stack *st,ElemType *x)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">destory_stack</span><span class="params">(Stack **st)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">get_size</span><span class="params">(Stack *st)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br></pre></td></tr></table></figure>
+
+<br>
+
+<p><strong>文件：link_stack.c</strong></p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">"link_stack.h"</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">init_stack</span><span class="params">(Stack **st)</span></span>&#123;</span><br><span class="line">    *st = (Stack *)<span class="built_in">malloc</span>(<span class="keyword">sizeof</span>(Stack));</span><br><span class="line">    (*st)-&gt;<span class="built_in">size</span> = <span class="number">0</span>;</span><br><span class="line">    (*st)-&gt;top = <span class="literal">NULL</span>;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">is_empty</span><span class="params">(Stack *st)</span></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> st-&gt;top == <span class="literal">NULL</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">push</span><span class="params">(Stack *st, ElemType *x)</span></span>&#123;</span><br><span class="line">    StNode *s = (StNode *)<span class="built_in">malloc</span>(<span class="keyword">sizeof</span>(StNode));</span><br><span class="line">    s-&gt;data = (*x);</span><br><span class="line">    s-&gt;last = st-&gt;top;</span><br><span class="line">    st-&gt;top = s;</span><br><span class="line">    st-&gt;<span class="built_in">size</span>++;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">pop</span><span class="params">(Stack *st)</span></span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(is_empty(st))&#123;</span><br><span class="line">        perror(<span class="string">"The stack is empty!\n"</span>);</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    StNode *tmp = st-&gt;top;</span><br><span class="line">    st-&gt;top = tmp-&gt;last;</span><br><span class="line">    <span class="built_in">free</span>(tmp);</span><br><span class="line">    st-&gt;<span class="built_in">size</span>--;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">get_top</span><span class="params">(Stack *st,ElemType *x)</span></span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(is_empty(st))&#123;</span><br><span class="line">        perror(<span class="string">"The stack is empty!\n"</span>);</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    (*x) = st-&gt;top-&gt;data;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">destory_stack</span><span class="params">(Stack **st)</span></span>&#123;</span><br><span class="line">    <span class="keyword">while</span>((*st)-&gt;top != <span class="literal">NULL</span>)&#123;</span><br><span class="line">        pop(*st);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">free</span>(*st);</span><br><span class="line">    (*st) = <span class="literal">NULL</span>;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">get_size</span><span class="params">(Stack *st)</span></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> st-&gt;<span class="built_in">size</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="例题"><a href="#例题" class="headerlink" title="例题"></a>例题</h3><h2 id="递归"><a href="#递归" class="headerlink" title="递归"></a>递归</h2><h3 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h3><h3 id="递归与非递归的转换"><a href="#递归与非递归的转换" class="headerlink" title="递归与非递归的转换"></a>递归与非递归的转换</h3><h3 id="例题-1"><a href="#例题-1" class="headerlink" title="例题"></a>例题</h3><h2 id="深度优先搜索"><a href="#深度优先搜索" class="headerlink" title="深度优先搜索"></a>深度优先搜索</h2><h3 id="图中的DFS"><a href="#图中的DFS" class="headerlink" title="图中的DFS"></a>图中的DFS</h3><h3 id="广义DFS"><a href="#广义DFS" class="headerlink" title="广义DFS"></a>广义DFS</h3><h3 id="例题-2"><a href="#例题-2" class="headerlink" title="例题"></a>例题</h3>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
         </div>
-        <div class="clearfix"></div>
-    </header>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//pan.baidu.com/share/qrcode?url=http://yoursite.com/2020/07/14/%E6%A0%88&%E9%80%92%E5%BD%92&%E6%B7%B1%E5%BA%A6%E4%BC%98%E5%85%88%E6%90%9C%E7%B4%A2/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
+
   
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2020/07/12/%E5%A0%86%E6%8E%92%E5%BA%8F&%E4%BC%98%E5%85%88%E9%98%9F%E5%88%97/" class="archive-article-date">
-  	<time datetime="2020-07-12T04:05:53.799Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-07-12</time>
-</a>
+<nav id="article-nav">
+  
+  
+    <a href="/2020/07/12/%E5%A0%86%E6%8E%92%E5%BA%8F&%E4%BC%98%E5%85%88%E9%98%9F%E5%88%97/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">堆排序&amp;优先队列</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
         </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2020/07/12/%E5%A0%86%E6%8E%92%E5%BA%8F&%E4%BC%98%E5%85%88%E9%98%9F%E5%88%97/">堆排序&amp;优先队列</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-          
-
+        
+        
+        <div class="toc-container tooltip-left">
+            <i class="icon-font icon-category"></i>
+            <div class="tooltip tooltip-east">
+                <span class="tooltip-item">
+                </span>
+                <span class="tooltip-content">
+                    <div class="toc-article">
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#栈-amp-递归-amp-深度优先搜索"><span class="toc-number">1.</span> <span class="toc-text">栈&amp;递归&amp;深度优先搜索</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#栈"><span class="toc-number">1.1.</span> <span class="toc-text">栈</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#顺序栈"><span class="toc-number">1.1.1.</span> <span class="toc-text">顺序栈</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#顺序栈的实现"><span class="toc-number">1.1.1.1.</span> <span class="toc-text">顺序栈的实现</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#链式栈"><span class="toc-number">1.1.2.</span> <span class="toc-text">链式栈</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#链式栈的实现"><span class="toc-number">1.1.2.1.</span> <span class="toc-text">链式栈的实现</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#例题"><span class="toc-number">1.1.3.</span> <span class="toc-text">例题</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#递归"><span class="toc-number">1.2.</span> <span class="toc-text">递归</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#原理"><span class="toc-number">1.2.1.</span> <span class="toc-text">原理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#递归与非递归的转换"><span class="toc-number">1.2.2.</span> <span class="toc-text">递归与非递归的转换</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#例题-1"><span class="toc-number">1.2.3.</span> <span class="toc-text">例题</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#深度优先搜索"><span class="toc-number">1.3.</span> <span class="toc-text">深度优先搜索</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#图中的DFS"><span class="toc-number">1.3.1.</span> <span class="toc-text">图中的DFS</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#广义DFS"><span class="toc-number">1.3.2.</span> <span class="toc-text">广义DFS</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#例题-2"><span class="toc-number">1.3.3.</span> <span class="toc-text">例题</span></a></li></ol></li></ol></li></ol>
+                    </div>
+                </span>
+            </div>
         </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
+        
+    </div>
+</aside>
+
+
+
   
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2020/07/03/%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E7%AF%87%E5%8D%9A%E5%AE%A2%E6%96%87%E7%AB%A0/" class="archive-article-date">
-  	<time datetime="2020-07-03T13:09:45.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-07-03</time>
-</a>
-        </div>
-    	 
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2020/07/03/%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E7%AF%87%E5%8D%9A%E5%AE%A2%E6%96%87%E7%AB%A0/">我的第一篇博客文章</a>
-    </h1>
   
 
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2020/07/03/hello-world/" class="archive-article-date">
-  	<time datetime="2020-07-03T13:05:12.543Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-07-03</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2020/07/03/hello-world/">Hello World</a>
-    </h1>
   
 
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-  
-    </div></section>
   
 
-    
+  
 
 
           </div>
@@ -298,8 +358,8 @@
 	var yiliaConfig = {
 		mathjax: true,
 		isHome: false,
-		isPost: false,
-		isArchive: true,
+		isPost: true,
+		isArchive: false,
 		isTag: false,
 		isCategory: false,
 		open_in_new: false,
