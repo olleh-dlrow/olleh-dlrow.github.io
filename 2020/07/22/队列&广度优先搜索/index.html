@@ -181,7 +181,7 @@
       <i class="iconfont icon-clock-fill"></i>
       
       
-      33
+      32
        分钟
     </span>
   
@@ -233,13 +233,8 @@
 </ol>
 </blockquote>
 <p>其中MAX_SIZE是存放该队列的数组长度</p>
-<div align="center">
-
-![img](circle_qu_full.png)
-
-**队列为满时的情况**
-
-</div>
+<p><img src="/2020/07/22/%E9%98%9F%E5%88%97&%E5%B9%BF%E5%BA%A6%E4%BC%98%E5%85%88%E6%90%9C%E7%B4%A2/circle_qu_full.png" srcset="/img/loading.gif" alt="img"></p>
+<center>队列为满时的情况</center>
 
 <p><br></p>
 <p>整体代码不算很难，但是要注意每次改变front 和 rear 的值时， 必须整除MAX_SIZE，以保证不会出现指针越界的情况。</p>
@@ -554,12 +549,7 @@ SET_LOG_FILE();
 <h2 id="广度优先搜索（BFS）"><a href="#广度优先搜索（BFS）" class="headerlink" title="广度优先搜索（BFS）"></a>广度优先搜索（BFS）</h2><p><strong>概念</strong>：广度优先搜索类似于一种横向式的搜索，对于它遇到的每一个合适的结点，都将放入考虑范围内，并且根据顺序依次访问，所以广度优先搜索常用于<strong>寻找最短路径</strong>。</p>
 <h3 id="图结构中的BFS遍历"><a href="#图结构中的BFS遍历" class="headerlink" title="图结构中的BFS遍历"></a>图结构中的BFS遍历</h3><p>大致过程如下：首先访问初始点v，接着访问顶点v的所有未被访问过的邻接点v1，v2… 然后按照次序访问每一个未被访问过的顶点，直到找到所需要的顶点。由于始终优先访问最先被接触到的结点，因此适合用队列来实现。</p>
 <p>通过下面的示意图能够很清晰的明白过程了。</p>
-<div align="center">
-
-![bfs_gra](bfs_graph.png)
-
-</div>
-
+<p><img src="/2020/07/22/%E9%98%9F%E5%88%97&%E5%B9%BF%E5%BA%A6%E4%BC%98%E5%85%88%E6%90%9C%E7%B4%A2/bfs_graph.png" srcset="/img/loading.gif" alt="bfs_gra"></p>
 <p><br></p>
 <p>大致的代码思路如下：</p>
 <pre><code class="hljs c++"><span class="hljs-comment">//文件：BFS.c</span>
@@ -645,7 +635,7 @@ SET_LOG_FILE();
 <blockquote>
 <p>创建一个队列；</p>
 <p>if 遇到一个新的状态：</p>
-<p>​        将该状态入队，并且假设已经访问过了（visited == 1）</p>
+<p>​         将该状态入队，并且假设已经访问过了（visited == 1）</p>
 <p>从队头取出一个状态进行访问</p>
 <p>遍历和该状态相关联的状态</p>
 </blockquote>

@@ -301,13 +301,8 @@
 <h3 id="链式栈"><a href="#链式栈" class="headerlink" title="链式栈"></a>链式栈</h3><blockquote>
 <p>链式栈是实现栈的比较理想的存储方式，它不受空间限制。为了方便出栈，链式栈中的结点一般指向它的前一个结点，而栈空时，头结点指向NULL。</p>
 </blockquote>
-<h4 id="链式栈的实现"><a href="#链式栈的实现" class="headerlink" title="链式栈的实现"></a>链式栈的实现</h4><div align="center">
-
-![link_stack](link_stack.png)
-
+<h4 id="链式栈的实现"><a href="#链式栈的实现" class="headerlink" title="链式栈的实现"></a>链式栈的实现</h4><p><img src="/2020/07/14/%E6%A0%88&%E9%80%92%E5%BD%92&%E6%B7%B1%E5%BA%A6%E4%BC%98%E5%85%88%E6%90%9C%E7%B4%A2/link_stack.png" srcset="/img/loading.gif" alt="link_stack"></p>
 <center>链式栈的基本结构</center>
-
-</div>
 
 <p><strong>文件：link_stack.h</strong></p>
 <pre><code class="hljs c++"><span class="hljs-meta">#<span class="hljs-meta-keyword">ifndef</span> LINK_STACK_H</span>
@@ -389,7 +384,7 @@
 <span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">get_size</span><span class="hljs-params">(Stack *st)</span></span>&#123;
     <span class="hljs-keyword">return</span> st-&gt;<span class="hljs-built_in">size</span>;
 &#125;</code></pre>
-<h3 id="例题"><a href="#例题" class="headerlink" title="例题"></a>例题</h3><h2 id="递归"><a href="#递归" class="headerlink" title="递归"></a>递归</h2><h3 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h3><p>在定义一个过程或者函数时出现调用本过程或 本函数的成分称为<strong>递归</strong>，调用自身为<strong>直接递归</strong>，比如二叉树中的先序遍历，图中的深度优先搜索；调用其他函数称为<strong>间接递归</strong>，比如快速排序。</p>
+<h2 id="递归"><a href="#递归" class="headerlink" title="递归"></a>递归</h2><h3 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h3><p>在定义一个过程或者函数时出现调用本过程或 本函数的成分称为<strong>递归</strong>，调用自身为<strong>直接递归</strong>，比如二叉树中的先序遍历，图中的深度优先搜索；调用其他函数称为<strong>间接递归</strong>，比如快速排序。</p>
 <p>如果一个递归过程或递归函数中的递归调用语句是最后一条执行语句，则称这种递归调用为<strong>尾递归</strong>，比如阶乘算法。</p>
 <p>一般情况下， 一个递归模型由<strong>递归出口</strong>和<strong>递归体</strong>两部分组成，在实际算法中也就是要解决这两个东西。</p>
 <p>举个例子，在阶乘算法中，n == 1 就是递归出口，当递归深入到这一层时就需要返回，而递归体就是 $ f(n) = n * f(n - 1) $，程序通过该递归体一步步向下递推，直到 遇到n == 1的情况时返回，最后依照原先的路径一步步回归到 $ n == n_0 $就完成了本次递归。</p>
@@ -469,7 +464,7 @@
     &#125;
     DestroyStack(st);
 &#125;</code></pre>
-<h3 id="例题-1"><a href="#例题-1" class="headerlink" title="例题"></a>例题</h3><h2 id="深度优先搜索"><a href="#深度优先搜索" class="headerlink" title="深度优先搜索"></a>深度优先搜索</h2><h3 id="图中的DFS"><a href="#图中的DFS" class="headerlink" title="图中的DFS"></a>图中的DFS</h3><ul>
+<h3 id="例题"><a href="#例题" class="headerlink" title="例题"></a>例题</h3><h2 id="深度优先搜索"><a href="#深度优先搜索" class="headerlink" title="深度优先搜索"></a>深度优先搜索</h2><h3 id="图中的DFS"><a href="#图中的DFS" class="headerlink" title="图中的DFS"></a>图中的DFS</h3><ul>
 <li><p><strong>原理</strong></p>
 <p>​    <strong>深度优先遍历</strong>的过程是从图中的某个初始点v出发，首先访问初始点v，然后选择一个与v相邻的且没有被访问过的顶点w，以w为初始顶点，再从它出发进行深度优先遍历，直到图中与顶点v邻接的所有顶点都被访问过为止，一般通过递归来实现。</p>
 <p>代码实现：</p>
@@ -511,7 +506,7 @@
     	<span class="hljs-constructor">DFS(<span class="hljs-params">new</span> <span class="hljs-params">station</span>)</span>;
     return;
 &#125;</code></pre>
-<h3 id="例题-2"><a href="#例题-2" class="headerlink" title="例题"></a>例题</h3>
+
             </div>
             <hr>
             <div>
