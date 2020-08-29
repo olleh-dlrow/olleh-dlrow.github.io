@@ -181,7 +181,7 @@
       <i class="iconfont icon-clock-fill"></i>
       
       
-      32
+      33
        分钟
     </span>
   
@@ -225,13 +225,9 @@
 </blockquote>
 <p><strong>文件：sq_stack.h</strong></p>
 <pre><code class="hljs c++"><span class="hljs-comment">//从顺序栈开始写起</span>
-<span class="hljs-comment">//顺序栈没有别的优势，就是好写，o(╥﹏╥)o，同时如果突然该需求成链表</span>
+<span class="hljs-comment">//顺序栈没有别的优势，就是好写，o(╥﹏╥)o，同时如果突然改需求成链表</span>
 <span class="hljs-comment">//就不用查找那么麻烦</span>
 <span class="hljs-comment">//现在开始吧(*^▽^*)</span>
-
-<span class="hljs-meta">#<span class="hljs-meta-keyword">ifndef</span> SQ_SQTCK_H</span>
-<span class="hljs-meta">#<span class="hljs-meta-keyword">define</span> SQ_SQTCK_H</span>
-
 
 <span class="hljs-comment">//先定义基本数据类型</span>
 <span class="hljs-keyword">typedef</span> <span class="hljs-keyword">int</span> ElemType;
@@ -249,8 +245,7 @@
 <span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">push</span><span class="hljs-params">(Stack *st, ElemType *x)</span></span>;
 <span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">pop</span><span class="hljs-params">(Stack *st)</span></span>;
 <span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">get_top</span><span class="hljs-params">(Stack *st,ElemType *x)</span></span>;
-<span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">destory_sq_stack</span><span class="hljs-params">(Stack **st)</span></span>;
-<span class="hljs-meta">#<span class="hljs-meta-keyword">endif</span></span></code></pre>
+<span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">destory_sq_stack</span><span class="hljs-params">(Stack **st)</span></span>;</code></pre>
 <p><br></p>
 <p><strong>文件：sq_stack.c</strong></p>
 <pre><code class="hljs c++"><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;stdio.h&gt;</span></span>
@@ -305,9 +300,7 @@
 <center>链式栈的基本结构</center>
 
 <p><strong>文件：link_stack.h</strong></p>
-<pre><code class="hljs c++"><span class="hljs-meta">#<span class="hljs-meta-keyword">ifndef</span> LINK_STACK_H</span>
-<span class="hljs-meta">#<span class="hljs-meta-keyword">define</span> LINK_STACK_H</span>
-
+<pre><code class="hljs c++">
 <span class="hljs-comment">//链式栈不受空间的约束，是一种比较理想的栈的结构</span>
 <span class="hljs-keyword">typedef</span> <span class="hljs-keyword">int</span> ElemType;
 
@@ -327,9 +320,7 @@
 <span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">pop</span><span class="hljs-params">(Stack *st)</span></span>;
 <span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">get_top</span><span class="hljs-params">(Stack *st,ElemType *x)</span></span>;
 <span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">destory_stack</span><span class="hljs-params">(Stack **st)</span></span>;
-<span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">get_size</span><span class="hljs-params">(Stack *st)</span></span>;
-
-<span class="hljs-meta">#<span class="hljs-meta-keyword">endif</span></span></code></pre>
+<span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">get_size</span><span class="hljs-params">(Stack *st)</span></span>;</code></pre>
 <p><br></p>
 <p><strong>文件：link_stack.c</strong></p>
 <pre><code class="hljs c++"><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;stdio.h&gt;</span></span>
@@ -497,15 +488,28 @@
 <h3 id="广义DFS"><a href="#广义DFS" class="headerlink" title="广义DFS"></a>广义DFS</h3><p>相较于限制在图中的DFS，广义上的DFS能够解决更多，更普遍的问题。</p>
 <p>DFS和枚举类似，都是一种很朴素自然的遍历方法。当我们遇到一种状态之后，我们开始判断它产生（或连接）的所有合理的新状态，每遇到一个新状态便递归使用DFS访问它，直到该状态下的所有情况访问完，该算法结束。</p>
 <p><img src="/2020/07/14/%E6%A0%88&%E9%80%92%E5%BD%92&%E6%B7%B1%E5%BA%A6%E4%BC%98%E5%85%88%E6%90%9C%E7%B4%A2/dfs_flow.png" srcset="/img/loading.gif" alt="dfs_flow"></p>
-<p>也可以用逻辑语言表达：</p>
-<pre><code class="hljs reasonml"><span class="hljs-constructor">DFS(<span class="hljs-params">station</span>)</span>&#123;
-	current station
-	for each accessable station:
-    	visited;
-    	<span class="hljs-keyword">do</span> something;
-    	<span class="hljs-constructor">DFS(<span class="hljs-params">new</span> <span class="hljs-params">station</span>)</span>;
-    return;
-&#125;</code></pre>
+<p>模板1(递归实现):</p>
+<pre><code class="hljs crmsh">DFS function(<span class="hljs-keyword">params</span>: current <span class="hljs-keyword">node</span><span class="hljs-title">, target</span> <span class="hljs-keyword">node</span><span class="hljs-title">, hash_table</span> visited):
+	if cur == target: return <span class="hljs-literal">true</span>
+	for every suitable neighbor <span class="hljs-keyword">in</span> current <span class="hljs-keyword">node</span><span class="hljs-title">'s</span> neighbors:
+		add each to visited
+		if DFS(each, target, visited): return <span class="hljs-literal">true</span>
+	//if not find target
+	return <span class="hljs-literal">false</span></code></pre>
+<p>模板2(栈实现):</p>
+<pre><code class="hljs crmsh">DFS function(<span class="hljs-keyword">params</span>: root <span class="hljs-keyword">node</span><span class="hljs-title">, target</span> <span class="hljs-keyword">node</span><span class="hljs-title">):</span>
+<span class="hljs-title">	hash_table</span> visited
+	init stack  //store nodes that not finished yet
+	add root to stack
+	while stack not empty:
+		current <span class="hljs-keyword">node</span> <span class="hljs-title">= top</span> of stack
+		remove top elem <span class="hljs-keyword">in</span> stack
+		if cur == target: return <span class="hljs-literal">true</span>
+		for every suitable neighbor <span class="hljs-keyword">in</span> cur <span class="hljs-keyword">node</span><span class="hljs-title">'s</span> neighbors:
+			add each to visited
+			add each to stack
+	//if not find target
+	return <span class="hljs-literal">false</span></code></pre>
 
             </div>
             <hr>

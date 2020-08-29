@@ -17,7 +17,7 @@
   <meta name="description" content="Shuwen Chen Blog">
   <meta name="author" content="Shuwen Chen">
   <meta name="keywords" content="">
-  <title>堆排序&amp;优先队列 - MyBlog</title>
+  <title>寻找唯一值 - MyBlog</title>
 
   <link  rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/css/bootstrap.min.css" />
 
@@ -160,8 +160,8 @@
               
   <div class="mt-3 post-meta">
     <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-    <time datetime="2020-07-12 12:05" pubdate>
-      2020年7月12日 中午
+    <time datetime="2020-08-28 22:30" pubdate>
+      2020年8月28日 晚上
     </time>
   </div>
 
@@ -171,7 +171,7 @@
     
     <span class="post-meta mr-2">
       <i class="iconfont icon-chart"></i>
-      827 字
+      357 字
     </span>
   
 
@@ -181,7 +181,7 @@
       <i class="iconfont icon-clock-fill"></i>
       
       
-      10
+      5
        分钟
     </span>
   
@@ -211,184 +211,51 @@
         <div class="py-5" id="board">
           <article class="post-content mx-auto" id="post">
             <!-- SEO header -->
-            <h1 style="display: none">堆排序&amp;优先队列</h1>
+            <h1 style="display: none">寻找唯一值</h1>
             
             <div class="markdown-body" id="post-body">
-              <h1 id="堆排序-amp-优先队列"><a href="#堆排序-amp-优先队列" class="headerlink" title="堆排序&amp;优先队列"></a>堆排序&amp;优先队列</h1><h2 id="堆排序"><a href="#堆排序" class="headerlink" title="堆排序"></a>堆排序</h2><h3 id="堆排序原理"><a href="#堆排序原理" class="headerlink" title="堆排序原理"></a>堆排序原理</h3><blockquote>
-<p><strong>堆是一颗具有特定性质的二叉树。</strong><br><strong>堆的性质</strong>：</p>
-<ol>
-<li>堆中所有结点的值必须大于或者等于(或小于等于)其孩子结点的值；</li>
-<li>堆是一颗完全二叉树。</li>
-</ol>
-<p><strong>二叉堆</strong>：<br>在二叉堆中，每个结点最多有两个孩子结点，二叉堆一般分为 <em>二叉最小堆</em>  和 <em>二叉最大堆</em><br><br></p>
+              <h1 id="寻找唯一值"><a href="#寻找唯一值" class="headerlink" title="寻找唯一值"></a>寻找唯一值</h1><h2 id="题目描述"><a href="#题目描述" class="headerlink" title="题目描述"></a>题目描述</h2><p>找出数组中唯一的值，因为该数组除了那个值以外，其他的值都有两个。</p>
+<p>例如：arr = {1,1,2,2,3}, 找出数字3</p>
+<h2 id="利用异或运算的性质"><a href="#利用异或运算的性质" class="headerlink" title="利用异或运算的性质"></a>利用异或运算的性质</h2><p class="note note-primary">异或运算</p>
+
+<blockquote>
+<p>异或运算满足交换律和结合律（对于二进制的每一位，异或运算相当于差的绝对值</p>
+<p>a^b = b^a, a^b^c = a^(b^c)</p>
+<p>a^a=0 （自己和自己一定相同）</p>
+<p>0^a=a （0^0=0, 0^1=1）</p>
 </blockquote>
-<h3 id="堆排序函数"><a href="#堆排序函数" class="headerlink" title="堆排序函数"></a>堆排序函数</h3><p>下面以最小堆为例列举实现二叉堆需要的函数</p>
-<h4 id="变量声明"><a href="#变量声明" class="headerlink" title="变量声明"></a>变量声明</h4><pre><code class="hljs c++"><span class="hljs-comment">//头文件</span>
-<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;stdio.h&gt;</span></span>
-
-<span class="hljs-meta">#<span class="hljs-meta-keyword">define</span> MAXN 1001</span>
-
-<span class="hljs-comment">//自定义元素类型</span>
-<span class="hljs-keyword">typedef</span> <span class="hljs-keyword">int</span> ElemType;
-
-<span class="hljs-comment">//最小堆的顺序表</span>
-<span class="hljs-keyword">int</span> SizeOfHeap = <span class="hljs-number">0</span>;
-ElemType Heap[MAXN];</code></pre>
-<h4 id="插入堆函数"><a href="#插入堆函数" class="headerlink" title="插入堆函数"></a>插入堆函数</h4><p>先将插入的结点放在二叉树的末尾，然后根据优先级与其双亲结点进行比较，如果优先级高于双亲结点则将他们交换，直到重新形成二叉堆。</p>
-<pre><code class="hljs c++"><span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">push</span><span class="hljs-params">(ElemType x)</span></span>&#123;
-    <span class="hljs-comment">//首先插入到最后一个位置</span>
-    <span class="hljs-keyword">int</span> index = ++SizeOfHeap;
-    <span class="hljs-comment">//向上调整</span>
-    <span class="hljs-keyword">while</span>(index &gt; <span class="hljs-number">1</span>)&#123;  <span class="hljs-comment">//只有i&gt;1时才有父节点</span>
-        <span class="hljs-keyword">int</span> IndexOfParent = index / <span class="hljs-number">2</span>;
-        <span class="hljs-keyword">if</span>(Heap[IndexOfParent] &lt;= x)&#123;
-            <span class="hljs-keyword">break</span>;
-        &#125;
-        Heap[index] = Heap[IndexOfParent];
-        index = IndexOfParent;
+<pre><code class="hljs c++"><span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">single_number</span><span class="hljs-params">(<span class="hljs-built_in">vector</span>&lt;<span class="hljs-keyword">int</span>&gt; arr)</span></span>&#123;
+    <span class="hljs-keyword">int</span> a = arr[<span class="hljs-number">0</span>];
+    <span class="hljs-keyword">if</span>(arr.<span class="hljs-built_in">size</span>() == <span class="hljs-number">1</span>)<span class="hljs-keyword">return</span> a;
+    <span class="hljs-keyword">for</span>(<span class="hljs-keyword">int</span> i = <span class="hljs-number">1</span>; i &lt; arr.<span class="hljs-built_in">size</span>(); i++)&#123;
+        a ^= arr[i];
     &#125;
-    Heap[index] = x;
+    <span class="hljs-keyword">return</span> a;
 &#125;</code></pre>
-<p><strong>图解</strong></p>
-<p><img src="/2020/07/12/%E5%A0%86%E6%8E%92%E5%BA%8F&%E4%BC%98%E5%85%88%E9%98%9F%E5%88%97/heap_insert1.png" srcset="/img/loading.gif" alt="insert"></p>
-<center><font size="4">初始堆</font></center>
-
-<p><img src="/2020/07/12/%E5%A0%86%E6%8E%92%E5%BA%8F&%E4%BC%98%E5%85%88%E9%98%9F%E5%88%97/heap_insert2.png" srcset="/img/loading.gif" alt="insert1"></p>
-<center><font size="4">插入新结点并向上调整</font></center>
-
-<p><img src="/2020/07/12/%E5%A0%86%E6%8E%92%E5%BA%8F&%E4%BC%98%E5%85%88%E9%98%9F%E5%88%97/heap_insert3.png" srcset="/img/loading.gif" alt="insert2"></p>
-<center><font size="4">继续向上调整</font></center>
-
-<p><img src="/2020/07/12/%E5%A0%86%E6%8E%92%E5%BA%8F&%E4%BC%98%E5%85%88%E9%98%9F%E5%88%97/heap_insert4.png" srcset="/img/loading.gif" alt="insert3"></p>
-<center><font size="4">插入完成</font></center>
-
-<h4 id="删除最值函数"><a href="#删除最值函数" class="headerlink" title="删除最值函数"></a>删除最值函数</h4><p>先临时保存一份最值，然后将最后一个结点放到根节点，依次向下移动结点直到二叉堆平衡。</p>
-<pre><code class="hljs c++"><span class="hljs-comment">//删除操作</span>
-<span class="hljs-function">ElemType <span class="hljs-title">pop</span><span class="hljs-params">()</span></span>&#123;
-    <span class="hljs-comment">//获取最值</span>
-    ElemType result = Heap[<span class="hljs-number">1</span>];
-    <span class="hljs-comment">//相当于将最后一个结点放到根节点</span>
-    ElemType x = Heap[SizeOfHeap];
-    <span class="hljs-keyword">int</span> index = <span class="hljs-number">1</span>;
-    <span class="hljs-comment">//一定要有子节点</span>
-    <span class="hljs-keyword">while</span>(<span class="hljs-number">2</span> * index &lt;= SizeOfHeap)&#123;
-        <span class="hljs-keyword">int</span> LSonIndex = <span class="hljs-number">2</span> * index;
-        <span class="hljs-keyword">int</span> RSonIndex = <span class="hljs-number">2</span> * index + <span class="hljs-number">1</span>;
-        <span class="hljs-comment">//比较儿子结点的最值</span>
-        <span class="hljs-keyword">int</span> MinIndex = LSonIndex;
-        <span class="hljs-keyword">if</span>(RSonIndex &lt;= SizeOfHeap &amp;&amp; Heap[RSonIndex] &lt; Heap[MinIndex])&#123;
-            MinIndex = RSonIndex;
-        &#125;
-        <span class="hljs-comment">//如果没有颠倒就结束</span>
-        <span class="hljs-keyword">if</span>(Heap[MinIndex] &gt;= x)&#123;
-            <span class="hljs-keyword">break</span>;
-        &#125;
-        Heap[index] = Heap[MinIndex];
-        index = MinIndex;
-    &#125;
-    Heap[index] = x;
-    SizeOfHeap--;
-    <span class="hljs-keyword">return</span> result;
-&#125;</code></pre>
-<p><strong>图解</strong></p>
-<p><img src="/2020/07/12/%E5%A0%86%E6%8E%92%E5%BA%8F&%E4%BC%98%E5%85%88%E9%98%9F%E5%88%97/heap_pop1.png" srcset="/img/loading.gif" alt></p>
-<center>初始堆</center>
-
+<p>解释：</p>
+<p>设数组中的数为b,b,c,c,e,d,e… …，则a = b^b^c^c^e^d^e^… … = 0^0^e^e^d^… … = 0^0^0^d^0^… … = d，因此遍历完所有数据后，得到的结果就是唯一值。</p>
 <p><br></p>
-<p><br></p>
-<p><img src="/2020/07/12/%E5%A0%86%E6%8E%92%E5%BA%8F&%E4%BC%98%E5%85%88%E9%98%9F%E5%88%97/heap_pop2.png" srcset="/img/loading.gif" alt="pop"></p>
-<center>将尾结点移动到根节点</center>
-
-<p><br></p>
-<p><br></p>
-<p><img src="/2020/07/12/%E5%A0%86%E6%8E%92%E5%BA%8F&%E4%BC%98%E5%85%88%E9%98%9F%E5%88%97/heap_pop3.png" srcset="/img/loading.gif" alt="pop"></p>
-<center>平衡二叉堆</center>
-
-<p><br></p>
-<p><br></p>
-<h4 id="获取堆顶元素"><a href="#获取堆顶元素" class="headerlink" title="获取堆顶元素"></a>获取堆顶元素</h4><pre><code class="hljs c++"><span class="hljs-comment">//获取堆顶元素</span>
-<span class="hljs-function">ElemType <span class="hljs-title">GetTop</span><span class="hljs-params">()</span></span>&#123;
-    <span class="hljs-keyword">return</span> Heap[<span class="hljs-number">0</span>];
-&#125;</code></pre>
-<p><br></p>
-<p><br></p>
-<h4 id="创建空堆"><a href="#创建空堆" class="headerlink" title="创建空堆"></a>创建空堆</h4><p>使用一个数组来创建空堆</p>
-<pre><code class="hljs c++"><span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">Build_Heap</span><span class="hljs-params">(<span class="hljs-keyword">int</span> data[],<span class="hljs-keyword">int</span> n)</span></span>&#123;
-    <span class="hljs-comment">//创建一个空堆</span>
-    SizeOfHeap = <span class="hljs-number">0</span>;
-    <span class="hljs-keyword">for</span>(<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>;i &lt; n;i++)&#123;
-        push(data[i]);
-    &#125;
-&#125;</code></pre>
-<h2 id="优先队列"><a href="#优先队列" class="headerlink" title="优先队列"></a>优先队列</h2><h3 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h3><blockquote>
-<p>优先队列也是一种队列，不过优先队列的出队顺序是按照优先级来的</p>
-<p>如果最小的键值元素拥有最高的优先级，那么这种优先队列叫做<em>升序优先队列</em>, 相反，如果最大键值元素具有最高的优先级，这种优先队列叫做<em>降序优先队列</em>。</p>
-<p>优先队列的基本操作类似于二叉堆的基本操作。</p>
-</blockquote>
-<h3 id="优先队列的应用"><a href="#优先队列的应用" class="headerlink" title="优先队列的应用"></a>优先队列的应用</h3><ul>
-<li>数据压缩：Huffman 算法</li>
-<li>最短路径：Dijkstra算法</li>
-<li>最小生成树：Prim算法</li>
-<li>事件驱动仿真：顾客排队算法</li>
-<li>选择问题：查找第k个最小元素</li>
-<li>… …</li>
+<p><strong>位运算的一些常见用法</strong></p>
+<ul>
+<li>除以2：n &gt;&gt; 1</li>
+<li>判断奇偶：n &amp; 1为true代表该数是奇数，否则为偶数</li>
+<li>交换数据：a ^= b, b ^= a, a ^= b</li>
 </ul>
-<h3 id="优先队列的实现比较"><a href="#优先队列的实现比较" class="headerlink" title="优先队列的实现比较"></a>优先队列的实现比较</h3><div class="table-container">
-<table>
-<thead>
-<tr>
-<th>实现</th>
-<th>插入</th>
-<th>删除</th>
-<th>寻找最小值</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>无序数组</td>
-<td>1</td>
-<td>n</td>
-<td>n</td>
-</tr>
-<tr>
-<td>无序链表</td>
-<td>1</td>
-<td>n</td>
-<td>n</td>
-</tr>
-<tr>
-<td>有序数组</td>
-<td>n</td>
-<td>1</td>
-<td>1</td>
-</tr>
-<tr>
-<td>有序链表</td>
-<td>n</td>
-<td>1</td>
-<td>1</td>
-</tr>
-<tr>
-<td>二叉搜索树</td>
-<td>log n（平均）</td>
-<td>log n（平均）</td>
-<td>log n（平均）</td>
-</tr>
-<tr>
-<td>平衡二叉搜索树</td>
-<td>log n</td>
-<td>log n</td>
-<td>log n</td>
-</tr>
-<tr>
-<td>二叉堆</td>
-<td>log n</td>
-<td>log n</td>
-<td>1</td>
-</tr>
-</tbody>
-</table>
-</div>
+<p><br></p>
+<h2 id="利用哈希表"><a href="#利用哈希表" class="headerlink" title="利用哈希表"></a>利用哈希表</h2><p class="note note-primary">哈希表</p>
+
+<p>对于遍历的每一个元素，如果哈希表中不存在该元素，则添加；否则在哈希表中删除该元素</p>
+<pre><code class="hljs c++"><span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">single_number2</span><span class="hljs-params">(<span class="hljs-built_in">vector</span>&lt;<span class="hljs-keyword">int</span>&gt; arr)</span></span>&#123;
+    <span class="hljs-built_in">unordered_set</span>&lt;<span class="hljs-keyword">int</span>&gt; my_set;
+    <span class="hljs-keyword">for</span>(<span class="hljs-keyword">auto</span> it = arr.<span class="hljs-built_in">begin</span>(); it != arr.<span class="hljs-built_in">end</span>(); it++)&#123;
+        <span class="hljs-keyword">if</span>(my_set.count(*it) &gt; <span class="hljs-number">0</span>)&#123;
+            my_set.erase(*it);
+        &#125; <span class="hljs-keyword">else</span> &#123;
+            my_set.insert(*it);
+        &#125;
+    &#125;
+    <span class="hljs-keyword">return</span> *my_set.<span class="hljs-built_in">begin</span>();
+&#125;</code></pre>
 
             </div>
             <hr>
@@ -400,15 +267,17 @@ ElemType Heap[MAXN];</code></pre>
                     
                       <a class="hover-with-bg" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/">数据结构与算法</a>
                     
+                      <a class="hover-with-bg" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/%E4%BD%8D%E8%BF%90%E7%AE%97/">位运算</a>
+                    
                   </div>
                 
                 
                   <div class="post-meta">
                     <i class="iconfont icon-tags"></i>
                     
-                      <a class="hover-with-bg" href="/tags/%E4%BC%98%E5%85%88%E9%98%9F%E5%88%97/">优先队列</a>
+                      <a class="hover-with-bg" href="/tags/%E5%BC%82%E6%88%96%E8%BF%90%E7%AE%97/">异或运算</a>
                     
-                      <a class="hover-with-bg" href="/tags/%E5%A0%86%E6%8E%92%E5%BA%8F/">堆排序</a>
+                      <a class="hover-with-bg" href="/tags/%E5%93%88%E5%B8%8C%E8%A1%A8/">哈希表</a>
                     
                   </div>
                 
@@ -421,15 +290,15 @@ ElemType Heap[MAXN];</code></pre>
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2020/07/14/%E6%A0%88&amp;%E9%80%92%E5%BD%92&amp;%E6%B7%B1%E5%BA%A6%E4%BC%98%E5%85%88%E6%90%9C%E7%B4%A2/">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">栈&递归&深度优先搜索</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
                   </article>
                   <article class="post-next col-6">
                     
+                    
+                      <a href="/2020/08/28/%E9%80%92%E5%A2%9E%E7%9F%A9%E9%98%B5%E6%90%9C%E7%B4%A2/">
+                        <span class="hidden-mobile">递增矩阵搜索</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
                     
                   </article>
                 </div>
@@ -565,7 +434,7 @@ ElemType Heap[MAXN];</code></pre>
     var typed = new Typed('#subtitle', {
       strings: [
         '  ',
-        "堆排序&优先队列&nbsp;",
+        "寻找唯一值&nbsp;",
       ],
       cursorChar: "_",
       typeSpeed: 70,

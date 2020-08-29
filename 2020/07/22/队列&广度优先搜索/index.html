@@ -181,7 +181,7 @@
       <i class="iconfont icon-clock-fill"></i>
       
       
-      32
+      31
        分钟
     </span>
   
@@ -240,18 +240,17 @@
 <p>整体代码不算很难，但是要注意每次改变front 和 rear 的值时， 必须整除MAX_SIZE，以保证不会出现指针越界的情况。</p>
 <p>代码如下（看看就好，跑不起来的）：</p>
 <pre><code class="hljs c++"><span class="hljs-comment">//circle_queue.h</span>
-<span class="hljs-meta">#<span class="hljs-meta-keyword">ifndef</span> C_QUEUE_H</span>
-<span class="hljs-meta">#<span class="hljs-meta-keyword">define</span> C_QUEUE_H</span>
-
-<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">"head.h"</span></span>
-
 <span class="hljs-meta">#<span class="hljs-meta-keyword">define</span> F(qu) (qu-&gt;front)</span>
 <span class="hljs-meta">#<span class="hljs-meta-keyword">define</span> R(qu) (qu-&gt;rear)</span>
 
 <span class="hljs-keyword">typedef</span> <span class="hljs-keyword">int</span> ElemType;
 
-<span class="hljs-meta">#<span class="hljs-meta-keyword">define</span> MAX_SIZE 10</span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">define</span> MAX_SIZE 10   <span class="hljs-comment">//定义最大队列长度</span></span>
 
+<span class="hljs-comment">/** </span>
+<span class="hljs-comment">* 此队列中，头结点默认指向队列头部的元素，尾指针指向队列尾部元素的下一个空格</span>
+<span class="hljs-comment">* 任何指针移动时，都必须要整除队列长度以保证不会越界</span>
+<span class="hljs-comment">*/</span>
 <span class="hljs-keyword">typedef</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">c_queue</span></span>
 <span class="hljs-class">&#123;</span>
     <span class="hljs-comment">/* data */</span>
@@ -267,17 +266,13 @@
 <span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">isfull</span><span class="hljs-params">(C_Queue *qu)</span></span>;
 <span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">isempty</span><span class="hljs-params">(C_Queue *qu)</span></span>;
 <span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">destory_circle_queue</span><span class="hljs-params">(C_Queue *qu)</span></span>;
-<span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">display</span><span class="hljs-params">(C_Queue *qu)</span></span>;
-
-<span class="hljs-meta">#<span class="hljs-meta-keyword">endif</span></span></code></pre>
+<span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">display</span><span class="hljs-params">(C_Queue *qu)</span></span>;</code></pre>
 <pre><code class="hljs c++"><span class="hljs-comment">//circle_queue.c</span>
 <span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">"c_queue.h"</span></span>
 
 <span class="hljs-function">C_Queue *<span class="hljs-title">init_circle_queue</span><span class="hljs-params">(C_Queue *qu)</span></span>&#123;
-    TEST_FUNC();
     qu = (C_Queue*)<span class="hljs-built_in">malloc</span>(<span class="hljs-keyword">sizeof</span>(C_Queue));
     qu-&gt;front = qu-&gt;rear = <span class="hljs-number">0</span>;
-    <span class="hljs-built_in">display</span>(qu);
     <span class="hljs-keyword">return</span> qu;
 &#125;
 
@@ -289,95 +284,44 @@
 &#125;
 
 <span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">push</span><span class="hljs-params">(C_Queue *qu,ElemType *x)</span></span>&#123;
-    TEST_FUNC();
     <span class="hljs-keyword">if</span>(isfull(qu))&#123;
-        perror(RED <span class="hljs-string">"The queue is full!\n"</span> NONE);
-        <span class="hljs-built_in">printf</span>(<span class="hljs-string">"MAXSIZE : %d\n"</span>, MAX_SIZE);
+        perror(<span class="hljs-string">"The queue is full!\n"</span>);
         <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
     &#125;
-    qu-&gt;data[TEST_INDEX(qu-&gt;rear, MAX_SIZE)] = (*x);
+    qu-&gt;data[qu-&gt;rear] = (*x);
     qu-&gt;rear = (qu-&gt;rear + <span class="hljs-number">1</span>) % MAX_SIZE;
     <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;
 &#125;
 <span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">pop</span><span class="hljs-params">(C_Queue *qu)</span></span>&#123;
-    TEST_FUNC();
-    <span class="hljs-keyword">if</span>(isempty(qu))&#123;
-        perror(RED <span class="hljs-string">"The queue is empty!\n"</span> NONE);
-        <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
-    &#125;
-    qu-&gt;front = TEST_INDEX((qu-&gt;front + <span class="hljs-number">1</span>) % MAX_SIZE, MAX_SIZE);
-    <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;
-&#125;
-<span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">get_front</span><span class="hljs-params">(C_Queue *qu,ElemType *x)</span></span>&#123;
-    TEST_FUNC();
     <span class="hljs-keyword">if</span>(isempty(qu))&#123;
         perror(<span class="hljs-string">"The queue is empty!\n"</span>);
         <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
     &#125;
-    (*x) = qu-&gt;data[TEST_INDEX(qu-&gt;front, MAX_SIZE)];
-    <span class="hljs-built_in">log</span>(<span class="hljs-string">"front elem: %d\n"</span>,*x);
+    qu-&gt;front = (qu-&gt;front + <span class="hljs-number">1</span>) % MAX_SIZE;
+    <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;
+&#125;
+<span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">get_front</span><span class="hljs-params">(C_Queue *qu,ElemType *x)</span></span>&#123;
+    <span class="hljs-keyword">if</span>(isempty(qu))&#123;
+        perror(<span class="hljs-string">"The queue is empty!\n"</span>);
+        <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+    &#125;
+    (*x) = qu-&gt;data[qu-&gt;front, MAX_SIZE];
     <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;
 &#125;
 
 <span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">destory_circle_queue</span><span class="hljs-params">(C_Queue *qu)</span></span>&#123;
-    TEST_FUNC();
     <span class="hljs-built_in">free</span>(qu);
-    <span class="hljs-built_in">log</span>(GREEN <span class="hljs-string">"The queue has been destoried!\n"</span> NONE);
     <span class="hljs-keyword">return</span> ;
 &#125;
 
 <span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">display</span><span class="hljs-params">(C_Queue *qu)</span></span>&#123;
     <span class="hljs-keyword">int</span> i = qu-&gt;front;
-    <span class="hljs-built_in">log</span>(<span class="hljs-string">"Queue:\n"</span>);
     <span class="hljs-keyword">while</span>(i != qu-&gt;rear)&#123;
         <span class="hljs-built_in">printf</span>(<span class="hljs-string">"%d "</span>, qu-&gt;data[i]);
         i = (i + <span class="hljs-number">1</span>) % MAX_SIZE;
     &#125;
     <span class="hljs-keyword">return</span>;
-&#125;
-
-<span class="hljs-meta">#<span class="hljs-meta-keyword">ifdef</span> DBG</span>
-SET_LOG_FILE();
-<span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span>&#123;
-    BEGIN_TEST();
-    <span class="hljs-keyword">int</span> opt, val;
-    C_Queue *qu;
-    qu = init_circle_queue(qu);
-    <span class="hljs-built_in">log</span>(<span class="hljs-string">"\n---------input--------\n"</span>);
-    <span class="hljs-built_in">log</span>(<span class="hljs-string">"param[1] : 0:clear_screen 1:push 2:pop 3:get_front 4:quit\n"</span>);
-    <span class="hljs-built_in">log</span>(<span class="hljs-string">"param[2] : val or no_meaning\n"</span>);
-    <span class="hljs-keyword">while</span>(~<span class="hljs-built_in">scanf</span>(<span class="hljs-string">"%d%d"</span>,&amp;opt, &amp;val))&#123;
-        <span class="hljs-built_in">log</span>(<span class="hljs-string">"\n********output********\n"</span>);
-        <span class="hljs-keyword">switch</span>(opt)&#123;
-            <span class="hljs-keyword">case</span> <span class="hljs-number">0</span>:
-                system(<span class="hljs-string">"cls"</span>);
-                <span class="hljs-keyword">break</span>;
-            <span class="hljs-keyword">case</span> <span class="hljs-number">1</span>:
-                <span class="hljs-built_in">log</span>(<span class="hljs-string">"push:\n"</span>);
-                push(qu, &amp;val);
-                <span class="hljs-keyword">break</span>;
-            <span class="hljs-keyword">case</span> <span class="hljs-number">2</span>:
-                <span class="hljs-built_in">log</span>(<span class="hljs-string">"pop:\n"</span>);
-                pop(qu);
-                <span class="hljs-keyword">break</span>;
-            <span class="hljs-keyword">case</span> <span class="hljs-number">3</span>:
-                <span class="hljs-built_in">log</span>(<span class="hljs-string">"get_front:\n"</span>);
-                get_front(qu, &amp;val);
-                <span class="hljs-keyword">break</span>;
-            <span class="hljs-keyword">case</span> <span class="hljs-number">4</span>:
-                destory_circle_queue(qu);
-                <span class="hljs-built_in">exit</span>(<span class="hljs-number">1</span>);
-        &#125;
-        <span class="hljs-built_in">display</span>(qu);
-        <span class="hljs-built_in">log</span>(<span class="hljs-string">"\n**********************\n"</span>);
-        <span class="hljs-built_in">log</span>(<span class="hljs-string">"\n---------input--------\n"</span>);
-        <span class="hljs-built_in">log</span>(<span class="hljs-string">"param[1] : 0:clear_screen 1:push 2:pop 3:get_front 4:quit\n"</span>);
-        <span class="hljs-built_in">log</span>(<span class="hljs-string">"param[2] : val or no_meaning\n"</span>);
-    &#125;
-    END_TEST();
-    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
-&#125;
-<span class="hljs-meta">#<span class="hljs-meta-keyword">endif</span></span></code></pre>
+&#125;</code></pre>
 <h3 id="链式队列"><a href="#链式队列" class="headerlink" title="链式队列"></a>链式队列</h3><p>链式队列的数据结构十分类似于链表，因此将链表加上头、尾指针后，就变成了链式队列。</p>
 <p><strong>基本操作</strong></p>
 <ol>
@@ -398,11 +342,6 @@ SET_LOG_FILE();
 </li>
 </ol>
 <pre><code class="hljs c++"><span class="hljs-comment">//l_queue.h</span>
-<span class="hljs-meta">#<span class="hljs-meta-keyword">ifndef</span> L_QUEUE_H</span>
-<span class="hljs-meta">#<span class="hljs-meta-keyword">define</span> L_QUEUE_H</span>
-
-<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">"head.h"</span></span>
-
 <span class="hljs-keyword">typedef</span> <span class="hljs-keyword">int</span> ElemType;
 
 <span class="hljs-keyword">typedef</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">node</span>&#123;</span>
@@ -421,9 +360,7 @@ SET_LOG_FILE();
 <span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">pop</span><span class="hljs-params">(Queue *qu)</span></span>;
 <span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">get_front</span><span class="hljs-params">(Queue *qu, ElemType *x)</span></span>;
 <span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">destory_queue</span><span class="hljs-params">(Queue *qu)</span></span>;
-<span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">disp_queue</span><span class="hljs-params">(Queue *qu)</span></span>;
-
-<span class="hljs-meta">#<span class="hljs-meta-keyword">endif</span></span></code></pre>
+<span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">disp_queue</span><span class="hljs-params">(Queue *qu)</span></span>;</code></pre>
 <pre><code class="hljs c++"><span class="hljs-comment">//l_queue.c</span>
 <span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">"l_queue.h"</span></span>
 
@@ -433,7 +370,6 @@ SET_LOG_FILE();
 <span class="hljs-meta">#<span class="hljs-meta-keyword">define</span> N(qu) (qu-&gt;next)</span>
 
 <span class="hljs-function">Queue *<span class="hljs-title">init</span><span class="hljs-params">(Queue *qu)</span></span>&#123;
-    TEST_FUNC();
     qu = (Queue*)<span class="hljs-built_in">malloc</span>(<span class="hljs-keyword">sizeof</span>(Queue));
     qu-&gt;front = qu-&gt;rear = <span class="hljs-literal">NULL</span>;
     <span class="hljs-keyword">return</span> qu;
@@ -443,7 +379,6 @@ SET_LOG_FILE();
     <span class="hljs-keyword">return</span> qu-&gt;front == <span class="hljs-literal">NULL</span>;
 &#125;
 <span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">push</span><span class="hljs-params">(Queue *qu, ElemType *x)</span></span>&#123;
-    TEST_FUNC();
     QNode *s = (QNode*)<span class="hljs-built_in">malloc</span>(<span class="hljs-keyword">sizeof</span>(QNode));
     s-&gt;next = <span class="hljs-literal">NULL</span>;
     s-&gt;data = (*x);
@@ -451,15 +386,13 @@ SET_LOG_FILE();
         F(qu) = R(qu) = s;
         <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;
     &#125;
-    TEST_SEG(qu-&gt;rear);
     qu-&gt;rear-&gt;next = s;
     qu-&gt;rear = s;
     <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;
 &#125;
 <span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">pop</span><span class="hljs-params">(Queue *qu)</span></span>&#123;
-    TEST_FUNC();
     <span class="hljs-keyword">if</span>(isempty(qu))&#123;
-        <span class="hljs-built_in">printf</span>(RED <span class="hljs-string">"The queue is empty!\n"</span> NONE);
+        <span class="hljs-built_in">printf</span>(<span class="hljs-string">"The queue is empty!\n"</span>);
         <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
     &#125;
     QNode *tmp = F(qu);
@@ -467,39 +400,23 @@ SET_LOG_FILE();
         <span class="hljs-built_in">free</span>(F(qu));
         F(qu) = R(qu) = <span class="hljs-literal">NULL</span>;
     &#125; <span class="hljs-keyword">else</span> &#123;
-        TEST_SEG(F(qu));
         F(qu) = N(F(qu));
         <span class="hljs-built_in">free</span>(tmp);
     &#125;
     <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;
 &#125;
 <span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">get_front</span><span class="hljs-params">(Queue *qu, ElemType *x)</span></span>&#123;
-    TEST_FUNC();
     <span class="hljs-keyword">if</span>(isempty(qu))&#123;
-        <span class="hljs-built_in">printf</span>(RED <span class="hljs-string">"The queue is empty!\n"</span> NONE);
+        <span class="hljs-built_in">printf</span>(<span class="hljs-string">"The queue is empty!\n"</span>);
         <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
     &#125;  
-    TEST_SEG(F(qu));
     (*x) = D(F(qu));
-    <span class="hljs-built_in">log</span>(<span class="hljs-string">"front_data = %d\n"</span>, (*x));
     <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;
 &#125;
 <span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">destory_queue</span><span class="hljs-params">(Queue *qu)</span></span>&#123;
-    TEST_FUNC();
-    <span class="hljs-comment">// QNode *pre = F(qu), *p;</span>
-    <span class="hljs-comment">// if(pre != NULL)&#123;</span>
-    <span class="hljs-comment">//     p = N(pre);</span>
-    <span class="hljs-comment">//     while(p != NULL)&#123;</span>
-    <span class="hljs-comment">//         free(pre);</span>
-    <span class="hljs-comment">//         pre = p;</span>
-    <span class="hljs-comment">//         p = N(p);</span>
-    <span class="hljs-comment">//     &#125;</span>
-    <span class="hljs-comment">//     free(pre);</span>
-    <span class="hljs-comment">// &#125;</span>
     <span class="hljs-keyword">while</span>(F(qu) != <span class="hljs-literal">NULL</span>)&#123;
         pop(qu);
     &#125;
-    <span class="hljs-built_in">printf</span>(GREEN <span class="hljs-string">"queue has been destoried!\n"</span> NONE);
     <span class="hljs-keyword">return</span> ;
 &#125;
 
@@ -507,73 +424,81 @@ SET_LOG_FILE();
     <span class="hljs-built_in">printf</span>(<span class="hljs-string">"queue:\n"</span>);
     <span class="hljs-keyword">if</span>(F(qu) == <span class="hljs-literal">NULL</span>)<span class="hljs-keyword">return</span> ;
     QNode *p = F(qu);
-    <span class="hljs-comment">//log("add_front: %p add_rear: %p\n", qu-&gt;front, qu-&gt;rear);</span>
-    <span class="hljs-comment">//log("front: %d data: %d\n",D(F(qu)), D(R(qu)));</span>
     <span class="hljs-keyword">while</span>(p != R(qu))&#123;
-        TEST_SEG(p);
         <span class="hljs-built_in">printf</span>(<span class="hljs-string">"%d "</span>, D(p));
         p = N(p);
     &#125;
     <span class="hljs-built_in">printf</span>(<span class="hljs-string">"%d\n"</span>, D(p));
     <span class="hljs-keyword">return</span> ;
-&#125;
-
-SET_LOG_FILE();
-<span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span>&#123;
-    BEGIN_TEST();
-    <span class="hljs-keyword">int</span> opt, val;
-    Queue *qu = init(qu);
-    <span class="hljs-keyword">while</span>(~<span class="hljs-built_in">scanf</span>(<span class="hljs-string">"%d%d"</span>,&amp;opt,&amp;val))&#123;
-        <span class="hljs-keyword">switch</span> (opt) &#123;
-        <span class="hljs-keyword">case</span> <span class="hljs-number">1</span>:
-            <span class="hljs-comment">/* code */</span>
-            push(qu, &amp;val);
-            <span class="hljs-keyword">break</span>;
-        <span class="hljs-keyword">case</span> <span class="hljs-number">2</span>:
-            pop(qu);
-            <span class="hljs-keyword">break</span>;
-        <span class="hljs-keyword">case</span> <span class="hljs-number">3</span>:
-            get_front(qu, &amp;val);
-            <span class="hljs-keyword">break</span>;
-        <span class="hljs-keyword">case</span> <span class="hljs-number">4</span>:
-            destory_queue(qu);
-            END_TEST();
-            <span class="hljs-built_in">exit</span>(<span class="hljs-number">1</span>);
-        <span class="hljs-keyword">default</span>:
-            <span class="hljs-keyword">break</span>;
-        &#125;
-        disp_queue(qu);
-    &#125;
-    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
 &#125;</code></pre>
 <h2 id="广度优先搜索（BFS）"><a href="#广度优先搜索（BFS）" class="headerlink" title="广度优先搜索（BFS）"></a>广度优先搜索（BFS）</h2><p><strong>概念</strong>：广度优先搜索类似于一种横向式的搜索，对于它遇到的每一个合适的结点，都将放入考虑范围内，并且根据顺序依次访问，所以广度优先搜索常用于<strong>寻找最短路径</strong>。</p>
 <h3 id="图结构中的BFS遍历"><a href="#图结构中的BFS遍历" class="headerlink" title="图结构中的BFS遍历"></a>图结构中的BFS遍历</h3><p>大致过程如下：首先访问初始点v，接着访问顶点v的所有未被访问过的邻接点v1，v2… 然后按照次序访问每一个未被访问过的顶点，直到找到所需要的顶点。由于始终优先访问最先被接触到的结点，因此适合用队列来实现。</p>
 <p>通过下面的示意图能够很清晰的明白过程了。</p>
 <p><img src="/2020/07/22/%E9%98%9F%E5%88%97&%E5%B9%BF%E5%BA%A6%E4%BC%98%E5%85%88%E6%90%9C%E7%B4%A2/bfs_graph.png" srcset="/img/loading.gif" alt="bfs_gra"></p>
 <p><br></p>
-<p>大致的代码思路如下：</p>
-<pre><code class="hljs c++"><span class="hljs-comment">//文件：BFS.c</span>
+<p>大致的代码思路如下（该代码需要图的基本算法）：</p>
+<pre><code class="hljs c++"><span class="hljs-comment">//graph_basic.h</span>
+
+<span class="hljs-comment">/** </span>
+<span class="hljs-comment">* 以邻接表的方式构建图</span>
+<span class="hljs-comment">*/</span>
+
+<span class="hljs-keyword">typedef</span> <span class="hljs-keyword">int</span> ElemType;
+
+<span class="hljs-meta">#<span class="hljs-meta-keyword">define</span> MAX_SIZE 100</span>
+
+<span class="hljs-comment">//声明边结点</span>
+<span class="hljs-keyword">typedef</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">anode</span>&#123;</span>
+    <span class="hljs-comment">//ElemType data;</span>
+    <span class="hljs-keyword">int</span> vertex;
+    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">anode</span> *<span class="hljs-title">next</span>;</span>  <span class="hljs-comment">//指向下一个边结点</span>
+    <span class="hljs-keyword">int</span> weight;
+&#125;ANode;
+
+<span class="hljs-comment">//声明头结点</span>
+<span class="hljs-keyword">typedef</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">vnode</span>&#123;</span>
+    ANode *firstarc;   <span class="hljs-comment">//指向第一个边结点</span>
+    <span class="hljs-keyword">int</span> isnode;
+&#125;VNode;
+
+<span class="hljs-keyword">typedef</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">graph</span>&#123;</span>
+    VNode adj_list[MAX_SIZE];   <span class="hljs-comment">//邻接表</span>
+    <span class="hljs-keyword">int</span> edges;
+    <span class="hljs-keyword">int</span> vertices;
+&#125;AdjGraph;
+
+<span class="hljs-function">AdjGraph *<span class="hljs-title">init_with_file</span><span class="hljs-params">(AdjGraph *G, <span class="hljs-keyword">const</span> <span class="hljs-keyword">char</span>* filename)</span></span>; <span class="hljs-comment">//使用文件来初始化图</span>
+<span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">insert</span><span class="hljs-params">(AdjGraph *G, <span class="hljs-keyword">int</span> u, <span class="hljs-keyword">int</span> v, <span class="hljs-keyword">int</span> w)</span></span>;  <span class="hljs-comment">//插入结点</span>
+<span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">destory_graph</span><span class="hljs-params">(AdjGraph *G)</span></span>;  <span class="hljs-comment">//销毁表</span>
+<span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">disp_adjlist</span><span class="hljs-params">(AdjGraph *G)</span></span>;  <span class="hljs-comment">//显示邻接表</span></code></pre>
+<pre><code class="hljs c++"><span class="hljs-comment">//BFS.c</span>
 
 <span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">"graph_basic.h"</span></span>
 <span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">"l_queue.h"</span></span>
 
 <span class="hljs-comment">//通过bfs寻找结点</span>
 <span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">bfs</span><span class="hljs-params">(AdjGraph *G, <span class="hljs-keyword">int</span> u, <span class="hljs-keyword">int</span> v)</span></span>&#123;
-    TEST_FUNC();
+    <span class="hljs-comment">//初始化容器</span>
     Queue *qu = init(qu);
     <span class="hljs-keyword">int</span> visited[MAX_SIZE] = &#123;<span class="hljs-number">0</span>&#125;;
+    
+    <span class="hljs-comment">//添加首个结点到队列中</span>
     push(qu, &amp;u);
     visited[u] = <span class="hljs-number">1</span>;
+    
+    <span class="hljs-comment">//处理队列中的每一个结点</span>
     <span class="hljs-keyword">while</span>(!isempty(qu))&#123;
-        disp_queue(qu);
         <span class="hljs-keyword">int</span> tmp;
-        get_front(qu, &amp;tmp);
+        get_front(qu, &amp;tmp);   <span class="hljs-comment">//取出队列头部结点</span>
+        
+        <span class="hljs-comment">//找到答案，返回</span>
         <span class="hljs-keyword">if</span>(tmp == v)&#123;
             <span class="hljs-built_in">printf</span>(<span class="hljs-string">"find!\n"</span>);
             destory_queue(qu);
             <span class="hljs-keyword">return</span>;
         &#125;
-        undel_pop(qu);
+        
+        <span class="hljs-comment">//在邻接表中寻找合适的结点</span>
         ANode *p = G-&gt;adj_list[tmp].firstarc;
         <span class="hljs-keyword">while</span>(p != <span class="hljs-literal">NULL</span>)&#123;
             <span class="hljs-keyword">int</span> goal = p-&gt;vertex;
@@ -583,6 +508,7 @@ SET_LOG_FILE();
             &#125;
             p = p-&gt;next;
         &#125;
+        undel_pop(qu);   <span class="hljs-comment">//当前结点处理完毕，从队列中弹出当前结点</span>
     &#125;
     <span class="hljs-built_in">printf</span>(<span class="hljs-string">"not find!\n"</span>);
     destory_queue(qu);
@@ -591,16 +517,21 @@ SET_LOG_FILE();
 
 <span class="hljs-comment">//寻找最短路径</span>
 <span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">find_shortest_path</span><span class="hljs-params">(AdjGraph *G, <span class="hljs-keyword">int</span> u, <span class="hljs-keyword">int</span> v)</span></span>&#123;
-    TEST_FUNC();
+    <span class="hljs-comment">//init</span>
     Queue *qu = init(qu);
     <span class="hljs-keyword">int</span> visited[MAX_SIZE] = &#123;<span class="hljs-number">0</span>&#125;;
+    
+    <span class="hljs-comment">//处理首个结点</span>
     push(qu, &amp;u);
     visited[u] = <span class="hljs-number">1</span>;
     qu-&gt;front-&gt;parent = <span class="hljs-literal">NULL</span>;
+    
+    <span class="hljs-comment">//处理队列中的结点</span>
     <span class="hljs-keyword">while</span>(!isempty(qu))&#123;
-        disp_queue(qu);
         <span class="hljs-keyword">int</span> tmp;
-        get_front(qu, &amp;tmp);
+        get_front(qu, &amp;tmp);  <span class="hljs-comment">//取出头结点</span>
+        
+        <span class="hljs-comment">//找到目标则输出答案</span>
         <span class="hljs-keyword">if</span>(tmp == v)&#123;
             <span class="hljs-built_in">printf</span>(<span class="hljs-string">"find! Road:\n"</span>);
             QNode *t = qu-&gt;front;
@@ -611,34 +542,48 @@ SET_LOG_FILE();
             <span class="hljs-built_in">printf</span>(<span class="hljs-string">"%d\n"</span>,t-&gt;data);
             destory_queue(qu);
             <span class="hljs-keyword">return</span>;
-        &#125;        
+        &#125;
+        
+        <span class="hljs-comment">//在邻接表中寻找合适的结点</span>
         ANode *p = G-&gt;adj_list[tmp].firstarc;
         <span class="hljs-keyword">while</span>(p != <span class="hljs-literal">NULL</span>)&#123;
             <span class="hljs-keyword">int</span> goal = p-&gt;vertex;
             <span class="hljs-keyword">if</span>(visited[goal] == <span class="hljs-number">0</span>)&#123;
                 visited[goal] = <span class="hljs-number">1</span>;
                 push(qu, &amp;goal);
-                END_TEST();
-                getchar();
-                RES_TEST();
                 qu-&gt;rear-&gt;parent = qu-&gt;front;
             &#125;
             p = p-&gt;next;
         &#125;
-        undel_pop(qu);
+        
+        undel_pop(qu);  <span class="hljs-comment">//非删除式弹出结点，目的在于保留路径</span>
     &#125;
+    
+    <span class="hljs-comment">//所有结点都遍历过了仍然没有找到</span>
     <span class="hljs-built_in">printf</span>(<span class="hljs-string">"not find!\n"</span>);
     destory_queue(qu);
-    <span class="hljs-keyword">return</span>;   
+    <span class="hljs-keyword">return</span>;
 &#125;</code></pre>
-<h3 id="广义BFS"><a href="#广义BFS" class="headerlink" title="广义BFS"></a>广义BFS</h3><p>从广义上来说，BFS也是一种很常见的搜索方式，即处理完手里的所有情况之后，在去处理产生的新情况（比如你在考试遇到难题时，你并不会很久地坚持做下去（类似于深度优先），而是先处理完其他题目，再回过头来按 顺序处理之前的难题），广度优先搜索同样可以用一个大概的逻辑语言表达。</p>
-<blockquote>
-<p>创建一个队列；</p>
-<p>if 遇到一个新的状态：</p>
-<p>​         将该状态入队，并且假设已经访问过了（visited == 1）</p>
-<p>从队头取出一个状态进行访问</p>
-<p>遍历和该状态相关联的状态</p>
-</blockquote>
+<h3 id="广义BFS"><a href="#广义BFS" class="headerlink" title="广义BFS"></a>广义BFS</h3><p>从广义上来说，BFS也是一种很常见的搜索方式，即处理完手里的所有情况之后，再去处理产生的新情况，下面是BFS寻找最小数值的伪代码。</p>
+<pre><code class="hljs arduino"><span class="hljs-function">BFS <span class="hljs-title">function</span><span class="hljs-params">(params: root, target)</span></span>
+<span class="hljs-function">	init hash_table visited</span>
+<span class="hljs-function">	init a <span class="hljs-built_in">queue</span> <span class="hljs-comment">//storing the type of root</span></span>
+<span class="hljs-function">	init <span class="hljs-built_in">step</span> </span>= <span class="hljs-number">0</span> <span class="hljs-comment">//record minimum value from root to target</span>
+	add root to <span class="hljs-built_in">queue</span>, visited
+	<span class="hljs-comment">//BFS</span>
+	<span class="hljs-keyword">while</span> <span class="hljs-built_in">queue</span> <span class="hljs-keyword">not</span> empty:
+		<span class="hljs-built_in">step</span>++ <span class="hljs-comment">//having walked one step</span>
+		init <span class="hljs-built_in">size</span> = <span class="hljs-built_in">queue</span>.<span class="hljs-built_in">size</span> <span class="hljs-comment">//the number of elements prepare to iterate next</span>
+		loop <span class="hljs-built_in">size</span> times:
+			init current node = <span class="hljs-built_in">queue</span>.front
+			<span class="hljs-keyword">if</span> cur == target:
+				<span class="hljs-keyword">return</span> <span class="hljs-built_in">step</span>
+			<span class="hljs-keyword">else</span>:
+				<span class="hljs-keyword">for</span> every suitable neighbors in cur: <span class="hljs-comment">//most times mean not visited,not overedges and so on</span>
+					add each to <span class="hljs-built_in">queue</span>, visited
+			<span class="hljs-built_in">remove</span> cur from <span class="hljs-built_in">queue</span>
+	<span class="hljs-comment">//not found</span>
+	<span class="hljs-keyword">return</span> <span class="hljs-number">-1</span></code></pre>
 
             </div>
             <hr>
