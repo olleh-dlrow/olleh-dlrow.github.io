@@ -181,7 +181,7 @@
       <i class="iconfont icon-clock-fill"></i>
       
       
-      29
+      30
        分钟
     </span>
   
@@ -290,8 +290,8 @@
 <p>接下来就可以正式处理这些点了：</p>
 <p>需要的结构体：平衡树，初始值为0（假定也是一个矩形）；数组，存放和排序上述点。</p>
 <p>对于某个具体点：</p>
-<p>​        如果是起始点，将高度插入树中，并且如果高度大于最大高度，输出这个点。</p>
-<p>​        如果是结束点，将该高度从树中移除，并且如果移除的高度同时是最大高度，则输出该点的横坐标和新的最大高度（即交叉点），<strong>但一种情况除外，即两建筑物一生成一摧毁并且高度恰好相同时不能输出为轮廓点！</strong></p>
+<p>​        如果是起始点，将高度插入树中（相当于生成建筑物），并且如果高度大于最大高度，输出这个点。</p>
+<p>​        如果是结束点，将该高度从树中移除（相当于销毁建筑物），并且如果移除的高度同时是最大高度，则输出该点的横坐标和新的最大高度（即交叉点），<strong>但一种情况除外，即两建筑物一生成一摧毁并且高度恰好相同时不能输出为轮廓点！</strong></p>
 <p><br></p>
 <p>以下是使用了c++ map 结构的代码，具体map存储高度的方式见代码：</p>
 <pre><code class="hljs c++"><span class="hljs-comment">//BuildingPoint,存储是否为起始点，该点的横坐标和该点的高度</span>
@@ -393,6 +393,9 @@
 &#125;</code></pre>
 <p><strong>核心思想</strong></p>
 <p>利用优先队列或者平衡树结构来存储建筑物，以实时根据最大高度输出结果。</p>
+<p><br></p>
+<p>参考解法链接：</p>
+<p><a href="https://www.youtube.com/watch?v=GSBLe8cKu0s" target="_blank" rel="noopener">Skyline Problem</a></p>
 
             </div>
             <hr>
@@ -422,6 +425,12 @@
                 <div class="post-prevnext row">
                   <article class="post-prev col-6">
                     
+                    
+                      <a href="/2020/09/05/%E7%BB%84%E5%90%88%E6%95%B0/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">组合数</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
                     
                   </article>
                   <article class="post-next col-6">
