@@ -171,7 +171,7 @@
     
     <span class="post-meta mr-2">
       <i class="iconfont icon-chart"></i>
-      5 字
+      879 字
     </span>
   
 
@@ -181,7 +181,7 @@
       <i class="iconfont icon-clock-fill"></i>
       
       
-      1
+      10
        分钟
     </span>
   
@@ -214,17 +214,103 @@
             <h1 style="display: none">A Top-Down Approach</h1>
             
             <div class="markdown-body" id="post-body">
-              <h1 id="A-Top-Down-Approach"><a href="#A-Top-Down-Approach" class="headerlink" title="A Top-Down Approach"></a>A Top-Down Approach</h1><h2 id="Chapter-1"><a href="#Chapter-1" class="headerlink" title="Chapter 1"></a>Chapter 1</h2><h3 id><a href="#" class="headerlink" title=" "></a> </h3>
+              <h1 id="A-Top-Down-Approach"><a href="#A-Top-Down-Approach" class="headerlink" title="A Top-Down Approach"></a>A Top-Down Approach</h1><h2 id="计算机网络与互联网"><a href="#计算机网络与互联网" class="headerlink" title="计算机网络与互联网"></a>计算机网络与互联网</h2><h3 id="互联网总览"><a href="#互联网总览" class="headerlink" title="互联网总览"></a>互联网总览</h3><p><strong>网络的组成部分(Nuts and Bolts)：</strong></p>
+<p>关键词：</p>
+<p>Host(end system), Server, Mobile, Router, Link-Layer switch, Modem, Base station, Smartphone, Cell phone tower</p>
+<p><strong>什么是网络协议（protocol）？</strong></p>
+<p>网络协议为计算机网络中进行数据交换而建立的规则、标准或约定的集合。不同的网络层遵循不同的协议，只有连接的双方都遵守协议条件才能进行有效的数据交换。</p>
+<h3 id="网络的边缘-The-Network-Edge"><a href="#网络的边缘-The-Network-Edge" class="headerlink" title="网络的边缘(The Network Edge)"></a>网络的边缘(The Network Edge)</h3><p><strong>网络接入的方式：</strong></p>
+<ul>
+<li><p><strong>Home Access</strong>: DSL, Cable, FTTH, Dial-Up, Satellite</p>
+<p>DSL（Digital Subscriber Line)：数字用户线路，是以电话线为传输介质的传输技术组合。DSL技术解决了经常发生在网络服务供应商和最终用户间的“最后一公里”的传输瓶颈问题。由于DSL 接入方案无需对电话线路进行改造，大大降低额外的开销。利用铜缆电话线提供更高速率的因特网接入。</p>
+<p>Cable internet access：有线互联网接入，常见接入方式</p>
+<p>FTTH: fiber to the home，能够到达很快地网速，但价格比较昂贵</p>
+<p>Dial-Up: 拨号上网</p>
+<p>Satellite: 一般用在荒无人烟的地区进行联网</p>
+</li>
+<li><p><strong>Access in the Enterprise(and the Home)</strong>: Ethernet and WiFi</p>
+<p>Ethernet：以太网，最流行的网络接入方式，是一种局域网的协议</p>
+</li>
+</ul>
+<p><strong>物理媒介：</strong></p>
+<p>Twisted-Pair Copper Wire：双绞铜线</p>
+<p>Coaxial Cable：同轴电缆</p>
+<p>Fiber Optics：光纤</p>
+<p>Terrestrial Radio Channels</p>
+<p>Satellite Radio Channels</p>
+<h3 id="网络核心"><a href="#网络核心" class="headerlink" title="网络核心"></a>网络核心</h3><p><strong>数据包交换(Packet Switching)</strong></p>
+<p>常见的数据交换方式。</p>
+<p>传输方式：Store-forward packet switching，即先将数据存储在Router中，再向前传输</p>
+<p>存在问题：队列延迟和丢包</p>
+<p>遵循协议：Routing Protocols，可以为Router设置forwarding tables，Router可以根据这个Map和packet中的IP信息将数据传输到目的地。</p>
+<p><strong>线路交换(Circuit Switching)</strong></p>
+<p>在进行数据交换之前，两端的主机需要先建立好联系。</p>
+<p>优点：一旦建立联系，那么数据传输速度和内容会比较稳定</p>
+<p>缺点：容易造成带宽的闲置</p>
+<p><strong>两者的区别：</strong></p>
+<p>Packet Switching 具有更快地速度，且因为不需要建立连接，所以不会造成带宽闲置，有多少带宽就可以分配多少给终端，但传输不太稳定。</p>
+<p>Circuit Switching 需要数据交换的两端建立联系，在数据传输稳定的同时却会造成带宽闲置，即如果两端的主机建立了连接却没有使用的话，这部分的带宽无法被拿出来给其他主机使用（处于占用但闲置的状态），当连接的主机数目较多时，会大大影响各自传输的速度。</p>
+<h3 id="网络延迟"><a href="#网络延迟" class="headerlink" title="网络延迟"></a>网络延迟</h3><p>类型：</p>
+<p>Processing Delay：数据进行加工时造成的延迟，一般影响很小</p>
+<p>Queuing Delay：由于数据拥堵造成的延迟，受到数据量的影响较大</p>
+<p>Transmission Delay：将数据从Router转换到link上造成的延迟，受数据宽度L(bits)和传输速度R(bits/sec)的影响，其值为L/R</p>
+<p>Propagation Delay：数据在介质中传播造成的延迟，受物理距离的影响</p>
+<h3 id="协议层"><a href="#协议层" class="headerlink" title="协议层"></a>协议层</h3><p>五层网络协议栈及其中的数据表示：</p>
+<p>Application(Message)： HTTP，FTP</p>
+<p>Transport(Segment)： 终端之间的数据交换协议，TCP，UDP</p>
+<p>Network(Datagram)： IP</p>
+<p>Link(Frame)</p>
+<p>Physical</p>
+<h2 id="应用层"><a href="#应用层" class="headerlink" title="应用层"></a>应用层</h2><h3 id="网络应用的原则规范"><a href="#网络应用的原则规范" class="headerlink" title="网络应用的原则规范"></a>网络应用的原则规范</h3><h3 id="Web和HTTP"><a href="#Web和HTTP" class="headerlink" title="Web和HTTP"></a>Web和HTTP</h3><h3 id="文件传输协议：FTP"><a href="#文件传输协议：FTP" class="headerlink" title="文件传输协议：FTP"></a>文件传输协议：FTP</h3><h3 id="电子邮件"><a href="#电子邮件" class="headerlink" title="电子邮件"></a>电子邮件</h3><h3 id="DNS域名解析"><a href="#DNS域名解析" class="headerlink" title="DNS域名解析"></a>DNS域名解析</h3><h3 id="点对点应用"><a href="#点对点应用" class="headerlink" title="点对点应用"></a>点对点应用</h3><h3 id="Socket项目"><a href="#Socket项目" class="headerlink" title="Socket项目"></a>Socket项目</h3>
             </div>
             <hr>
             <div>
               <div class="post-metas mb-3">
                 
+                  <div class="post-meta mr-3">
+                    <i class="iconfont icon-category"></i>
+                    
+                      <a class="hover-with-bg" href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/">计算机网络</a>
+                    
+                  </div>
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/Web/">Web</a>
+                    
+                      <a class="hover-with-bg" href="/tags/HTTP/">HTTP</a>
+                    
+                  </div>
                 
               </div>
               
                 <p class="note note-warning">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" target="_blank" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！</p>
               
+              
+                <div class="post-prevnext row">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2020/08/28/%E9%80%92%E5%A2%9E%E7%9F%A9%E9%98%B5%E6%90%9C%E7%B4%A2/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">递增矩阵搜索</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2020/08/02/%E8%87%AA%E7%94%A8-linux%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4(bash+script)/">
+                        <span class="hidden-mobile">自用-linux常用命令(bash+script)</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
               
             </div>
 

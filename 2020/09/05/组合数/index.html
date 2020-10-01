@@ -171,7 +171,7 @@
     
     <span class="post-meta mr-2">
       <i class="iconfont icon-chart"></i>
-      393 字
+      998 字
     </span>
   
 
@@ -181,7 +181,7 @@
       <i class="iconfont icon-clock-fill"></i>
       
       
-      5
+      13
        分钟
     </span>
   
@@ -218,7 +218,7 @@
 <p>eg:</p>
 <p>n = 4, k = 2</p>
 <p>answer: [ [2,4], [3,4], [2, 3], [1, 2], [1, 3], [1, 4] ], 共6种情况</p>
-<h2 id="解决思路"><a href="#解决思路" class="headerlink" title="解决思路"></a>解决思路</h2><p>考虑深度优先算法，先在当前序列中任取一个数字，然后与其后的子序列形成的组合数再进行组合，例如，对于序列1~4，当需要求2个数的组合时，先选取一个数为1，然后在2~3中再取一个数与其进行组合，得到1,2 1,3 1,4 。再取第一个数为2， 同理得到2,3 2,4 。最后取第一个数为3，得到3,4 。此时剩余的数字的个数小于2（此处只有一个数字4），问题解决。</p>
+<h2 id="解决思路"><a href="#解决思路" class="headerlink" title="解决思路"></a>解决思路</h2><h3 id="解法一：DFS"><a href="#解法一：DFS" class="headerlink" title="解法一：DFS"></a>解法一：DFS</h3><p>考虑深度优先算法，先在当前序列中任取一个数字，然后与其后的子序列形成的组合数再进行组合，例如，对于序列1~4，当需要求2个数的组合时，先选取一个数为1，然后在2~3中再取一个数与其进行组合，得到1,2 1,3 1,4 。再取第一个数为2， 同理得到2,3 2,4 。最后取第一个数为3，得到3,4 。此时剩余的数字的个数小于2（此处只有一个数字4），问题解决。</p>
 <pre><code class="hljs c++"><span class="hljs-comment">//k为需要组合的数字的个数，s为需要组合的序列的起点，ans存放结果，tmp临时存放生成的序列</span>
 <span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">DFS</span><span class="hljs-params">(<span class="hljs-keyword">int</span> k, <span class="hljs-keyword">int</span> s, <span class="hljs-keyword">int</span> n, <span class="hljs-built_in">vector</span>&lt;<span class="hljs-built_in">vector</span>&lt;<span class="hljs-keyword">int</span>&gt;&gt; &amp;ans, <span class="hljs-built_in">vector</span>&lt;<span class="hljs-keyword">int</span>&gt; tmp)</span></span>&#123;
     <span class="hljs-keyword">if</span>(k == <span class="hljs-number">0</span>)&#123;<span class="hljs-comment">//如果拿取的数字达到要求，将生成序列放入答案中</span>
@@ -239,6 +239,48 @@
     DFS(k, <span class="hljs-number">1</span>, n, ans, <span class="hljs-built_in">vector</span>&lt;<span class="hljs-keyword">int</span>&gt;());
     <span class="hljs-keyword">return</span> ans;
 &#125;</code></pre>
+<h3 id="解法二：动态规划"><a href="#解法二：动态规划" class="headerlink" title="解法二：动态规划"></a>解法二：动态规划</h3><p>先找到所求函数的转移方程，这里用到高中所学的公式：</p>
+<script type="math/tex; mode=display">
+C_{N}^{M} = C_{N - 1}^{M - 1} + C_{N - 1}^{M}</script><p>意思就是说，要找到N个数的组合数，可以先找到N-1个数中不含N的组合数，再找到N-1个数中含N的组合数。</p>
+<p>此时需要寻找所求n,k之间的关系，我们把两个变量放入二维坐标系中就能比较清楚的看出循环思路，如图：</p>
+<p><img src="/2020/09/05/%E7%BB%84%E5%90%88%E6%95%B0/Combinations.png" srcset="/img/loading.gif" alt="comb"></p>
+<p>假设图中紫色的点代表待求的最终关于n和k的组合数，则需要先求出两个绿色点处的组合数，然后让左边点求出的组合数添加上数n后，再和右边点求出的组合数结合起来就是最终结果。以此类推，我们需要求的点为图中红色边框内的所有点，为了使临时存放的值尽可能少，我们可以制定以下策略：</p>
+<p>先从左向右求出n = k + b上每个点代表的组合数（内部循环），这样，利用当前斜线上的前一个点和上一条线上相同横坐标的点再求n = k + b + 1, n = k + b + 2, … , n = k + b + a上的点（外层循环），求出的最后一个点即为答案。该算法的时间复杂度为$O(n^2)$, 空间复杂度为$O(n)$。</p>
+<pre><code class="hljs c++"><span class="hljs-function"><span class="hljs-built_in">vector</span>&lt;<span class="hljs-built_in">vector</span>&lt;<span class="hljs-keyword">int</span>&gt;&gt; <span class="hljs-title">combinations</span><span class="hljs-params">(<span class="hljs-keyword">int</span> n, <span class="hljs-keyword">int</span> k)</span></span>&#123;
+    <span class="hljs-keyword">if</span>(k == <span class="hljs-number">0</span>)<span class="hljs-keyword">return</span> <span class="hljs-built_in">vector</span>&lt;<span class="hljs-built_in">vector</span>&lt;<span class="hljs-keyword">int</span>&gt;&gt;();<span class="hljs-comment">//k = 0比较特殊，可以拿出来单独讨论</span>
+    <span class="hljs-built_in">vector</span>&lt;<span class="hljs-built_in">vector</span>&lt;<span class="hljs-keyword">int</span>&gt;&gt; *combs = <span class="hljs-keyword">new</span> <span class="hljs-built_in">vector</span>&lt;<span class="hljs-built_in">vector</span>&lt;<span class="hljs-keyword">int</span>&gt;&gt;[k+<span class="hljs-number">1</span>];
+    <span class="hljs-keyword">int</span> startN = <span class="hljs-number">0</span>; <span class="hljs-comment">//外层循环的变量</span>
+    <span class="hljs-keyword">int</span> increment;  <span class="hljs-comment">//内层循环的变量</span>
+    <span class="hljs-keyword">while</span>(startN &lt;= n - k)&#123;
+        increment = <span class="hljs-number">1</span>;
+        <span class="hljs-keyword">while</span>(increment &lt;= k)&#123;
+            <span class="hljs-keyword">if</span>(increment == <span class="hljs-number">1</span>)&#123;<span class="hljs-comment">//k=1，代表从1-n中任取一个值</span>
+                combs[increment].<span class="hljs-built_in">clear</span>();
+                <span class="hljs-keyword">for</span>(<span class="hljs-keyword">int</span> i = <span class="hljs-number">1</span>; i &lt;= startN + increment; i++)
+                    combs[increment].push_back(<span class="hljs-built_in">vector</span>&lt;<span class="hljs-keyword">int</span>&gt;(<span class="hljs-number">1</span>, i));
+            &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span>(increment == startN + increment)&#123;<span class="hljs-comment">//n个数中拿取n个数，组合数为它自身</span>
+                <span class="hljs-built_in">vector</span>&lt;<span class="hljs-keyword">int</span>&gt; comb;
+                <span class="hljs-keyword">for</span>(<span class="hljs-keyword">int</span> i = <span class="hljs-number">1</span>; i &lt;= increment; i++)&#123;
+                    comb.push_back(i);
+                &#125;
+                combs[increment].push_back(comb);
+            &#125; <span class="hljs-keyword">else</span> &#123;
+                <span class="hljs-keyword">int</span> curN = startN + increment;
+                <span class="hljs-built_in">vector</span>&lt;<span class="hljs-built_in">vector</span>&lt;<span class="hljs-keyword">int</span>&gt;&gt; lastComb = combs[increment - <span class="hljs-number">1</span>];
+                <span class="hljs-comment">//上个点的组合数再添加上数n</span>
+                <span class="hljs-keyword">for</span>(<span class="hljs-keyword">auto</span> it = lastComb.<span class="hljs-built_in">begin</span>(); it != lastComb.<span class="hljs-built_in">end</span>(); it++)&#123;
+                    it-&gt;push_back(curN);
+                    combs[increment].push_back(*it);
+                &#125;
+            &#125;
+            increment++;
+        &#125;
+        startN++;
+    &#125;
+    <span class="hljs-built_in">vector</span>&lt;<span class="hljs-built_in">vector</span>&lt;<span class="hljs-keyword">int</span>&gt;&gt; ans = combs[k];
+    <span class="hljs-keyword">delete</span>[] combs;
+    <span class="hljs-keyword">return</span> ans;
+&#125;</code></pre>
 
             </div>
             <hr>
@@ -257,6 +299,8 @@
                     <i class="iconfont icon-tags"></i>
                     
                       <a class="hover-with-bg" href="/tags/DFS/">DFS</a>
+                    
+                      <a class="hover-with-bg" href="/tags/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/">动态规划</a>
                     
                   </div>
                 
