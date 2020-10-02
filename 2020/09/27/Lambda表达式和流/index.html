@@ -270,13 +270,13 @@ fori;
 IntStream.of(values).filter(value-&gt;value % <span class="hljs-number">2</span> == <span class="hljs-number">0</span>).map(vakye-&gt;value * <span class="hljs-number">10</span>).sorted().forEach(value-&gt;sysout(value));
 <span class="hljs-comment">//求1~9的和</span>
 IntStream.range(<span class="hljs-number">1</span>,<span class="hljs-number">10</span>).sum();</code></pre>
-<h3 id="实例2：使用Stream-Manipulations来处理Integer"><a href="#实例2：使用Stream-Manipulations来处理Integer" class="headerlink" title="实例2：使用Stream\  Manipulations来处理Integer[]"></a>实例2：使用Stream\<Integer>  Manipulations来处理Integer[]</Integer></h3><pre><code class="hljs java">Integer[] values = &#123;<span class="hljs-number">1</span>,<span class="hljs-number">2</span>,<span class="hljs-number">3</span>&#125;;
+<h3 id="实例2：使用Stream-lt-Integer-gt-Manipulations来处理Integer"><a href="#实例2：使用Stream-lt-Integer-gt-Manipulations来处理Integer" class="headerlink" title="实例2：使用Stream&lt; Integer &gt;  Manipulations来处理Integer[]"></a>实例2：使用Stream&lt; Integer &gt;  Manipulations来处理Integer[]</h3><pre><code class="hljs java">Integer[] values = &#123;<span class="hljs-number">1</span>,<span class="hljs-number">2</span>,<span class="hljs-number">3</span>&#125;;
 Arrays.stream(values).collect(Collectors.toList());   <span class="hljs-comment">//将数组转换成一个集合类，比如列表，映射</span>
 <span class="hljs-comment">//另一种转换方式</span>
 Collections.addAll(arrayList, values);
 <span class="hljs-comment">//对元素进行筛选和排序</span>
 Arrays.stream(values).filter(value-&gt;value &gt; <span class="hljs-number">4</span>).sorted().collect(Collectors.toList());</code></pre>
-<h3 id="实例3：使用Stream-Manipulations简化Strings-Characters-和-Regular-Expressions"><a href="#实例3：使用Stream-Manipulations简化Strings-Characters-和-Regular-Expressions" class="headerlink" title="实例3：使用Stream\ Manipulations简化Strings, Characters 和 Regular Expressions"></a>实例3：使用Stream\<String> Manipulations简化Strings, Characters 和 Regular Expressions</String></h3><pre><code class="hljs java">String[] strings = &#123;<span class="hljs-string">"red"</span>, <span class="hljs-string">"blue"</span>, <span class="hljs-string">"yellow"</span>&#125;;
+<h3 id="实例3：使用Stream-lt-String-gt-Manipulations简化Strings-Characters-和-Regular-Expressions"><a href="#实例3：使用Stream-lt-String-gt-Manipulations简化Strings-Characters-和-Regular-Expressions" class="headerlink" title="实例3：使用Stream&lt; String &gt; Manipulations简化Strings, Characters 和 Regular Expressions"></a>实例3：使用Stream&lt; String &gt; Manipulations简化Strings, Characters 和 Regular Expressions</h3><pre><code class="hljs java">String[] strings = &#123;<span class="hljs-string">"red"</span>, <span class="hljs-string">"blue"</span>, <span class="hljs-string">"yellow"</span>&#125;;
 <span class="hljs-comment">//将字符串转换成大写</span>
 Arrays.stream(strings).map(String::toUpperCase).collect(Collectors.toList());  
 <span class="hljs-comment">//等价于</span>
@@ -433,7 +433,7 @@ list.stream().mapToDouble(Employee::getSalary).average().getAsDouble();</code></
                         System.out.printf(<span class="hljs-string">"%-6d%d%n"</span>, face, frequency));
     &#125;
 &#125;</code></pre>
-<p>注：Java不允许原始数据放入集合中，而infinite stream（比如IntStream）的元素个数是未知的，因此需要使用boxed将其转换为Stream\<Integer>。</Integer></p>
+<p>注：Java不允许原始数据放入集合中，而infinite stream（比如IntStream）的元素个数是未知的，因此需要使用boxed将其转换为Stream&lt; Integer &gt;。</p>
 
             </div>
             <hr>

@@ -171,7 +171,7 @@
     
     <span class="post-meta mr-2">
       <i class="iconfont icon-chart"></i>
-      5.2k 字
+      10.7k 字
     </span>
   
 
@@ -181,7 +181,7 @@
       <i class="iconfont icon-clock-fill"></i>
       
       
-      67
+      143
        分钟
     </span>
   
@@ -744,6 +744,15 @@ exit; <span class="hljs-comment">--退出连接</span>
 	[<span class="hljs-keyword">order</span> <span class="hljs-keyword">by</span> ...] <span class="hljs-comment">-- 指定查询记录按照一个或者多个条件排序</span>
 	[<span class="hljs-keyword">limit</span> &#123;[<span class="hljs-keyword">offset</span>,]<span class="hljs-keyword">row_count</span> | row_countOFFSET <span class="hljs-keyword">offset</span>&#125;];
 	<span class="hljs-comment">-- 指定查询的记录从哪条至哪条</span></code></pre>
+<p>顺序很重要：</p>
+<p>select 去重 查询的字段（主义：表和字段可以取别名）</p>
+<p>xx join 要连接的表 on 等值判断</p>
+<p>where (具体的值， 子查询语句)</p>
+<p>group by(通过哪个字段来分组)</p>
+<p>having （过滤分组后的信息，条件和where一样，位置不同）</p>
+<p>order by（通过哪个字段排序）[升序/降序]</p>
+<p>limit startindex, pagesize</p>
+<p>查询：跨表，跨数据库</p>
 <h3 id="指定查询字段"><a href="#指定查询字段" class="headerlink" title="指定查询字段"></a>指定查询字段</h3><pre><code class="hljs sql"><span class="hljs-comment">-- 查询所有字段   SELECT 字段 FROM 表</span>
 <span class="hljs-keyword">SELECT</span> * <span class="hljs-keyword">FROM</span> student
 <span class="hljs-keyword">SELECT</span> * <span class="hljs-keyword">FROM</span> <span class="hljs-keyword">result</span>
@@ -1157,6 +1166,14 @@ ON r.subjectno &#x3D; sub.subjectno
 		<span class="hljs-keyword">SELECT</span> subjectno <span class="hljs-keyword">FROM</span> <span class="hljs-string">`subject`</span> <span class="hljs-keyword">WHERE</span> subjectname = <span class="hljs-string">'高等数学-2'</span>
 	)
 )</code></pre>
+<h3 id="分组和过滤"><a href="#分组和过滤" class="headerlink" title="分组和过滤"></a>分组和过滤</h3><pre><code class="hljs sql"><span class="hljs-comment">-- 查询不同课程的平均分，最高分，最低分，平均分大于80</span>
+<span class="hljs-comment">-- 核心：（根据不同的课程分组）</span>
+<span class="hljs-keyword">SELECT</span> SubjectName, <span class="hljs-keyword">AVG</span>(StudentResult) <span class="hljs-keyword">AS</span> 平均分, <span class="hljs-keyword">MAX</span>(StudentResult) <span class="hljs-keyword">AS</span> 最高分, <span class="hljs-keyword">MIN</span>(StudentResult) <span class="hljs-keyword">AS</span> 最低分
+<span class="hljs-keyword">FROM</span> <span class="hljs-keyword">result</span> r
+<span class="hljs-keyword">INNER</span> <span class="hljs-keyword">JOIN</span> <span class="hljs-string">`subject`</span> sub
+<span class="hljs-keyword">ON</span> r.<span class="hljs-string">`subjectno`</span> = sub.<span class="hljs-string">`subjectno`</span>
+<span class="hljs-keyword">GROUP</span> <span class="hljs-keyword">BY</span> r.<span class="hljs-string">`subjectno`</span>   <span class="hljs-comment">-- 通过什么字段来分组</span>
+<span class="hljs-keyword">HAVING</span> 平均分 &gt; <span class="hljs-number">80</span></code></pre>
 <h2 id="MySQL函数"><a href="#MySQL函数" class="headerlink" title="MySQL函数"></a>MySQL函数</h2><p>官网地址：<a href="https://dev.mysql.com/doc/refman/5.7/en/func-op-summary-ref.html" target="_blank" rel="noopener">https://dev.mysql.com/doc/refman/5.7/en/func-op-summary-ref.html</a></p>
 <h3 id="常用函数"><a href="#常用函数" class="headerlink" title="常用函数"></a>常用函数</h3><pre><code class="hljs sql"><span class="hljs-comment">-- 数学运算</span>
 <span class="hljs-keyword">SELECT</span> <span class="hljs-keyword">ABS</span>(<span class="hljs-number">-8</span>)  <span class="hljs-comment">-- 绝对值</span>
@@ -1198,7 +1215,987 @@ ON r.subjectno &#x3D; sub.subjectno
 <span class="hljs-keyword">SELECT</span> <span class="hljs-keyword">SYSTEM_USER</span>()
 <span class="hljs-keyword">SELECT</span> <span class="hljs-keyword">USER</span>()
 <span class="hljs-keyword">SELECT</span> <span class="hljs-keyword">VERSION</span>()</code></pre>
-<h3 id="聚合函数（更常用）"><a href="#聚合函数（更常用）" class="headerlink" title="聚合函数（更常用）"></a>聚合函数（更常用）</h3>
+<h3 id="聚合函数（更常用）"><a href="#聚合函数（更常用）" class="headerlink" title="聚合函数（更常用）"></a>聚合函数（更常用）</h3><div class="table-container">
+<table>
+<thead>
+<tr>
+<th>函数名称</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>COUNT()</td>
+<td></td>
+</tr>
+<tr>
+<td>SUM()</td>
+<td></td>
+</tr>
+<tr>
+<td>AVG()</td>
+<td></td>
+</tr>
+<tr>
+<td>MAX()</td>
+<td></td>
+</tr>
+<tr>
+<td>MIN()</td>
+<td></td>
+</tr>
+<tr>
+<td>…</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+<pre><code class="hljs sql"><span class="hljs-comment">-- 聚合函数</span>
+<span class="hljs-comment">-- 都能统计表中的数据</span>
+<span class="hljs-keyword">SELECT</span> <span class="hljs-keyword">COUNT</span>(studentname) <span class="hljs-keyword">FROM</span> student;  <span class="hljs-comment">-- Count(字段)，会忽略所有的null值</span>
+<span class="hljs-keyword">SELECT</span> <span class="hljs-keyword">COUNT</span>(*) <span class="hljs-keyword">FROM</span> student;   <span class="hljs-comment">-- Count(*)，不会忽略null值，本质计算行数</span>
+<span class="hljs-keyword">SELECT</span> <span class="hljs-keyword">COUNT</span>(<span class="hljs-number">1</span>) <span class="hljs-keyword">FROM</span> <span class="hljs-keyword">result</span>;    <span class="hljs-comment">-- Count(1)，不会忽略null值，本质计算行数，但只会检查一列</span></code></pre>
+<h3 id="数据库级别的MD5加密"><a href="#数据库级别的MD5加密" class="headerlink" title="数据库级别的MD5加密"></a>数据库级别的MD5加密</h3><p>MD5：主要增强算法的复杂度和不可逆性。</p>
+<p>MD5不可逆，具体的值md5是一样的</p>
+<p>MD5破解网站的原理：背后有一个字典，MD5加密后的值 对比 加密前的值</p>
+<pre><code class="hljs sql"><span class="hljs-comment">-- 测试MD5 加密</span>
+<span class="hljs-keyword">CREATE</span> <span class="hljs-keyword">TABLE</span> <span class="hljs-string">`testmd5`</span>(
+	<span class="hljs-string">`id`</span> <span class="hljs-built_in">INT</span>(<span class="hljs-number">4</span>) <span class="hljs-keyword">NOT</span> <span class="hljs-literal">NULL</span>,
+	<span class="hljs-string">`name`</span> <span class="hljs-built_in">VARCHAR</span>(<span class="hljs-number">20</span>) <span class="hljs-keyword">NOT</span> <span class="hljs-literal">NULL</span>,
+	<span class="hljs-string">`pwd`</span> <span class="hljs-built_in">VARCHAR</span>(<span class="hljs-number">50</span>) <span class="hljs-keyword">NOT</span> <span class="hljs-literal">NULL</span>,
+	PRIMARY <span class="hljs-keyword">KEY</span>(<span class="hljs-string">`id`</span>)
+)<span class="hljs-keyword">ENGINE</span>=<span class="hljs-keyword">INNODB</span> <span class="hljs-keyword">DEFAULT</span> <span class="hljs-keyword">CHARSET</span>=utf8
+
+<span class="hljs-comment">-- 明文密码</span>
+<span class="hljs-keyword">INSERT</span> <span class="hljs-keyword">INTO</span> <span class="hljs-string">`testmd5`</span> <span class="hljs-keyword">VALUES</span>(<span class="hljs-number">1</span>, <span class="hljs-string">'zhangsan'</span>, <span class="hljs-string">'123456'</span>),
+(<span class="hljs-number">2</span>, <span class="hljs-string">'lisi'</span>, <span class="hljs-string">'134567'</span>),
+(<span class="hljs-number">3</span>, <span class="hljs-string">'wangwu'</span>, <span class="hljs-string">'134567'</span>);
+
+<span class="hljs-comment">-- 加密</span>
+<span class="hljs-keyword">UPDATE</span> testmd5 <span class="hljs-keyword">SET</span> pwd=<span class="hljs-keyword">MD5</span>(pwd);
+
+<span class="hljs-comment">-- 插入的时候加密</span>
+<span class="hljs-keyword">INSERT</span> <span class="hljs-keyword">INTO</span> testmd5 <span class="hljs-keyword">VALUES</span>(<span class="hljs-number">4</span>, <span class="hljs-string">'xiaoming'</span>, <span class="hljs-keyword">MD5</span>(<span class="hljs-string">'123456'</span>));
+
+<span class="hljs-comment">-- 校验:将用户传递进来的密码进行md5加密，比对加密后的值</span>
+<span class="hljs-keyword">SELECT</span> * <span class="hljs-keyword">FROM</span> testmd5 <span class="hljs-keyword">WHERE</span> <span class="hljs-string">`name`</span>=<span class="hljs-string">'xiaoming'</span> <span class="hljs-keyword">AND</span> pwd = <span class="hljs-keyword">MD5</span>(<span class="hljs-string">'123456'</span>)</code></pre>
+<h2 id="事务"><a href="#事务" class="headerlink" title="事务"></a>事务</h2><h3 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h3><p>核心：将一组SQL放在一个批次中去执行</p>
+<blockquote>
+<p>事务的原则：ACID原则</p>
+<p>原子性，一致性，隔离性，持久性  （脏读，幻读…）</p>
+<p>详细介绍链接：<a href="https://blog.csdn.net/dengjili/article/details/82468576" target="_blank" rel="noopener">https://blog.csdn.net/dengjili/article/details/82468576</a></p>
+</blockquote>
+<h3 id="原子性（Atomicity）"><a href="#原子性（Atomicity）" class="headerlink" title="原子性（Atomicity）"></a>原子性（Atomicity）</h3><p>要么成功，要么失败</p>
+<ol>
+<li>SQL执行  A 给 B 转账  A 1000 -&gt;200 B 200</li>
+<li>SQL执行  B 收到 A 的钱  A  800  B 400</li>
+</ol>
+<h3 id="一致性（Consistency）"><a href="#一致性（Consistency）" class="headerlink" title="一致性（Consistency）"></a>一致性（Consistency）</h3><p>事务前后的数据完整性保持一致，比如最终一致性，A和B的总钱数不会变化，始终为1200</p>
+<h3 id="隔离性（Isolation）"><a href="#隔离性（Isolation）" class="headerlink" title="隔离性（Isolation）"></a>隔离性（Isolation）</h3><p>多个用户并发访问数据库时，数据库为每一个用户开启的事务，不会被其他事务的操作数据所干扰，多个并发事务之间要相互隔离。</p>
+<blockquote>
+<p>隔离所导致的一些问题：</p>
+</blockquote>
+<ul>
+<li><p>脏读：</p>
+<p>  指一个事务读取了另外一个事物未提交的数据。</p>
+</li>
+<li><p>不可重复读：</p>
+<p>  在一个事务内读取表中的某一行数据，多次读取的结果不同。</p>
+</li>
+<li><p>虚读（幻读）：</p>
+<p>  在一个事务内读取到了别的事务插入的数据，导致前后读取不一致。</p>
+</li>
+</ul>
+<h3 id="持久性（Durability）"><a href="#持久性（Durability）" class="headerlink" title="持久性（Durability）"></a>持久性（Durability）</h3><p>— 事务提交</p>
+<p>事务一旦提交则不可逆，被持久化到数据库中</p>
+<blockquote>
+<p>执行事务</p>
+</blockquote>
+<pre><code class="hljs sql"><span class="hljs-comment">-- MySQL默认开启事务自动提交</span>
+<span class="hljs-keyword">SET</span> autocommit = <span class="hljs-number">0</span>  <span class="hljs-comment">-- 关闭</span>
+<span class="hljs-keyword">SET</span> autocommit = <span class="hljs-number">1</span>  <span class="hljs-comment">-- 开启</span>
+
+<span class="hljs-comment">-- 手动处理事务</span>
+<span class="hljs-keyword">SET</span> autocommit = <span class="hljs-number">0</span>;  <span class="hljs-comment">-- 关闭自动提交</span>
+
+<span class="hljs-comment">-- 事务开启</span>
+<span class="hljs-keyword">START</span> <span class="hljs-keyword">TRANSACTION</span>  <span class="hljs-comment">-- 标记一个事务的开始，从这之后的sql 都在同一个事务内</span>
+
+<span class="hljs-comment">-- 提交： 持久化(成功）</span>
+<span class="hljs-keyword">COMMIT</span>
+<span class="hljs-comment">-- 回滚： 回到原来的样子（失败）</span>
+<span class="hljs-keyword">ROLLBACK</span>
+<span class="hljs-comment">-- 事务结束</span>
+<span class="hljs-keyword">SET</span> autocommit = <span class="hljs-number">1</span>  <span class="hljs-comment">-- 开启自动提交</span>
+
+<span class="hljs-keyword">SAVEPOINT</span> 保存点名 <span class="hljs-comment">-- 设置一个事务的保存点</span>
+<span class="hljs-keyword">ROLLBACK</span> <span class="hljs-keyword">TO</span> <span class="hljs-keyword">SAVEPOINT</span> 保存点名  <span class="hljs-comment">-- 回滚到保存点</span>
+<span class="hljs-keyword">RELEASE</span> <span class="hljs-keyword">SAVEPOINT</span> 保存点名    <span class="hljs-comment">-- 撤销保存点</span></code></pre>
+<p><img src="/2020/09/13/MySQL/image-20201001133509760.png" srcset="/img/loading.gif" alt="image-20201001133509760"></p>
+<p>转账实例：</p>
+<pre><code class="hljs sql"><span class="hljs-comment">-- ===============================</span>
+<span class="hljs-comment">-- 转账</span>
+<span class="hljs-keyword">CREATE</span> <span class="hljs-keyword">DATABASE</span> shop <span class="hljs-built_in">CHARACTER</span> <span class="hljs-keyword">SET</span> utf8 <span class="hljs-keyword">COLLATE</span> utf8_general_ci
+<span class="hljs-keyword">USE</span> shop
+
+<span class="hljs-keyword">CREATE</span> <span class="hljs-keyword">TABLE</span> <span class="hljs-string">`account`</span>(
+	<span class="hljs-string">`id`</span> <span class="hljs-built_in">INT</span>(<span class="hljs-number">3</span>) <span class="hljs-keyword">NOT</span> <span class="hljs-literal">NULL</span> AUTO_INCREMENT,
+	<span class="hljs-string">`name`</span> <span class="hljs-built_in">VARCHAR</span>(<span class="hljs-number">30</span>) <span class="hljs-keyword">NOT</span> <span class="hljs-literal">NULL</span>,
+	<span class="hljs-string">`money`</span> <span class="hljs-built_in">DECIMAL</span>(<span class="hljs-number">9</span>, <span class="hljs-number">2</span>) <span class="hljs-keyword">NOT</span> <span class="hljs-literal">NULL</span>,   <span class="hljs-comment">-- 9位数，其中小数点两位</span>
+	PRIMARY <span class="hljs-keyword">KEY</span> (<span class="hljs-string">`id`</span>) 
+)<span class="hljs-keyword">ENGINE</span>=<span class="hljs-keyword">INNODB</span> <span class="hljs-keyword">DEFAULT</span> <span class="hljs-keyword">CHARSET</span>=utf8
+
+<span class="hljs-keyword">INSERT</span> <span class="hljs-keyword">INTO</span> <span class="hljs-string">`account`</span>(<span class="hljs-string">`name`</span>, <span class="hljs-string">`money`</span>)
+<span class="hljs-keyword">VALUES</span>
+(<span class="hljs-string">'A'</span>, <span class="hljs-number">2000.00</span>),
+(<span class="hljs-string">'B'</span>, <span class="hljs-number">10000.00</span>)
+
+<span class="hljs-comment">-- 模拟转账: 事务</span>
+<span class="hljs-keyword">SET</span> autocommit = <span class="hljs-number">0</span>;   <span class="hljs-comment">-- 关闭自动提交</span>
+<span class="hljs-keyword">START</span> <span class="hljs-keyword">TRANSACTION</span>; <span class="hljs-comment">-- 开启事务;</span>
+<span class="hljs-keyword">UPDATE</span> <span class="hljs-keyword">account</span> <span class="hljs-keyword">SET</span> money = money - <span class="hljs-number">500</span> <span class="hljs-keyword">WHERE</span> <span class="hljs-string">`name`</span> = <span class="hljs-string">'A'</span>;  <span class="hljs-comment">-- A减500</span>
+<span class="hljs-keyword">UPDATE</span> <span class="hljs-keyword">account</span> <span class="hljs-keyword">SET</span> money = money + <span class="hljs-number">500</span> <span class="hljs-keyword">WHERE</span> <span class="hljs-string">`name`</span> = <span class="hljs-string">'B'</span>;  <span class="hljs-comment">-- B加500</span>
+
+<span class="hljs-keyword">COMMIT</span>;  <span class="hljs-comment">-- 提交事务</span>
+<span class="hljs-keyword">ROLLBACK</span>;  <span class="hljs-comment">-- 回滚，一旦提交数据就被持久化而不能回滚了</span>
+
+<span class="hljs-keyword">SET</span> autocommit = <span class="hljs-number">1</span>;  <span class="hljs-comment">-- 恢复默认值</span>
+<span class="hljs-comment">-- ========================</span></code></pre>
+<p>在Java中的使用情况：</p>
+<pre><code class="hljs java"><span class="hljs-keyword">public</span> Function&#123;
+    <span class="hljs-keyword">try</span>()&#123;
+        something;
+        commit();
+    &#125;<span class="hljs-keyword">catch</span>(Exception)&#123;
+        rollback();
+    &#125;
+&#125;</code></pre>
+<h2 id="索引"><a href="#索引" class="headerlink" title="索引"></a>索引</h2><p>详细介绍链接：<a href="http://blog.codinglabs.org/articles/theory-of-mysql-index.html" target="_blank" rel="noopener">http://blog.codinglabs.org/articles/theory-of-mysql-index.html</a></p>
+<blockquote>
+<p>MySQL官方对索引的定义为：<strong>索引（Index）是帮助MySQL高效获取数据的数据结构</strong>。</p>
+<p>提取句子主干，就可以得到索引的本质：索引是数据结构。</p>
+</blockquote>
+<h3 id="索引的分类"><a href="#索引的分类" class="headerlink" title="索引的分类"></a>索引的分类</h3><blockquote>
+<p>在一个表中，主键索引只能有一个，唯一索引可以有多个</p>
+</blockquote>
+<ul>
+<li>主键索引 PRIMARY KEY<ul>
+<li>唯一的标识，主键不可重复，只能有一个列作为主键</li>
+</ul>
+</li>
+<li>唯一索引 UNIQUE KEY<ul>
+<li>避免重复的列出现，唯一索引可以重复，多个列都可以标识为唯一索引</li>
+</ul>
+</li>
+<li>常规索引 KEY/INDEX<ul>
+<li>默认的，index，key关键字来设置</li>
+</ul>
+</li>
+<li>全文索引 FullText<ul>
+<li>在特定的数据库引擎下才有，如MyISAM</li>
+<li>快速定位数据</li>
+</ul>
+</li>
+</ul>
+<p>基础语法：</p>
+<pre><code class="hljs sql"><span class="hljs-comment">-- 索引的使用</span>
+<span class="hljs-comment">-- 1.在创建表的时候给字段增加索引</span>
+<span class="hljs-comment">-- 2.创建完毕后增加索引</span>
+
+<span class="hljs-comment">-- 显示所有索引信息</span>
+<span class="hljs-keyword">SHOW</span> <span class="hljs-keyword">INDEX</span> <span class="hljs-keyword">FROM</span> student
+
+<span class="hljs-comment">-- 增加一个索引(索引名，类名)</span>
+<span class="hljs-keyword">ALTER</span> <span class="hljs-keyword">TABLE</span> school.<span class="hljs-string">`student`</span> <span class="hljs-keyword">ADD</span> FULLTEXT <span class="hljs-keyword">INDEX</span> <span class="hljs-string">`studentname`</span>(<span class="hljs-string">`studentname`</span>)
+
+<span class="hljs-comment">-- 分析SQL执行的状况</span>
+<span class="hljs-keyword">EXPLAIN</span> <span class="hljs-keyword">SELECT</span> * <span class="hljs-keyword">FROM</span> student; <span class="hljs-comment">-- 常规索引，非全文索引</span>
+
+<span class="hljs-keyword">EXPLAIN</span> <span class="hljs-keyword">SELECT</span> * <span class="hljs-keyword">FROM</span> student <span class="hljs-keyword">WHERE</span> <span class="hljs-keyword">MATCH</span>(studentname) AGAINST(<span class="hljs-string">'刘'</span>);   <span class="hljs-comment">-- 全文索引</span></code></pre>
+<h3 id="测试索引"><a href="#测试索引" class="headerlink" title="测试索引"></a>测试索引</h3><pre><code class="hljs sql"><span class="hljs-keyword">CREATE</span> <span class="hljs-keyword">TABLE</span> <span class="hljs-string">`app_user`</span>(
+	<span class="hljs-string">`id`</span> <span class="hljs-built_in">BIGINT</span>(<span class="hljs-number">20</span>) <span class="hljs-keyword">UNSIGNED</span> <span class="hljs-keyword">NOT</span> <span class="hljs-literal">NULL</span> AUTO_INCREMENT,
+	<span class="hljs-string">`name`</span> <span class="hljs-built_in">VARCHAR</span>(<span class="hljs-number">50</span>) <span class="hljs-keyword">DEFAULT</span> <span class="hljs-string">''</span> <span class="hljs-keyword">COMMENT</span> <span class="hljs-string">'用户昵称'</span>,
+	<span class="hljs-string">`email`</span> <span class="hljs-built_in">VARCHAR</span>(<span class="hljs-number">50</span>) <span class="hljs-keyword">NOT</span> <span class="hljs-literal">NULL</span> <span class="hljs-keyword">COMMENT</span> <span class="hljs-string">'用户邮箱'</span>,
+	<span class="hljs-string">`phone`</span> <span class="hljs-built_in">VARCHAR</span>(<span class="hljs-number">20</span>) <span class="hljs-keyword">DEFAULT</span> <span class="hljs-string">''</span> <span class="hljs-keyword">COMMENT</span> <span class="hljs-string">'手机号'</span>,
+	<span class="hljs-string">`gender`</span> <span class="hljs-built_in">TINYINT</span>(<span class="hljs-number">4</span>) <span class="hljs-keyword">UNSIGNED</span> <span class="hljs-keyword">DEFAULT</span> <span class="hljs-string">'0'</span> <span class="hljs-keyword">COMMENT</span> <span class="hljs-string">'性别（0：男，1：女）'</span>,
+	<span class="hljs-string">`password`</span> <span class="hljs-built_in">VARCHAR</span>(<span class="hljs-number">100</span>) <span class="hljs-keyword">NOT</span> <span class="hljs-literal">NULL</span> <span class="hljs-keyword">COMMENT</span> <span class="hljs-string">'密码'</span>,
+	<span class="hljs-string">`age`</span> <span class="hljs-built_in">TINYINT</span>(<span class="hljs-number">4</span>) <span class="hljs-keyword">DEFAULT</span> <span class="hljs-string">'0'</span> <span class="hljs-keyword">COMMENT</span> <span class="hljs-string">'年龄'</span>,
+	<span class="hljs-string">`create_time`</span> DATETIME <span class="hljs-keyword">DEFAULT</span> <span class="hljs-keyword">CURRENT_TIMESTAMP</span>,
+	<span class="hljs-string">`update_time`</span> <span class="hljs-built_in">TIMESTAMP</span> <span class="hljs-literal">NULL</span> <span class="hljs-keyword">DEFAULT</span> <span class="hljs-keyword">CURRENT_TIMESTAMP</span> <span class="hljs-keyword">ON</span> <span class="hljs-keyword">UPDATE</span> <span class="hljs-keyword">CURRENT_TIMESTAMP</span>,
+	PRIMARY <span class="hljs-keyword">KEY</span> (<span class="hljs-string">`id`</span>)
+) <span class="hljs-keyword">ENGINE</span>=<span class="hljs-keyword">INNODB</span> <span class="hljs-keyword">CHARSET</span>=utf8mb4  <span class="hljs-keyword">COMMENT</span>=<span class="hljs-string">'app用户表'</span>
+
+<span class="hljs-comment">-- 插入100万数据</span>
+DELIMITER $$ <span class="hljs-comment">-- 写函数之前必须要写，标志</span>
+<span class="hljs-keyword">CREATE</span> <span class="hljs-keyword">FUNCTION</span> <span class="hljs-string">`mock_data`</span>()
+<span class="hljs-keyword">RETURNS</span> <span class="hljs-built_in">INT</span>
+<span class="hljs-keyword">DETERMINISTIC</span>
+<span class="hljs-keyword">BEGIN</span>
+	<span class="hljs-keyword">DECLARE</span> <span class="hljs-keyword">num</span> <span class="hljs-built_in">INT</span> <span class="hljs-keyword">DEFAULT</span> <span class="hljs-number">1000000</span>;
+	<span class="hljs-keyword">DECLARE</span> i <span class="hljs-built_in">INT</span> <span class="hljs-keyword">DEFAULT</span> <span class="hljs-number">0</span>;
+	
+	WHILE i &lt; num DO
+		<span class="hljs-comment">-- 插入语句</span>
+		<span class="hljs-keyword">INSERT</span> <span class="hljs-keyword">INTO</span> app_user(<span class="hljs-string">`name`</span>, <span class="hljs-string">`email`</span>, <span class="hljs-string">`phone`</span>,<span class="hljs-string">`gender`</span>, <span class="hljs-string">`password`</span>, <span class="hljs-string">`age`</span>)
+		<span class="hljs-keyword">VALUES</span>(
+		<span class="hljs-keyword">CONCAT</span>(<span class="hljs-string">'用户'</span>, i),
+		<span class="hljs-string">'54323456@qq.com'</span>, 
+		<span class="hljs-keyword">CONCAT</span>(<span class="hljs-string">'18'</span>, <span class="hljs-keyword">FLOOR</span>(<span class="hljs-keyword">RAND</span>() * ((<span class="hljs-number">999999999</span><span class="hljs-number">-100000000</span>) + <span class="hljs-number">100000000</span>)) ),
+		<span class="hljs-keyword">FLOOR</span>(<span class="hljs-keyword">RAND</span>() * <span class="hljs-number">2</span>),
+		<span class="hljs-keyword">UUID</span>(),
+		<span class="hljs-keyword">FLOOR</span>(<span class="hljs-keyword">RAND</span>() * <span class="hljs-number">100</span>)
+		);
+		
+		<span class="hljs-keyword">SET</span> i = i + <span class="hljs-number">1</span>;
+	<span class="hljs-keyword">END</span> <span class="hljs-keyword">WHILE</span>;
+	RETURN i;
+<span class="hljs-keyword">END</span>;
+<span class="hljs-keyword">SELECT</span> mock_data();
+
+<span class="hljs-comment">-- 创建索引前</span>
+<span class="hljs-keyword">SELECT</span> * <span class="hljs-keyword">FROM</span> app_user <span class="hljs-keyword">WHERE</span> <span class="hljs-string">`name`</span>=<span class="hljs-string">'用户9999'</span>;  <span class="hljs-comment">-- 0.518sec</span>
+
+<span class="hljs-comment">-- id _ 表名 _ 字段名</span>
+<span class="hljs-comment">-- create index 索引名 on 表（字段）</span>
+<span class="hljs-keyword">CREATE</span> <span class="hljs-keyword">INDEX</span> id_app_user_name <span class="hljs-keyword">ON</span> app_user(<span class="hljs-string">`name`</span>);
+<span class="hljs-keyword">SELECT</span> * <span class="hljs-keyword">FROM</span> app_user <span class="hljs-keyword">WHERE</span> <span class="hljs-string">`name`</span>=<span class="hljs-string">'用户9999'</span>;  <span class="hljs-comment">-- 0.002 sec</span></code></pre>
+<p>索引在小数据量的时候，用处不大，但是在大数据的时候，区别十分明显~</p>
+<h3 id="索引原则"><a href="#索引原则" class="headerlink" title="索引原则"></a>索引原则</h3><ul>
+<li>索引不是越多越好</li>
+<li>不要对经常变动的数据加索引</li>
+<li>小数据量的表不需要加索引</li>
+<li>索引一般加在常用来查询的字段上（提高查询速度）</li>
+</ul>
+<blockquote>
+<p>索引的数据结构</p>
+</blockquote>
+<p>Hash 类型的索引</p>
+<p>Btree：INNODB的默认数据结构</p>
+<h2 id="权限管理"><a href="#权限管理" class="headerlink" title="权限管理"></a>权限管理</h2><h3 id="用户管理"><a href="#用户管理" class="headerlink" title="用户管理"></a>用户管理</h3><blockquote>
+<p>SQL yog 可视化管理</p>
+</blockquote>
+<p><img src="/2020/09/13/MySQL/image-20201001160431570.png" srcset="/img/loading.gif" alt="image-20201001160431570"></p>
+<blockquote>
+<p>SQL 命令操作</p>
+</blockquote>
+<p>用户表：mysql.user</p>
+<p>本质：对这张表进行增删改查</p>
+<p>详细命令链接：<a href="https://blog.csdn.net/zy_1995/article/details/102708482" target="_blank" rel="noopener">https://blog.csdn.net/zy_1995/article/details/102708482</a></p>
+<pre><code class="hljs sql"><span class="hljs-comment">-- 创建用户</span>
+<span class="hljs-keyword">CREATE</span> <span class="hljs-keyword">USER</span> kuangshen <span class="hljs-keyword">IDENTIFIED</span> <span class="hljs-keyword">BY</span> <span class="hljs-string">'123456'</span>
+
+<span class="hljs-comment">-- 修改密码</span>
+<span class="hljs-comment">-- set password for kuangshen@localhost = password('111111')  旧版本</span>
+<span class="hljs-keyword">ALTER</span> <span class="hljs-keyword">USER</span> <span class="hljs-string">'kuangshen'</span>@<span class="hljs-string">'localhost'</span> <span class="hljs-keyword">IDENTIFIED</span> <span class="hljs-keyword">BY</span> <span class="hljs-string">'111111'</span>
+<span class="hljs-keyword">SET</span> <span class="hljs-keyword">PASSWORD</span> <span class="hljs-keyword">FOR</span> <span class="hljs-string">'kuangshen2'</span>@<span class="hljs-string">'localhost'</span> = <span class="hljs-string">'2222222'</span>
+
+<span class="hljs-comment">-- 给用户重命名</span>
+<span class="hljs-keyword">RENAME</span> <span class="hljs-keyword">USER</span> <span class="hljs-string">'kuangshen'</span>@<span class="hljs-string">'localhost'</span> <span class="hljs-keyword">TO</span> <span class="hljs-string">'kuangshen2'</span>@<span class="hljs-string">'localhost'</span>
+
+<span class="hljs-comment">-- 给用户授权 ALL PRIVILEGES *.* 会授予除GRANT以外的所有权限, 要授予GRANT需加上WITH GRANT OPTION</span>
+<span class="hljs-keyword">GRANT</span> <span class="hljs-keyword">ALL</span> <span class="hljs-keyword">PRIVILEGES</span> <span class="hljs-keyword">ON</span> *.* <span class="hljs-keyword">TO</span> <span class="hljs-string">'kuangshen'</span>@<span class="hljs-string">'localhost'</span>
+
+<span class="hljs-comment">-- 删除用户</span>
+<span class="hljs-keyword">DROP</span> <span class="hljs-keyword">USER</span> <span class="hljs-string">'kuangshen'</span>@<span class="hljs-string">'localhost'</span>
+
+<span class="hljs-comment">-- 查询权限</span>
+<span class="hljs-keyword">SHOW</span> <span class="hljs-keyword">GRANTS</span> <span class="hljs-keyword">FOR</span> <span class="hljs-string">'kuangshen'</span>@<span class="hljs-string">'localhost'</span>  <span class="hljs-comment">-- 查看指定用户的权限</span>
+<span class="hljs-keyword">SHOW</span> <span class="hljs-keyword">GRANTS</span> <span class="hljs-keyword">FOR</span> root@localhost
+
+<span class="hljs-comment">-- 撤销权限 revoke 哪些权限 ，在哪个库撤销， 给谁撤销</span>
+<span class="hljs-keyword">REVOKE</span> <span class="hljs-keyword">ALL</span> <span class="hljs-keyword">PRIVILEGES</span> <span class="hljs-keyword">ON</span> *.* <span class="hljs-keyword">FROM</span> kuangshen2@localhost</code></pre>
+<h3 id="MySQL备份"><a href="#MySQL备份" class="headerlink" title="MySQL备份"></a>MySQL备份</h3><ul>
+<li>保证重要的数据不丢失</li>
+<li>数据转移</li>
+</ul>
+<p>MySQL数据库备份的方式：</p>
+<ul>
+<li><p>直接拷贝物理文件…../data</p>
+</li>
+<li><p>在SQL yog可视化工具中手动导出</p>
+<ul>
+<li>在左栏右键选择导出转储，选择结构和数据，指定导出的位置</li>
+<li>将文件直接拉入yog中即可使用</li>
+</ul>
+</li>
+<li><p>使用命令行 mysqldump  在命令行中使用</p>
+  <pre><code class="hljs cmd"># mysqldump -h主机 -u用户名 -p密码 数据库名 [表<span class="hljs-number">1</span> 表<span class="hljs-number">2</span> 表<span class="hljs-number">3</span> ...] &gt; 物理磁盘位置
+mysqldump -hlocalhost -uroot -pxxxxxx school student &gt;D:/a.sql</code></pre>
+<p>  导入方法：</p>
+  <pre><code class="hljs cmd"># 登录后使用source命令
+mysql -uroot -pxxxxxx
+source .sql文件位置</code></pre>
+</li>
+</ul>
+<h2 id="规范数据设计"><a href="#规范数据设计" class="headerlink" title="规范数据设计"></a>规范数据设计</h2><h3 id="为什么需要设计？"><a href="#为什么需要设计？" class="headerlink" title="为什么需要设计？"></a>为什么需要设计？</h3><p>当数据库比较复杂的时候，就需要进行设计。</p>
+<p>糟糕的数据库设计：</p>
+<ul>
+<li>数据冗余，浪费空间</li>
+<li>数据库插入和删除都会很麻烦，异常（屏蔽使用物理外键）</li>
+<li>程序性能差</li>
+</ul>
+<p>良好的数据库设计：</p>
+<ul>
+<li>节省内存空间</li>
+<li>保证数据库的完整性</li>
+<li>方便开发系统</li>
+</ul>
+<p><strong>软件开发中，关于数据库的设计</strong></p>
+<ul>
+<li>分析需求：分析业务和需要处理的数据库的需求</li>
+<li>概要设计：设计关系图 E-R 图</li>
+</ul>
+<p><strong>设计数据库的步骤：（个人博客）</strong></p>
+<ul>
+<li>收集信息，分析需求<ul>
+<li>用户表（用户登录注销，用户的个人信息，写博客，创建分类）</li>
+<li>分类表（文章分类，谁创建的）</li>
+<li>文章表（文章的信息）</li>
+<li>评论表（评论）</li>
+<li>友链表（友链信息）</li>
+<li>自定义表（系统信息，某个关键的字或者一些主字段） key: value</li>
+<li>说说表（发表心情  id  content  create_time）</li>
+</ul>
+</li>
+<li>标识实体（把需求落地到每个字段）</li>
+<li>标识实体之间的关系<ul>
+<li>写博客 user -&gt; blog</li>
+<li>创建分类 user -&gt; category</li>
+<li>关注 user -&gt; user</li>
+<li>友链 links</li>
+<li>评论 user-user-blog</li>
+</ul>
+</li>
+</ul>
+<h3 id="三大范式"><a href="#三大范式" class="headerlink" title="三大范式"></a>三大范式</h3><p><strong>为什么需要数据规范化？</strong></p>
+<p>可能出现的问题：</p>
+<ul>
+<li>信息重复</li>
+<li>更新异常</li>
+<li>插入异常<ul>
+<li>无法正常显示信息</li>
+</ul>
+</li>
+<li>删除异常<ul>
+<li>丢失一些有效的信息</li>
+</ul>
+</li>
+</ul>
+<p>详细链接：<a href="https://www.cnblogs.com/wsg25/p/9615100.html" target="_blank" rel="noopener">https://www.cnblogs.com/wsg25/p/9615100.html</a></p>
+<h4 id="第一范式"><a href="#第一范式" class="headerlink" title="第一范式"></a>第一范式</h4><p>原子性：保证每一列不可再分</p>
+<h4 id="第二范式"><a href="#第二范式" class="headerlink" title="第二范式"></a>第二范式</h4><p>前提：满足第一范式</p>
+<p>每张表只描述一件事情</p>
+<h4 id="第三范式"><a href="#第三范式" class="headerlink" title="第三范式"></a>第三范式</h4><p>前提：满足第一范式和第二范式</p>
+<p>确保数据表中的每一列数据都和主键直接相关，而不能间接相关</p>
+<p><strong>规范性和性能的问题</strong></p>
+<p>关联查询的表不能超过三张表</p>
+<ul>
+<li>考虑商业化的需求和目标，（成本，用户体验）数据库的性能更加重要</li>
+<li>规范性能的问题时，需要适当考虑规范性</li>
+<li>故意给某些表增加一些冗余的字段（从多表查询变为单表查询）</li>
+<li>故意增加一些计算列（从大数据量降低为小数据量查询：索引）</li>
+</ul>
+<h2 id="JDBC"><a href="#JDBC" class="headerlink" title="JDBC"></a>JDBC</h2><h3 id="数据库驱动"><a href="#数据库驱动" class="headerlink" title="数据库驱动"></a>数据库驱动</h3><p><img src="/2020/09/13/MySQL/image-20201002111118497.png" srcset="/img/loading.gif" alt="image-20201002111118497"></p>
+<p>程序会通过数据库驱动，和数据库打交道。</p>
+<h3 id="JDBC概念"><a href="#JDBC概念" class="headerlink" title="JDBC概念"></a>JDBC概念</h3><p>SUN公司为了简化开发人员的（对数据库统一）的操作，提供了一个（java操作数据库的）规范，称为JDBC。</p>
+<p>这些规范的实现由具体的厂商去做。</p>
+<p>对于开发人员，只需要操纵API即可。</p>
+<p><img src="/2020/09/13/MySQL/image-20201002111425645.png" srcset="/img/loading.gif" alt="image-20201002111425645"></p>
+<p>java.sql</p>
+<p>javax.sql</p>
+<p>还需要导入一个数据库驱动包</p>
+<p>mysql-connector-java.jar</p>
+<h3 id="第一个JDBC程序"><a href="#第一个JDBC程序" class="headerlink" title="第一个JDBC程序"></a>第一个JDBC程序</h3><blockquote>
+<p>创建测试数据库</p>
+</blockquote>
+<pre><code class="hljs sql"><span class="hljs-keyword">CREATE</span> <span class="hljs-keyword">DATABASE</span> jdbcstudy <span class="hljs-built_in">CHARACTER</span> <span class="hljs-keyword">SET</span> utf8 <span class="hljs-keyword">COLLATE</span> utf8_general_ci;
+
+<span class="hljs-keyword">USE</span> jdbcstudy;
+
+<span class="hljs-keyword">CREATE</span> <span class="hljs-keyword">TABLE</span> <span class="hljs-keyword">users</span>(
+	<span class="hljs-keyword">id</span> <span class="hljs-built_in">INT</span> PRIMARY <span class="hljs-keyword">KEY</span>,
+	<span class="hljs-keyword">NAME</span> <span class="hljs-built_in">VARCHAR</span>(<span class="hljs-number">40</span>),
+	<span class="hljs-keyword">PASSWORD</span> <span class="hljs-built_in">VARCHAR</span>(<span class="hljs-number">40</span>),
+	email <span class="hljs-built_in">VARCHAR</span>(<span class="hljs-number">60</span>),
+	birthday <span class="hljs-built_in">DATE</span>
+);
+
+<span class="hljs-keyword">INSERT</span> <span class="hljs-keyword">INTO</span> <span class="hljs-keyword">users</span>(<span class="hljs-keyword">id</span>, <span class="hljs-keyword">NAME</span>, <span class="hljs-keyword">PASSWORD</span>, email, birthday)
+<span class="hljs-keyword">VALUES</span>
+(<span class="hljs-number">1</span>, <span class="hljs-string">'zhansan'</span>, <span class="hljs-string">'123456'</span>, <span class="hljs-string">'zs@sina.com'</span>, <span class="hljs-string">'1980-12-04'</span>),
+(<span class="hljs-number">2</span>, <span class="hljs-string">'lisi'</span>, <span class="hljs-string">'123456'</span>, <span class="hljs-string">'lisi@sina.com'</span>, <span class="hljs-string">'1981-12-04'</span>),
+(<span class="hljs-number">3</span>, <span class="hljs-string">'wangwu'</span>, <span class="hljs-string">'123456'</span>, <span class="hljs-string">'wangwu@sina.com'</span>, <span class="hljs-string">'1979-12-04'</span>);</code></pre>
+<ol>
+<li><p>创建一个普通项目</p>
+</li>
+<li><p>导入数据库驱动</p>
+</li>
+<li><p>编写测试代码</p>
+ <pre><code class="hljs java"><span class="hljs-keyword">import</span> java.sql.*;
+
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">jdbcFirstDemo</span> </span>&#123;
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">main</span><span class="hljs-params">(String[] args)</span> <span class="hljs-keyword">throws</span> ClassNotFoundException, SQLException </span>&#123;
+        <span class="hljs-comment">//1. 加载驱动</span>
+        Class.forName(<span class="hljs-string">"com.mysql.cj.jdbc.Driver"</span>);  <span class="hljs-comment">//固定写法，加载驱动</span>
+        <span class="hljs-comment">//2. 用户信息和url</span>
+        String url = <span class="hljs-string">"jdbc:mysql://localhost:3306/jdbcstudy?useUnicode=true&amp;characterEncoding=utf8&amp;useSSL=true&amp;serverTimezone=GMT"</span>;
+        String username = <span class="hljs-string">"root"</span>;
+        String password = <span class="hljs-string">"123456"</span>;
+        <span class="hljs-comment">//3. 连接成功，数据库对象 Connection 代表数据库</span>
+        Connection connection = DriverManager.getConnection(url, username, password);
+
+        <span class="hljs-comment">//4. 执行SQL的对象</span>
+        Statement statement = connection.createStatement();
+
+        <span class="hljs-comment">//5. 执行SQL的对象去执行SQL，可能存在结果，返回结果</span>
+        String sql = <span class="hljs-string">"select * from users"</span>;
+        ResultSet resultSet = statement.executeQuery(sql);   <span class="hljs-comment">//返回结果集，封装了全部查询出来的结果</span>
+
+        <span class="hljs-keyword">while</span>(resultSet.next())&#123;
+            System.out.println(<span class="hljs-string">"id="</span> + resultSet.getObject(<span class="hljs-string">"id"</span>));
+            System.out.println(<span class="hljs-string">"name="</span> + resultSet.getObject(<span class="hljs-string">"name"</span>));
+            System.out.println(<span class="hljs-string">"password="</span> + resultSet.getObject(<span class="hljs-string">"password"</span>));
+            System.out.println(<span class="hljs-string">"email="</span> + resultSet.getObject(<span class="hljs-string">"email"</span>));
+            System.out.println(<span class="hljs-string">"birthday="</span> + resultSet.getObject(<span class="hljs-string">"birthday"</span>));
+            System.out.println(<span class="hljs-string">"==========================="</span>);
+        &#125;
+        <span class="hljs-comment">//6. 释放连接</span>
+        resultSet.close();
+        statement.close();
+        connection.close();
+    &#125;
+&#125;</code></pre>
+</li>
+</ol>
+<p>步骤总结：</p>
+<ol>
+<li>加载驱动</li>
+<li>连接数据库 DriverManager</li>
+<li>获取执行SQL的对象 Statement</li>
+<li>获取返回的结果集</li>
+<li>释放连接</li>
+</ol>
+<blockquote>
+<p>DriveManager</p>
+</blockquote>
+<pre><code class="hljs java">Class.forName(<span class="hljs-string">"com.mysql.cj.jdbc.Driver"</span>);  <span class="hljs-comment">//固定写法，加载驱动</span>
+
+Connection connection = DriverManager.getConnection(url, username, password);
+<span class="hljs-comment">//connection 代表数据库</span>
+<span class="hljs-comment">//数据库设置自动提交</span>
+connection.setAutoCommit();
+<span class="hljs-comment">//事务提交</span>
+connection.commit();
+<span class="hljs-comment">//事务回滚</span>
+connection.rollback();</code></pre>
+<blockquote>
+<p>url</p>
+</blockquote>
+<pre><code class="hljs java">String url = <span class="hljs-string">"jdbc:mysql://localhost:3306/jdbcstudy?useUnicode=true&amp;characterEncoding=utf8&amp;useSSL=true&amp;serverTimezone=GMT"</span>;
+<span class="hljs-comment">//mysql --3306</span>
+<span class="hljs-comment">//jdbc:mysql:(协议)/localhost:3306/数据库名?参数1&amp;参数2&amp;参数3...</span>
+
+<span class="hljs-comment">//oracle --2521</span>
+<span class="hljs-comment">//jdbc:oracle:thin:@localhost:1521:sid</span></code></pre>
+<blockquote>
+<p>Statement —执行SQL 的对象   PrepareStatement</p>
+</blockquote>
+<pre><code class="hljs java"><span class="hljs-comment">//编写sql</span>
+String sql = <span class="hljs-string">"select * from users"</span>;
+
+statement.executeQuery(<span class="hljs-string">""</span>);  <span class="hljs-comment">//查询操作，返回结果集</span>
+statement.execute(<span class="hljs-string">""</span>);       <span class="hljs-comment">//执行任何sql</span>
+statement.executeUpdate(<span class="hljs-string">""</span>); <span class="hljs-comment">//更新，插入，删除，返回受影响的行数</span></code></pre>
+<blockquote>
+<p>ResultSet查询的结果集：封装了所有的查询结果</p>
+</blockquote>
+<p>获取指定的数据类型</p>
+<pre><code class="hljs java">resultSet.getInt();
+resultSet.getString();
+resultSet.getDate();
+resultSet.getObject();   <span class="hljs-comment">//不知道列的类型时使用</span>
+...</code></pre>
+<p>遍历，指针</p>
+<pre><code class="hljs java">resultSet.beforeFirst();  <span class="hljs-comment">//移动到最前面</span>
+resultSet.afterLast();    <span class="hljs-comment">//移动到最后面</span>
+resultSet.next();         <span class="hljs-comment">//移动到下一个数据</span>
+resultSet.previous();    <span class="hljs-comment">//移动到前一行</span>
+resultSet.absolute(row);  <span class="hljs-comment">//移动到指定行</span></code></pre>
+<blockquote>
+<p>释放资源</p>
+</blockquote>
+<pre><code class="hljs java"><span class="hljs-comment">//释放连接</span>
+resultSet.close();
+statement.close();
+connection.close();</code></pre>
+<h3 id="statement对象"><a href="#statement对象" class="headerlink" title="statement对象"></a>statement对象</h3><p>jdbc中的statement对象用于向数据库发送SQL语句，想完成数据库的增删改查，只需要通过这个对象向数据库发送增删改查语句即可。</p>
+<p>Statement对象的executeUpdate方法，用于向数据库发送增删改的SQL语句，executeUpdate执行完后，将会返回一个整数（变化的行数）。</p>
+<p>Statement.executeQuery方法用于向数据库发送查询语句，executeQuery方法返回查询结果的ResultSet对象。</p>
+<blockquote>
+<p>CRUD操作- create</p>
+</blockquote>
+<p>使用executeUpdate（String sql）方法完成数据添加操作：</p>
+<pre><code class="hljs java">Statement st = connection.createStatement();
+String sql = <span class="hljs-string">"insert into user(...) values(...)"</span>;
+<span class="hljs-keyword">int</span> num = st.executeUpdate(sql);
+<span class="hljs-keyword">if</span>(num &gt; <span class="hljs-number">0</span>)&#123;
+    System.out.println(<span class="hljs-string">"插入成功！"</span>);
+&#125;</code></pre>
+<blockquote>
+<p>CRUD操作- delete</p>
+</blockquote>
+<pre><code class="hljs java">Statement st = connection.createStatement();
+String sql = <span class="hljs-string">"delete from user where id = 1"</span>;
+<span class="hljs-keyword">int</span> num = st.executeUpdate(sql);
+<span class="hljs-keyword">if</span>(num &gt; <span class="hljs-number">0</span>)&#123;
+    System.out.println(<span class="hljs-string">"删除成功！"</span>);
+&#125;</code></pre>
+<blockquote>
+<p>CRUD操作- update</p>
+</blockquote>
+<pre><code class="hljs java">...;
+String sql = <span class="hljs-string">"update user set name = '' where name = '' "</span>;
+<span class="hljs-keyword">int</span> num = st.executeUpdate(sql);
+...;</code></pre>
+<blockquote>
+<p>CRUD操作- read</p>
+</blockquote>
+<pre><code class="hljs java">...;
+String sql = <span class="hljs-string">"select * from user where id = 1"</span>;
+ResultSet rs = st.executeQuery(sql);
+<span class="hljs-keyword">while</span>(rs.next())&#123;
+    ...;
+&#125;</code></pre>
+<blockquote>
+<p> 代码实现</p>
+</blockquote>
+<ol>
+<li><p>提取工具类</p>
+ <pre><code class="hljs java"><span class="hljs-keyword">package</span> utils;
+
+<span class="hljs-keyword">import</span> java.io.IOException;
+<span class="hljs-keyword">import</span> java.io.InputStream;
+<span class="hljs-keyword">import</span> java.sql.*;
+<span class="hljs-keyword">import</span> java.util.Properties;
+
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">JdbcUtils</span> </span>&#123;
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> String driver = <span class="hljs-keyword">null</span>;
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> String url = <span class="hljs-keyword">null</span>;
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> String username = <span class="hljs-keyword">null</span>;
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> String password = <span class="hljs-keyword">null</span>;
+
+    <span class="hljs-keyword">static</span>&#123;
+        <span class="hljs-keyword">try</span>&#123;
+            <span class="hljs-comment">//获取文件信息</span>
+            InputStream inputStream = JdbcUtils.class.getClassLoader().getResourceAsStream("db.properties");
+            Properties properties = <span class="hljs-keyword">new</span> Properties();
+            properties.load(inputStream);
+
+            driver = properties.getProperty(<span class="hljs-string">"driver"</span>);
+            url = properties.getProperty(<span class="hljs-string">"url"</span>);
+            username = properties.getProperty(<span class="hljs-string">"username"</span>);
+            password = properties.getProperty(<span class="hljs-string">"password"</span>);
+
+            <span class="hljs-comment">//1. 驱动只用加载一次</span>
+            Class.forName(driver);
+
+        &#125;<span class="hljs-keyword">catch</span> (IOException e)&#123;
+            e.printStackTrace();
+        &#125; <span class="hljs-keyword">catch</span> (ClassNotFoundException e) &#123;
+            e.printStackTrace();
+        &#125;
+    &#125;
+    <span class="hljs-comment">//获取连接</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> Connection <span class="hljs-title">getConnection</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> SQLException </span>&#123;
+        <span class="hljs-keyword">return</span> DriverManager.getConnection(url, username, password);
+    &#125;
+    <span class="hljs-comment">//释放连接资源</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">release</span><span class="hljs-params">(Connection connection, Statement statement, ResultSet resultSet)</span></span>&#123;
+        <span class="hljs-keyword">if</span>(resultSet != <span class="hljs-keyword">null</span>)&#123;
+            <span class="hljs-keyword">try</span> &#123;
+                resultSet.close();
+            &#125; <span class="hljs-keyword">catch</span> (SQLException throwables) &#123;
+                throwables.printStackTrace();
+            &#125;
+        &#125;
+        <span class="hljs-keyword">if</span>(statement != <span class="hljs-keyword">null</span>)&#123;
+            <span class="hljs-keyword">try</span> &#123;
+                statement.close();
+            &#125; <span class="hljs-keyword">catch</span> (SQLException throwables) &#123;
+                throwables.printStackTrace();
+            &#125;
+        &#125;
+        <span class="hljs-keyword">if</span>(connection != <span class="hljs-keyword">null</span>)&#123;
+            <span class="hljs-keyword">try</span> &#123;
+                connection.close();
+            &#125; <span class="hljs-keyword">catch</span> (SQLException throwables) &#123;
+                throwables.printStackTrace();
+            &#125;
+        &#125;
+    &#125;
+&#125;</code></pre>
+<p> db.properties文件：</p>
+ <pre><code class="hljs properties"><span class="hljs-attr">driver</span>=<span class="hljs-string">com.mysql.cj.jdbc.Driver</span>
+<span class="hljs-attr">url</span>=<span class="hljs-string">jdbc:mysql://localhost:3306/jdbcstudy?useUnicode=true&amp;characterEncoding=utf8&amp;useSSL=true&amp;serverTimezone=GMT</span>
+<span class="hljs-attr">username</span>=<span class="hljs-string">root</span>
+<span class="hljs-attr">password</span>=<span class="hljs-string">123456</span></code></pre>
+</li>
+<li><p>编写增删改查的方法</p>
+ <pre><code class="hljs java"><span class="hljs-comment">//增删改</span>
+<span class="hljs-keyword">import</span> utils.JdbcUtils;
+
+<span class="hljs-keyword">import</span> java.sql.Connection;
+<span class="hljs-keyword">import</span> java.sql.ResultSet;
+<span class="hljs-keyword">import</span> java.sql.SQLException;
+<span class="hljs-keyword">import</span> java.sql.Statement;
+
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">TestInsert</span> </span>&#123;
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">main</span><span class="hljs-params">(String[] args)</span> </span>&#123;
+        Connection connection = <span class="hljs-keyword">null</span>;
+        Statement statement = <span class="hljs-keyword">null</span>;
+        ResultSet resultSet = <span class="hljs-keyword">null</span>;
+        <span class="hljs-keyword">try</span> &#123;
+            connection = JdbcUtils.getConnection();  <span class="hljs-comment">//获取数据库连接</span>
+            statement = connection.createStatement();
+            String sql = SQL语句;
+            <span class="hljs-keyword">int</span> i = statement.executeUpdate(sql);
+            <span class="hljs-keyword">if</span>(i &gt; <span class="hljs-number">0</span>)&#123;
+                System.out.println(<span class="hljs-string">"success!"</span>);
+            &#125;
+        &#125; <span class="hljs-keyword">catch</span> (SQLException sqlException) &#123;
+            sqlException.printStackTrace();
+        &#125; <span class="hljs-keyword">finally</span> &#123;
+            JdbcUtils.release(connection, statement, resultSet);
+        &#125;
+    &#125;
+&#125;</code></pre>
+ <pre><code class="hljs java"><span class="hljs-comment">//查询</span>
+<span class="hljs-keyword">import</span> utils.JdbcUtils;
+
+<span class="hljs-keyword">import</span> java.sql.Connection;
+<span class="hljs-keyword">import</span> java.sql.ResultSet;
+<span class="hljs-keyword">import</span> java.sql.SQLException;
+<span class="hljs-keyword">import</span> java.sql.Statement;
+
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">TestInsert</span> </span>&#123;
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">main</span><span class="hljs-params">(String[] args)</span> </span>&#123;
+        Connection connection = <span class="hljs-keyword">null</span>;
+        Statement statement = <span class="hljs-keyword">null</span>;
+        ResultSet resultSet = <span class="hljs-keyword">null</span>;
+        <span class="hljs-keyword">try</span> &#123;
+            connection = JdbcUtils.getConnection();  <span class="hljs-comment">//获取数据库连接</span>
+            statement = connection.createStatement();
+            String sql = <span class="hljs-string">"select * from users"</span>;
+            resultSet = statement.executeQuery(sql);
+            <span class="hljs-keyword">if</span>(resultSet != <span class="hljs-keyword">null</span>)&#123;
+                <span class="hljs-keyword">while</span>(resultSet.next())&#123;
+                    System.out.println(<span class="hljs-string">"id="</span> + resultSet.getObject(<span class="hljs-string">"id"</span>));
+                    System.out.println(<span class="hljs-string">"name="</span> + resultSet.getObject(<span class="hljs-string">"name"</span>));
+                    System.out.println(<span class="hljs-string">"password="</span> + resultSet.getObject(<span class="hljs-string">"password"</span>));
+                    System.out.println(<span class="hljs-string">"email="</span> + resultSet.getObject(<span class="hljs-string">"email"</span>));
+                    System.out.println(<span class="hljs-string">"birthday="</span> + resultSet.getObject(<span class="hljs-string">"birthday"</span>));
+                    System.out.println(<span class="hljs-string">"==========================="</span>);
+                &#125;
+            &#125;
+        &#125; <span class="hljs-keyword">catch</span> (SQLException sqlException) &#123;
+            sqlException.printStackTrace();
+        &#125; <span class="hljs-keyword">finally</span> &#123;
+            JdbcUtils.release(connection, statement, resultSet);
+        &#125;
+    &#125;
+&#125;</code></pre>
+</li>
+</ol>
+<h3 id="SQL注入问题-sql-injection"><a href="#SQL注入问题-sql-injection" class="headerlink" title="SQL注入问题  (sql injection)"></a>SQL注入问题  (sql injection)</h3><p>sql存在漏洞，会被攻击导致数据泄露 <strong>SQL会拼接or</strong></p>
+<pre><code class="hljs java">sql = <span class="hljs-string">"select * from users where name ='"</span> + username + <span class="hljs-string">"' and password = '"</span> + password + <span class="hljs-string">"'"</span>;
+<span class="hljs-comment">//此时如果username和password为：</span>
+username = <span class="hljs-string">"' or '1=1'"</span>;
+password = <span class="hljs-string">"' or '1=1'"</span>;
+<span class="hljs-comment">//则表达式恒成立，用户的所有数据将被盗取</span></code></pre>
+<h3 id="PreparedStatement对象"><a href="#PreparedStatement对象" class="headerlink" title="PreparedStatement对象"></a>PreparedStatement对象</h3><p>PreparedStatement 可以防止SQL注入，并且效率更高。</p>
+<pre><code class="hljs java"><span class="hljs-keyword">import</span> utils.JdbcUtils;
+
+<span class="hljs-keyword">import</span> java.sql.Connection;
+<span class="hljs-keyword">import</span> java.sql.PreparedStatement;
+<span class="hljs-keyword">import</span> java.sql.ResultSet;
+<span class="hljs-keyword">import</span> java.sql.SQLException;
+
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">TestSelect1</span> </span>&#123;
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">main</span><span class="hljs-params">(String[] args)</span> </span>&#123;
+        Connection connection = <span class="hljs-keyword">null</span>;
+        PreparedStatement preparedStatement = <span class="hljs-keyword">null</span>;
+        ResultSet resultSet = <span class="hljs-keyword">null</span>;
+        <span class="hljs-keyword">try</span> &#123;
+            String username = <span class="hljs-string">"shuwen"</span>;
+            String password = <span class="hljs-string">"123456"</span>;
+            connection = JdbcUtils.getConnection();
+            String sql = <span class="hljs-string">"select * from users where name = ? and password = ?"</span>;
+
+            <span class="hljs-comment">//preparedStatement本质：把传递进来的参数当做字符，即用引号包裹，如果存在转义字符，如'，则直接忽略</span>
+            preparedStatement = connection.prepareStatement(sql);  <span class="hljs-comment">//预编译</span>
+
+            preparedStatement.setString(<span class="hljs-number">1</span>, username);
+            preparedStatement.setString(<span class="hljs-number">2</span>, password);
+
+            resultSet = preparedStatement.executeQuery();  <span class="hljs-comment">//执行</span>
+
+            <span class="hljs-keyword">if</span>(resultSet.next())&#123;
+                System.out.println(resultSet.getString(<span class="hljs-string">"name"</span>));
+            &#125;
+
+        &#125; <span class="hljs-keyword">catch</span> (SQLException throwables) &#123;
+            throwables.printStackTrace();
+        &#125; <span class="hljs-keyword">finally</span> &#123;
+            JdbcUtils.release(connection, preparedStatement, resultSet);
+        &#125;
+    &#125;
+&#125;</code></pre>
+<h3 id="使用IDEA连接数据库"><a href="#使用IDEA连接数据库" class="headerlink" title="使用IDEA连接数据库"></a>使用IDEA连接数据库</h3><p>在右侧栏添加数据库</p>
+<p><img src="/2020/09/13/MySQL/image-20201002173513965.png" srcset="/img/loading.gif" alt="image-20201002173513965"></p>
+<p><img src="/2020/09/13/MySQL/image-20201002173726030.png" srcset="/img/loading.gif" alt="image-20201002173726030"></p>
+<p><img src="/2020/09/13/MySQL/image-20201002173822608.png" srcset="/img/loading.gif" alt="image-20201002173822608"></p>
+<p>连接成功后，可以选择数据库</p>
+<p><img src="/2020/09/13/MySQL/image-20201002174038984.png" srcset="/img/loading.gif" alt="image-20201002174038984"></p>
+<p><img src="/2020/09/13/MySQL/image-20201002174055364.png" srcset="/img/loading.gif" alt="image-20201002174055364"></p>
+<p>如果连接失败，可以在设置-》驱动里面查看版本是否正确，或者类是否正确。</p>
+<h3 id="JDBC处理事务"><a href="#JDBC处理事务" class="headerlink" title="JDBC处理事务"></a>JDBC处理事务</h3><p><strong>回顾</strong></p>
+<p>要么都成功，要么都失败</p>
+<blockquote>
+<p>ACID原则</p>
+</blockquote>
+<p>原子性：要么全部完成，要么都不完成</p>
+<p>一致性：总数不变</p>
+<p>隔离性：多个进程互不干扰</p>
+<p>持久性：一旦提交不可逆，持久化到数据库</p>
+<p>隔离性的问题：</p>
+<p>脏读：一个事务读取了另一个没有提交的事务</p>
+<p>不可重复读：在同一个事务内，重复读取表中的数据，数据发生了改变</p>
+<p>幻读：在一个事务内，读取到了别人插入的数据，导致前后读出来的结果不一致</p>
+<p><br></p>
+<p><strong>代码实现：</strong></p>
+<ol>
+<li>开启事务<code>connection.setAutoCommit(false);</code></li>
+<li>一组业务执行完毕，提交事务</li>
+<li>可以在catch语句中显式定义回滚语句，但默认会回滚</li>
+</ol>
+<pre><code class="hljs java"><span class="hljs-keyword">import</span> utils.JdbcUtils;
+
+<span class="hljs-keyword">import</span> java.sql.Connection;
+<span class="hljs-keyword">import</span> java.sql.PreparedStatement;
+<span class="hljs-keyword">import</span> java.sql.ResultSet;
+<span class="hljs-keyword">import</span> java.sql.SQLException;
+
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">TestTransaction</span> </span>&#123;
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">main</span><span class="hljs-params">(String[] args)</span> </span>&#123;
+        Connection connection = <span class="hljs-keyword">null</span>;
+        PreparedStatement preparedStatement = <span class="hljs-keyword">null</span>;
+        ResultSet resultSet = <span class="hljs-keyword">null</span>;
+
+        <span class="hljs-keyword">try</span> &#123;
+            connection = JdbcUtils.getConnection();
+            <span class="hljs-comment">//关闭数据库的自动提交功能,自动回开启事务</span>
+            connection.setAutoCommit(<span class="hljs-keyword">false</span>);  <span class="hljs-comment">//开启事务</span>
+
+            String sql1 = <span class="hljs-string">"update account set money = money - 100 where name = 'A'"</span>;
+            preparedStatement = connection.prepareStatement(sql1);
+            preparedStatement.execute();
+
+            String sql2 = <span class="hljs-string">"update account set money = money + 100 where name = 'B'"</span>;
+            preparedStatement = connection.prepareStatement(sql2);
+            preparedStatement.execute();
+
+            <span class="hljs-comment">//业务完毕，提交事务</span>
+            connection.commit();
+            System.out.println(<span class="hljs-string">"success!"</span>);
+
+        &#125; <span class="hljs-keyword">catch</span> (Exception throwables) &#123;
+            <span class="hljs-keyword">try</span> &#123;
+                connection.rollback();   <span class="hljs-comment">//如果失败则回滚事务</span>
+            &#125; <span class="hljs-keyword">catch</span> (SQLException e) &#123;
+                e.printStackTrace();
+            &#125;
+            <span class="hljs-comment">//如果失败也会默认回滚</span>
+            throwables.printStackTrace();
+        &#125; <span class="hljs-keyword">finally</span> &#123;
+            JdbcUtils.release(connection, preparedStatement, resultSet);
+        &#125;
+    &#125;
+&#125;</code></pre>
+<h3 id="数据库连接池"><a href="#数据库连接池" class="headerlink" title="数据库连接池"></a>数据库连接池</h3><p>数据库连接—执行完毕—释放 </p>
+<p>但是连接到释放会十分浪费系统资源</p>
+<p><strong>池化技术：准备一些预先的资源，过来就连接预先准备好的</strong></p>
+<p>最小连接数：10</p>
+<p>最大连接数：100  业务最高承载上限</p>
+<p>等待超时：100ms</p>
+<p>编写连接池，实现一个接口  DataSource</p>
+<blockquote>
+<p>开源数据源实现（拿来即用）</p>
+</blockquote>
+<p>DBCP</p>
+<p>C3P0</p>
+<p>Druid：阿里巴巴</p>
+<p>使用了这些数据库连接池之后，我们在项目开发中就不需要编写连接数据库的代码了。</p>
+<blockquote>
+<p>DBCP</p>
+</blockquote>
+<p>需要用到的jar包：</p>
+<p>commons-dbcp,commons-pool</p>
+<p>dbcpconfig.properties</p>
+<pre><code class="hljs pro"># 连接设置 这里面的名字，是DBCP数据源定义好的
+driverClassName&#x3D;com.mysql.cj.jdbc.Driver
+url&#x3D;jdbc:mysql:&#x2F;&#x2F;localhost:3306&#x2F;jdbcstudy?useUnicode&#x3D;true&amp;characterEncoding&#x3D;utf8&amp;useSSL&#x3D;true&amp;serverTimezone&#x3D;GMT
+username&#x3D;root
+password&#x3D;123456
+
+#&lt;!-- 初始化连接 --&gt;
+initialSize&#x3D;10
+
+#最大连接数量
+maxActive&#x3D;50
+
+#&lt;!-- 最大空闲连接 --&gt;
+maxIdle&#x3D;20
+
+#&lt;!-- 最小空闲连接 --&gt;
+minIdle&#x3D;5
+
+#&lt;!-- 超时等待时间以毫秒为单位 6000毫秒&#x2F;1000等于60秒 --&gt;
+maxWait&#x3D;60000
+
+
+#JDBC驱动建立连接时附带的连接属性属性的格式必须为这样：[属性名&#x3D;property;]
+#注意：&quot;user&quot; 与 &quot;password&quot; 两个属性会被明确地传递，因此这里不需要包含他们。
+connectionProperties&#x3D;useUnicode&#x3D;true;characterEncoding&#x3D;utf8
+
+#指定由连接池所创建的连接的自动提交（auto-commit）状态。
+defaultAutoCommit&#x3D;true
+
+#driver default 指定由连接池所创建的连接的事务级别（TransactionIsolation）。
+#可用值为下列之一：（详情可见javadoc。）NONE,READ_UNCOMMITTED, READ_COMMITTED, REPEATABLE_READ, SERIALIZABLE
+defaultTransactionIsolation&#x3D;READ_UNCOMMITTED</code></pre>
+<p>JdbcUtils_DBCP.java 利用工厂模式创建数据库连接</p>
+<pre><code class="hljs java"><span class="hljs-keyword">package</span> utils;
+
+<span class="hljs-keyword">import</span> org.apache.commons.dbcp.BasicDataSourceFactory;
+
+<span class="hljs-keyword">import</span> javax.sql.DataSource;
+<span class="hljs-keyword">import</span> java.io.IOException;
+<span class="hljs-keyword">import</span> java.io.InputStream;
+<span class="hljs-keyword">import</span> java.sql.*;
+<span class="hljs-keyword">import</span> java.util.Properties;
+
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">JdbcUtils_DBCP</span> </span>&#123;
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> DataSource dataSource = <span class="hljs-keyword">null</span>;
+
+    <span class="hljs-keyword">static</span>&#123;
+        <span class="hljs-keyword">try</span>&#123;
+            <span class="hljs-comment">//获取文件信息</span>
+            InputStream inputStream = JdbcUtils.class.getClassLoader().getResourceAsStream("dbcpconfig.properties");
+            Properties properties = <span class="hljs-keyword">new</span> Properties();
+            properties.load(inputStream);
+
+            <span class="hljs-comment">//创建数据源 工厂模式 --》 创建</span>
+            dataSource = BasicDataSourceFactory.createDataSource(properties);
+
+        &#125;<span class="hljs-keyword">catch</span> (IOException e)&#123;
+            e.printStackTrace();
+        &#125; <span class="hljs-keyword">catch</span> (ClassNotFoundException e) &#123;
+            e.printStackTrace();
+        &#125; <span class="hljs-keyword">catch</span> (Exception e) &#123;
+            e.printStackTrace();
+        &#125;
+    &#125;
+    <span class="hljs-comment">//获取连接</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> Connection <span class="hljs-title">getConnection</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> SQLException </span>&#123;
+        <span class="hljs-keyword">return</span> dataSource.getConnection();  <span class="hljs-comment">//从数据源中获取连接</span>
+    &#125;
+    <span class="hljs-comment">//释放连接资源</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">release</span><span class="hljs-params">(Connection connection, Statement statement, ResultSet resultSet)</span></span>&#123;
+        <span class="hljs-keyword">if</span>(resultSet != <span class="hljs-keyword">null</span>)&#123;
+            <span class="hljs-keyword">try</span> &#123;
+                resultSet.close();
+            &#125; <span class="hljs-keyword">catch</span> (SQLException throwables) &#123;
+                throwables.printStackTrace();
+            &#125;
+        &#125;
+        <span class="hljs-keyword">if</span>(statement != <span class="hljs-keyword">null</span>)&#123;
+            <span class="hljs-keyword">try</span> &#123;
+                statement.close();
+            &#125; <span class="hljs-keyword">catch</span> (SQLException throwables) &#123;
+                throwables.printStackTrace();
+            &#125;
+        &#125;
+        <span class="hljs-keyword">if</span>(connection != <span class="hljs-keyword">null</span>)&#123;
+            <span class="hljs-keyword">try</span> &#123;
+                connection.close();
+            &#125; <span class="hljs-keyword">catch</span> (SQLException throwables) &#123;
+                throwables.printStackTrace();
+            &#125;
+        &#125;
+    &#125;
+&#125;</code></pre>
+<p>插入数据测试</p>
+<pre><code class="hljs java"><span class="hljs-keyword">import</span> utils.JdbcUtils;
+<span class="hljs-keyword">import</span> utils.JdbcUtils_DBCP;
+
+<span class="hljs-keyword">import</span> java.sql.Connection;
+<span class="hljs-keyword">import</span> java.sql.ResultSet;
+<span class="hljs-keyword">import</span> java.sql.SQLException;
+<span class="hljs-keyword">import</span> java.sql.Statement;
+
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">TestDBCP</span> </span>&#123;
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">main</span><span class="hljs-params">(String[] args)</span> </span>&#123;
+        Connection connection = <span class="hljs-keyword">null</span>;
+        Statement statement = <span class="hljs-keyword">null</span>;
+        ResultSet resultSet = <span class="hljs-keyword">null</span>;
+        <span class="hljs-keyword">try</span> &#123;
+            connection = JdbcUtils_DBCP.getConnection();  <span class="hljs-comment">//获取数据库连接</span>
+
+            statement = connection.createStatement();
+            String sql = <span class="hljs-string">"select * from users"</span>;
+            resultSet = statement.executeQuery(sql);
+            <span class="hljs-keyword">if</span>(resultSet != <span class="hljs-keyword">null</span>)&#123;
+                <span class="hljs-keyword">while</span>(resultSet.next())&#123;
+                    System.out.println(<span class="hljs-string">"id="</span> + resultSet.getObject(<span class="hljs-string">"id"</span>));
+                    System.out.println(<span class="hljs-string">"name="</span> + resultSet.getObject(<span class="hljs-string">"name"</span>));
+                    System.out.println(<span class="hljs-string">"password="</span> + resultSet.getObject(<span class="hljs-string">"password"</span>));
+                    System.out.println(<span class="hljs-string">"email="</span> + resultSet.getObject(<span class="hljs-string">"email"</span>));
+                    System.out.println(<span class="hljs-string">"birthday="</span> + resultSet.getObject(<span class="hljs-string">"birthday"</span>));
+                    System.out.println(<span class="hljs-string">"==========================="</span>);
+                &#125;
+            &#125;
+        &#125; <span class="hljs-keyword">catch</span> (SQLException sqlException) &#123;
+            sqlException.printStackTrace();
+        &#125; <span class="hljs-keyword">finally</span> &#123;
+            JdbcUtils_DBCP.release(connection, statement, resultSet);
+        &#125;
+    &#125;
+&#125;</code></pre>
+<blockquote>
+<p>C3P0</p>
+</blockquote>
+<p>需要用到的jar包</p>
+<p>c3p0, mchange-commons-java</p>
+<blockquote>
+<p>结论</p>
+</blockquote>
+<p>无论使用什么数据源，本质相同：DataSource接口不会变，方法就不会变</p>
+<blockquote>
+<p>Druid</p>
+</blockquote>
+
             </div>
             <hr>
             <div>
@@ -1209,6 +2206,29 @@ ON r.subjectno &#x3D; sub.subjectno
               
                 <p class="note note-warning">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" target="_blank" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！</p>
               
+              
+                <div class="post-prevnext row">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2020/09/15/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">计算机系统基础</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2020/09/09/Java_Web/">
+                        <span class="hidden-mobile">Java_Web</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
               
             </div>
 
