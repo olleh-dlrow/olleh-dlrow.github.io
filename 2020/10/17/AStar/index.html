@@ -1,0 +1,632 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=&#34;auto&#34;>
+
+
+
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+  <link rel="icon" type="image/png" href="/img/favicon.png">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="description" content="Shuwen Chen Blog">
+  <meta name="author" content="Shuwen Chen">
+  <meta name="keywords" content="">
+  <title>AStar - MyBlog</title>
+
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/github-markdown-css/4.0.0/github-markdown.min.css" />
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
+
+  
+    
+    <link  rel="stylesheet" href="https://cdn.staticfile.org/highlight.js/10.0.0/styles/github-gist.min.css" />
+  
+
+  
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_6peoq002giu.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_pjno9b9zyxs.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 4.2.1"><!-- hexo-inject:begin --><!-- hexo-inject:end --></head>
+
+
+<body>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand"
+       href="/">&nbsp;<strong>Shuwen Chen</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" data-toggle="modal" data-target="#modalSearch">&nbsp;<i
+                class="iconfont icon-search"></i>&nbsp;</a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" href="javascript:">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner intro-2" id="background" parallax=true
+         style="background: url('/img/default.png') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="container page-header text-center fade-in-up">
+            <span class="h2" id="subtitle">
+              
+            </span>
+
+            
+              
+  <div class="mt-3 post-meta">
+    <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+    <time datetime="2020-10-17 16:02" pubdate>
+      2020年10月17日 下午
+    </time>
+  </div>
+
+
+<div class="mt-1">
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      1.9k 字
+    </span>
+  
+
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      24
+       分钟
+    </span>
+  
+
+  
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-md">
+      <div class="container nopadding-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto" id="post">
+            <!-- SEO header -->
+            <h1 style="display: none">AStar</h1>
+            
+            <div class="markdown-body" id="post-body">
+              <h1 id="AStar——既脚踏实地，又仰望星空"><a href="#AStar——既脚踏实地，又仰望星空" class="headerlink" title="AStar——既脚踏实地，又仰望星空"></a>AStar——既脚踏实地，又仰望星空</h1><h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>AStar算法，又称为A*算法，它作为一个启发式的寻路算法，在大部分情况下的性能要优于非启发式算法（如Dijkstra算法和Prim算法），特别是时间复杂度方面，只要选取的估值函数足够好。</p>
+<p>AStar算法可以用来搜寻所有非负图中的最短路径，并且能够找到最优解，是一种在人工智能和游戏引擎中被广泛使用的寻路算法。</p>
+<h2 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h2><p>“既脚踏实地，又仰望星空”。A*算法的设计很巧妙地贯彻了这句鸡汤。假设一个旅行者需要找到起点和目的地之间的最短路径，那么他不仅会根据自己走过的中转站计算出到达这个中转站的最短路径，也会根据手中的地图来估计一下距离目的地还有多远的距离，在把两者权衡一下之后，选择接下来的旅行策略。这样既能够充分地利用已经走过的中转站，又不会出现南辕北辙的情况（明明这个中转站的方向是相反的还要去尝试）。或者说，借助非启发式算法的前提下，又一直在朝着目的地的方向迈进。</p>
+<p>A*算法的核心函数如下：</p>
+<script type="math/tex; mode=display">
+f(n)= g(n) + h(n)</script><ul>
+<li>f(n): 从起点到终点并且经过点n的一个路径长度估计值。在实际处理新的中间点的过程中，当这个点对应的f(n)越小，证明这个点具有更好地成为最短路径的潜质，因此会优先去考虑这个点的相邻点作为下一个可能的路径点。</li>
+<li>g(n): 从起点到点n并且经过其父节点的最短距离。</li>
+<li>h(n): 从点n到终点的估值距离。这个距离越大则算法性能越好，但是不能超过两点之间实际距离的最小值，否则不能保证得到最优解。可以使用极限法考虑，如果h(n) 趋向于无穷大，则永远不可能找到最短路径。实际上，当f(n)小于实际的最优解时，那么在后续的遍历中，最优解下的路径一定会将之前的那个路径给覆盖掉，当f(n)始终等于最优解时，该算法就一直在遍历最短路径了。</li>
+</ul>
+<h2 id="算法实现"><a href="#算法实现" class="headerlink" title="算法实现"></a>算法实现</h2><h3 id="图的基本结构"><a href="#图的基本结构" class="headerlink" title="图的基本结构"></a>图的基本结构</h3><p>因为AStar算法是基于非负图的，因此数据结构的选取非常重要。如果把一张2D网格映射成一张图的话，其基本类和变量如下：</p>
+<pre><code class="hljs java"><span class="hljs-comment">//图的结点</span>
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Node</span></span>&#123;
+    String nodeId;  <span class="hljs-comment">//为每个结点生成一个字符串Id，主要便于查找到这个结点和作为Key</span>
+    Point position; <span class="hljs-comment">//用来存放该结点存储的坐标</span>
+    List&lt;Node&gt; neghbors; <span class="hljs-comment">//存储相邻结点</span>
+    Map&lt;String, Integer&gt; distances; <span class="hljs-comment">//通过Id来获得该点与相邻点之间的距离</span>
+&#125;
+
+<span class="hljs-comment">//图类</span>
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Graph</span></span>&#123;
+    Map&lt;String, Node&gt; graph;  <span class="hljs-comment">//存储图中的所有结点</span>
+&#125;</code></pre>
+<h3 id="A-算法"><a href="#A-算法" class="headerlink" title="A*算法"></a>A*算法</h3><p>为了便于理解，可以直接根据算法需要实现的功能来设计对应的数据结构。</p>
+<ul>
+<li>g(n): 该函数需要得到当前结点在经过父节点的情况下到达起点的最短路径，可以直接利用Dijkstra算法的思想来实现，假设点n-1是点n的父节点并且g(n-1)已知，那么g(n) = min(g(n), g(n-1) + d(n-1, n)), 其中d是两点之间的距离。为了记录当前结点的父节点，可以设计数据结构<code>Map&lt;String, Node&gt; cameFrom</code>，这样，可以通过当前结点的Id找到其父节点。g(n)也可以通过Map来实现。</li>
+<li>h(n): 估算点n到终点的距离，保证h(n)小于实际最短距离的前提下让估算值越接近真实值越好，因此对于不同的实际问题可以采取不同的计算方式。一般来说，对于一个2D平面，采取两点之间的线段距离，而对于一个2D的网格，因为不能斜着走，所以两点直接长宽差的和就是最短的情况了。</li>
+<li>f(n): 用来指导算法的行进方向，也可以通过Map来存储每个结点对应的函数值，同时，为了使得每次取出f(n)值最小的结点，可以采用堆结构或者优先队列的结构来存储结点，即<code>PriorityQueue&lt;Node&gt; openSet</code>。</li>
+</ul>
+<p>这样，已知的变量如下：</p>
+<pre><code class="hljs java">Map&lt;String, Node&gt; cameFrom;
+Map&lt;String, Integer&gt; gScore;
+Map&lt;String, Integer&gt; fScore;
+PriorityQueue&lt;Node&gt; openSet = <span class="hljs-keyword">new</span> PriorityQueue&lt;&gt;(<span class="hljs-keyword">new</span> Comparator&lt;Node&gt;()&#123;
+   <span class="hljs-comment">//f(n)越小则对应结点放置地越靠前</span>
+   <span class="hljs-meta">@override</span>
+   <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">int</span> <span class="hljs-title">compare</span><span class="hljs-params">(Node o1, Node o2)</span></span>&#123;
+       <span class="hljs-keyword">return</span> fScore.get(o1.getNodeId()).compareTo(fScore.get(o2.getNodeId));
+   &#125;
+&#125;);</code></pre>
+<p>h(n)需要根据场景不同进行不同的设计：</p>
+<pre><code class="hljs java">   <span class="hljs-comment">/**</span>
+<span class="hljs-comment">    * heuristic function that caculate approximately the distance between </span>
+<span class="hljs-comment">    * current point and the end point.</span>
+<span class="hljs-comment">    * &lt;p&gt;&lt;strong&gt;About distance : &lt;/strong&gt;in AStar algorithm, the bigger is distance,</span>
+<span class="hljs-comment">    * the better its performance can be. However, this appro. distance shouldn't beyond the </span>
+<span class="hljs-comment">    * actual distance between the two points. Otherwise, it may can't get the best</span>
+<span class="hljs-comment">    * solution.</span>
+<span class="hljs-comment">    * &lt;p&gt;in 2D grid, the distance can set as width add length</span>
+<span class="hljs-comment">    * &lt;p&gt;in 2D map, the distance should set as the segment's length between the</span>
+<span class="hljs-comment">    * two points</span>
+<span class="hljs-comment">    * </span>
+<span class="hljs-comment">    * <span class="hljs-doctag">@param</span> cur the current point</span>
+<span class="hljs-comment">    * <span class="hljs-doctag">@param</span> end the end point</span>
+<span class="hljs-comment">    * <span class="hljs-doctag">@return</span> the approximately distance between two points</span>
+<span class="hljs-comment">    */</span>
+<span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">heuristic</span><span class="hljs-params">(Point cur, Point end, <span class="hljs-keyword">int</span> mode)</span></span>&#123;
+       <span class="hljs-keyword">switch</span> (mode) &#123;
+           <span class="hljs-comment">//不进行估值，NONE是定义的常变量</span>
+           <span class="hljs-keyword">case</span> AStar.NONE:
+               <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+           <span class="hljs-comment">//网格图    </span>
+           <span class="hljs-keyword">case</span> AStar.GRID:
+               <span class="hljs-keyword">return</span> Math.abs(end.getRow() - cur.getRow()) + Math.abs(end.getCol() - cur.getCol());
+           <span class="hljs-comment">//一般的2D平面</span>
+           <span class="hljs-keyword">case</span> AStar.EUCLID:
+               <span class="hljs-keyword">double</span> dx = cur.getRow() - end.getRow();
+               <span class="hljs-keyword">double</span> dy = cur.getCol() - end.getCol();
+               <span class="hljs-keyword">return</span> (<span class="hljs-keyword">int</span>)Math.sqrt(dx * dx + dy * dy);
+           <span class="hljs-keyword">default</span>:
+               <span class="hljs-keyword">return</span> -<span class="hljs-number">1</span>;
+       &#125;      
+   &#125;</code></pre>
+<p>先为所有变量设置初值：</p>
+<pre><code class="hljs java">      <span class="hljs-comment">//@param startNode, endNode</span>
+openSet.add(startNode);                        <span class="hljs-comment">//最初只访问了起点</span>
+      cameFrom.put(startNode.getNodeId(), <span class="hljs-keyword">null</span>);     <span class="hljs-comment">//起点没有父节点</span>
+<span class="hljs-comment">//为结点的g和f设置INF，但除了起点</span>
+      <span class="hljs-keyword">while</span> (iterator.hasNext()) &#123;
+          Node current = iterator.next().getValue();
+          gScore.put(current.getNodeId(), Integer.MAX_VALUE);
+          fScore.put(current.getNodeId(), Integer.MAX_VALUE);
+      &#125;
+      gScore.replace(startNode.getNodeId(), <span class="hljs-number">0</span>);
+      fScore.replace(startNode.getNodeId(), heuristic(start, end, mode));</code></pre>
+<p>寻路过程：</p>
+<pre><code class="hljs java">      <span class="hljs-comment">//优先队列不为空或者没有找到终点时循环</span>
+<span class="hljs-keyword">while</span>(!openSet.isEmpty())&#123;
+          <span class="hljs-comment">//从队列中取出f(n)值最小的点，在保证得到最优解的情况下，这个点的期望也是当前最大的，因此把它的邻接点作为下一个考虑点</span>
+          Node currentNode = openSet.poll();
+          <span class="hljs-comment">//找到终点，根据父节点输出路径</span>
+          <span class="hljs-keyword">if</span>(currentNode.getNodeId().compareTo(endNode.getNodeId()) == <span class="hljs-number">0</span>)&#123;
+              <span class="hljs-keyword">return</span> reconstructPath(cameFrom, currentNode);
+          &#125;
+          <span class="hljs-comment">//遍历所有邻接点</span>
+          <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i &lt; currentNode.getNeighborsSize(); i++) &#123;
+              Node neighbor = currentNode.getNeighbor(i);
+              <span class="hljs-comment">//获得临界点的Id</span>
+              String nbrId = neighbor.getNodeId();
+              <span class="hljs-comment">//计算邻接点经过当前点(currentNode)的最小g(n)</span>
+              Integer tmpGScore = gScore.get(neighbor.getNodeId()) 
+                                  + currentNode.getDistance(neighbor.getNodeId());
+              <span class="hljs-comment">//如果比之前的路径更优，则修改其父节点</span>
+              <span class="hljs-keyword">if</span>(tmpGScore.compareTo(gScore.get(neighbor.getNodeId())) &lt; <span class="hljs-number">0</span>)&#123;
+                  cameFrom.put(nbrId, currentNode);
+                  <span class="hljs-comment">//依次修改g(n) 和 h(n)</span>
+                  gScore.put(nbrId, tmpGScore);
+                  fScore.put(nbrId, gScore.get(nbrId) + heuristic(neighbor.getPosition(), end, mode));
+                  <span class="hljs-comment">//把当前点放入待处理的队列中</span>
+                  <span class="hljs-keyword">if</span>(!openSet.contains(neighbor))&#123;
+                      openSet.add(neighbor);
+                  &#125;
+              &#125;
+          &#125;
+      &#125;</code></pre>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>可以看出，A*算法可以说是BFS和DFS的结合。</p>
+<p>当g(n)为0时，A*算法退化为DFS, 尽管能够很快找到终点，但只有遍历完所有点才能确定最短的那条，有点好高骛远的感觉。</p>
+<p>当h(n)为0时，A*算法退化为BFS, 即使大方向错了，还是得闷头去走，是一种非启发式的傻瓜算法。</p>
+
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                  <div class="post-meta mr-3">
+                    <i class="iconfont icon-category"></i>
+                    
+                      <a class="hover-with-bg" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/">数据结构与算法</a>
+                    
+                  </div>
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/AStar/">AStar</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" target="_blank" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！</p>
+              
+              
+                <div class="post-prevnext row">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2020/10/23/%E6%B7%B1%E5%85%A5%E5%BA%95%E5%B1%82-%E6%95%B0%E6%8D%AE%E7%9A%84%E6%8C%89%E4%BD%8D%E8%BF%90%E7%AE%97/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">深入底层-数据的按位运算</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2020/10/11/%E4%B8%8D%E7%9B%B8%E4%BA%A4%E9%9B%86%E7%BB%93%E6%9E%84/">
+                        <span class="hidden-mobile">不相交集结构</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div id="tocbot"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+  </main>
+
+  
+    <a id="scroll-top-button" href="#" role="button">
+      <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+    </a>
+  
+
+  
+    <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+  
+
+  
+
+  
+
+  <footer class="mt-5">
+  <div class="text-center py-3">
+    <div>
+      <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a>
+      <i class="iconfont icon-love"></i>
+      <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener">
+        <span>Fluid</span></a>
+    </div>
+    
+
+    
+
+    
+  </div>
+</footer>
+
+<!-- SCRIPTS -->
+<script  src="https://cdn.staticfile.org/jquery/3.4.1/jquery.min.js" ></script>
+<script  src="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/js/bootstrap.min.js" ></script>
+<script  src="/js/debouncer.js" ></script>
+<script  src="/js/main.js" ></script>
+
+<!-- Plugins -->
+
+
+  
+    <script  src="/js/lazyload.js" ></script>
+  
+
+
+
+  <script defer src="https://cdn.staticfile.org/clipboard.js/2.0.6/clipboard.min.js" ></script>
+  <script  src="/js/clipboard-use.js" ></script>
+
+
+
+
+
+
+
+  <script  src="https://cdn.staticfile.org/tocbot/4.11.1/tocbot.min.js" ></script>
+  <script>
+    $(document).ready(function () {
+      var boardCtn = $('#board-ctn');
+      var boardTop = boardCtn.offset().top;
+
+      tocbot.init({
+        tocSelector: '#tocbot',
+        contentSelector: '#post-body',
+        headingSelector: 'h1,h2,h3,h4,h5,h6',
+        linkClass: 'tocbot-link',
+        activeLinkClass: 'tocbot-active-link',
+        listClass: 'tocbot-list',
+        isCollapsedClass: 'tocbot-is-collapsed',
+        collapsibleClass: 'tocbot-is-collapsible',
+        collapseDepth: 0,
+        scrollSmooth: true,
+        headingsOffset: -boardTop
+      });
+      if ($('.toc-list-item').length > 0) {
+        $('#toc').css('visibility', 'visible');
+      }
+    });
+  </script>
+
+
+
+  <script  src="https://cdn.staticfile.org/typed.js/2.0.11/typed.min.js" ></script>
+  <script>
+    var typed = new Typed('#subtitle', {
+      strings: [
+        '  ',
+        "AStar&nbsp;",
+      ],
+      cursorChar: "_",
+      typeSpeed: 70,
+      loop: false,
+    });
+    typed.stop();
+    $(document).ready(function () {
+      $(".typed-cursor").addClass("h2");
+      typed.start();
+    });
+  </script>
+
+
+
+  <script  src="https://cdn.staticfile.org/anchor-js/4.2.2/anchor.min.js" ></script>
+  <script>
+    anchors.options = {
+      placement: "right",
+      visible: "hover",
+      
+    };
+    var el = "h1,h2,h3,h4,h5,h6".split(",");
+    var res = [];
+    for (item of el) {
+      res.push(".markdown-body > " + item)
+    }
+    anchors.add(res.join(", "))
+  </script>
+
+
+
+  <script  src="/js/local-search.js" ></script>
+  <script>
+    var path = "/local-search.xml";
+    var inputArea = document.querySelector("#local-search-input");
+    inputArea.onclick = function () {
+      searchFunc(path, 'local-search-input', 'local-search-result');
+      this.onclick = null
+    }
+  </script>
+
+
+
+  <script  src="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+  <script>
+    $('#post img:not(.no-zoom img, img[no-zoom]), img[zoom]').each(
+      function () {
+        var element = document.createElement('a');
+        $(element).attr('data-fancybox', 'images');
+        $(element).attr('href', $(this).attr('src'));
+        $(this).wrap(element);
+      }
+    );
+  </script>
+
+
+
+
+
+  
+
+  
+    <!-- MathJax -->
+    <script>
+      MathJax = {
+        tex: {
+          inlineMath: [['$', '$'], ['\\(', '\\)']]
+        },
+        options: {
+          renderActions: {
+            findScript: [10, doc => {
+              document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+                const display = !!node.type.match(/; *mode=display/);
+                const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+                const text = document.createTextNode('');
+                node.parentNode.replaceChild(text, node);
+                math.start = { node: text, delim: '', n: 0 };
+                math.end = { node: text, delim: '', n: 0 };
+                doc.math.push(math);
+              });
+            }, '', false],
+            insertedScript: [200, () => {
+              document.querySelectorAll('mjx-container').forEach(node => {
+                let target = node.parentNode;
+                if (target.nodeName.toLowerCase() === 'li') {
+                  target.parentNode.classList.add('has-jax');
+                }
+              });
+            }, '', false]
+          }
+        }
+      };
+    </script>
+
+    <script async src="https://cdn.staticfile.org/mathjax/3.0.5/es5/tex-svg.js" ></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

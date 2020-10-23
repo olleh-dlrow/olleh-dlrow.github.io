@@ -1,0 +1,873 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=&#34;auto&#34;>
+
+
+
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+  <link rel="icon" type="image/png" href="/img/favicon.png">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="description" content="Shuwen Chen Blog">
+  <meta name="author" content="Shuwen Chen">
+  <meta name="keywords" content="">
+  <title>深入底层-数据的按位运算 - MyBlog</title>
+
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/github-markdown-css/4.0.0/github-markdown.min.css" />
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
+
+  
+    
+    <link  rel="stylesheet" href="https://cdn.staticfile.org/highlight.js/10.0.0/styles/github-gist.min.css" />
+  
+
+  
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_6peoq002giu.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_pjno9b9zyxs.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 4.2.1"><!-- hexo-inject:begin --><!-- hexo-inject:end --></head>
+
+
+<body>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand"
+       href="/">&nbsp;<strong>Shuwen Chen</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" data-toggle="modal" data-target="#modalSearch">&nbsp;<i
+                class="iconfont icon-search"></i>&nbsp;</a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" href="javascript:">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner intro-2" id="background" parallax=true
+         style="background: url('/img/default.png') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="container page-header text-center fade-in-up">
+            <span class="h2" id="subtitle">
+              
+            </span>
+
+            
+              
+  <div class="mt-3 post-meta">
+    <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+    <time datetime="2020-10-23 19:02" pubdate>
+      2020年10月23日 晚上
+    </time>
+  </div>
+
+
+<div class="mt-1">
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      2.8k 字
+    </span>
+  
+
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      45
+       分钟
+    </span>
+  
+
+  
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-md">
+      <div class="container nopadding-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto" id="post">
+            <!-- SEO header -->
+            <h1 style="display: none">深入底层-数据的按位运算</h1>
+            
+            <div class="markdown-body" id="post-body">
+              <h1 id="深入底层——数据的按位运算"><a href="#深入底层——数据的按位运算" class="headerlink" title="深入底层——数据的按位运算"></a>深入底层——数据的按位运算</h1><h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>由于程序中的所有数在计算机内存中都是以二进制的形式储存的，因此要对这些数进行直接操作的话，只能按位来处理。不同于其他复杂的运算符，位运算消耗的时钟周期是最少的，因此如果要追求极致的效率，那么位运算是理想的选择。</p>
+<h2 id="基本运算符及性质"><a href="#基本运算符及性质" class="headerlink" title="基本运算符及性质"></a>基本运算符及性质</h2><h3 id="与运算-amp"><a href="#与运算-amp" class="headerlink" title="与运算&amp;"></a>与运算&amp;</h3><p>”遇0清0，遇1不变“。只有两个二进制位都是1时运算后才为1，其他情况都为0。</p>
+<p>与运算最常见地被用来清除数据的某些位数，或者用来判断某一位是否为1。</p>
+<pre><code class="hljs c"><span class="hljs-comment">//将0011的末位清0</span>
+<span class="hljs-number">0011</span> &amp; <span class="hljs-number">0010</span> = <span class="hljs-number">0010</span>;
+<span class="hljs-comment">//判断x的第3位是否为1(index start from 0)</span>
+<span class="hljs-keyword">if</span> x == <span class="hljs-number">1100</span>:
+	x &amp; <span class="hljs-number">1000</span> = <span class="hljs-number">1000</span>(<span class="hljs-keyword">not</span> zero)
+<span class="hljs-keyword">if</span> x == <span class="hljs-number">0100</span>:
+	x &amp; <span class="hljs-number">1000</span> = <span class="hljs-number">0000</span>(zero)</code></pre>
+<h3 id="或运算"><a href="#或运算" class="headerlink" title="或运算|"></a>或运算|</h3><p>“遇1置1，遇0不变”。只有两个二进制位都为0时运算后才为0，其他情况都为1。</p>
+<p>或运算可以用来把某些位置为1，但更常用来将两个错位的数据合并起来。</p>
+<pre><code class="hljs c"><span class="hljs-comment">//合并1100 和 0011</span>
+<span class="hljs-number">1100</span> | <span class="hljs-number">0011</span> = <span class="hljs-number">11111</span></code></pre>
+<h3 id="非运算"><a href="#非运算" class="headerlink" title="非运算~"></a>非运算~</h3><p>将数据的每一位取反。常用来计算补码</p>
+<pre><code class="hljs c"><span class="hljs-comment">//-1转化为0</span>
+~<span class="hljs-number">1111</span> = <span class="hljs-number">0000</span>
+<span class="hljs-comment">//计算-1的补码</span>
+~<span class="hljs-number">1111</span> + <span class="hljs-number">1</span> = <span class="hljs-number">0001</span></code></pre>
+<h3 id="异或运算"><a href="#异或运算" class="headerlink" title="异或运算^"></a>异或运算^</h3><p>如果两个二进制位不同，则结果为1，否则结果为0。</p>
+<p>异或运算可以看成是不带进位的加法。</p>
+<p>异或运算有一些很好的性质：</p>
+<p>x ^ x  = 0</p>
+<p>x ^ 0 = x</p>
+<p>交换律：x ^ a ^ x = x ^ x ^ a = a</p>
+<p>结合律：a ^ b ^ c = a ^ (b ^ c)</p>
+<pre><code class="hljs c"><span class="hljs-comment">//交换两个数（不能储存在同一个地址下）</span>
+x ^= y;
+y ^= x;
+x ^= y;
+
+<span class="hljs-comment">//找出藏在成对数据中的唯一数据</span>
+<span class="hljs-comment">//如:1,1,2,3,3,4,4 -&gt; 2</span>
+a = <span class="hljs-number">0</span>;
+<span class="hljs-keyword">for</span> i <span class="hljs-number">0</span> -&gt; length - <span class="hljs-number">1</span>:
+	a ^= <span class="hljs-built_in">array</span>[i];
+<span class="hljs-keyword">return</span> a;</code></pre>
+<h3 id="左移-lt-lt"><a href="#左移-lt-lt" class="headerlink" title="左移&lt;&lt;"></a>左移&lt;&lt;</h3><p>将数据的二进制位依次左移，相当于乘2。也经常和与运算结合起来取出特定位置的数据。</p>
+<pre><code class="hljs c">x * <span class="hljs-number">2</span> == x &lt;&lt; <span class="hljs-number">1</span>;
+<span class="hljs-comment">//取出x = 0101 1100的高4位</span>
+x &amp;= <span class="hljs-number">-1</span> &lt;&lt; <span class="hljs-number">4</span>;</code></pre>
+<h3 id="右移-gt-gt"><a href="#右移-gt-gt" class="headerlink" title="右移&gt;&gt;"></a>右移&gt;&gt;</h3><p>将数据的二进制位依次右移，相当于除以2。右移又分为逻辑右移和算术右移，算术右移会根据最高位来补位。</p>
+<pre><code class="hljs c">x / <span class="hljs-number">2</span> == x &gt;&gt; <span class="hljs-number">1</span>;</code></pre>
+<h2 id="题海拾贝"><a href="#题海拾贝" class="headerlink" title="题海拾贝"></a>题海拾贝</h2><h3 id="byteSwap"><a href="#byteSwap" class="headerlink" title="byteSwap"></a>byteSwap</h3><pre><code class="hljs c"><span class="hljs-comment">/* </span>
+<span class="hljs-comment"> * byteSwap - swaps the nth byte and the mth byte</span>
+<span class="hljs-comment"> *  Examples: byteSwap(0x12345678, 1, 3) = 0x56341278</span>
+<span class="hljs-comment"> *            byteSwap(0xDEADBEEF, 0, 2) = 0xDEEFBEAD</span>
+<span class="hljs-comment"> *  You may assume that 0 &lt;= n &lt;= 3, 0 &lt;= m &lt;= 3</span>
+<span class="hljs-comment"> *  Legal ops: ! ~ &amp; ^ | + &lt;&lt; &gt;&gt;</span>
+<span class="hljs-comment"> *  Max ops: 25</span>
+<span class="hljs-comment"> *  Rating: 2</span>
+<span class="hljs-comment"> */</span>
+<span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">byteSwap</span><span class="hljs-params">(<span class="hljs-keyword">int</span> x, <span class="hljs-keyword">int</span> n, <span class="hljs-keyword">int</span> m)</span></span>
+<span class="hljs-function"></span>&#123;
+  <span class="hljs-comment">/**</span>
+<span class="hljs-comment">   * first get the bytes needed to swap: n_byte and m_byte, which </span>
+<span class="hljs-comment">   * seperately present nth byte of x and mth byte of y.</span>
+<span class="hljs-comment">   * then set y = n_byte ^ m_byte.</span>
+<span class="hljs-comment">   * because y ^ n_byte = n_byte ^ m_byte ^ n_byte = m_byte,</span>
+<span class="hljs-comment">   * same as y ^ m_byte, so x ^= y &lt;&lt; n will set nth byte to m_byte,</span>
+<span class="hljs-comment">   * and x ^= y &lt;&lt; m will set mth byte to n_byte.</span>
+<span class="hljs-comment">  */</span>
+  <span class="hljs-keyword">int</span> y = <span class="hljs-number">0</span>;
+  n = n &lt;&lt; <span class="hljs-number">3</span>;
+  m = m &lt;&lt; <span class="hljs-number">3</span>;
+  y = <span class="hljs-number">0xff</span> &amp; ((x &gt;&gt; n) ^ (x &gt;&gt; m));
+  x = x ^ (y &lt;&lt; n);
+  x = x ^ (y &lt;&lt; m);
+  <span class="hljs-keyword">return</span> x;
+&#125;</code></pre>
+<p>可见，异或运算有时也能用来<strong>存储</strong>好几个数据，比如y存储了x的第n个字节和第m个字节，这样在重新和原始的x进行异或运算时，重复的数据被抵消掉了，留下的就是交换后的数据。</p>
+<h3 id="rotateRight"><a href="#rotateRight" class="headerlink" title="rotateRight"></a>rotateRight</h3><pre><code class="hljs c"><span class="hljs-comment">/* </span>
+<span class="hljs-comment"> * rotateRight - Rotate x to the right by n</span>
+<span class="hljs-comment"> *   Can assume that 0 &lt;= n &lt;= 31</span>
+<span class="hljs-comment"> *   Examples: rotateRight(0x87654321,4) = 0x18765432</span>
+<span class="hljs-comment"> *   Legal ops: ~ &amp; ^ | + &lt;&lt; &gt;&gt; !</span>
+<span class="hljs-comment"> *   Max ops: 25</span>
+<span class="hljs-comment"> *   Rating: 3 </span>
+<span class="hljs-comment"> */</span>
+<span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">rotateRight</span><span class="hljs-params">(<span class="hljs-keyword">int</span> x, <span class="hljs-keyword">int</span> n)</span></span>
+<span class="hljs-function"></span>&#123;
+  <span class="hljs-comment">/**</span>
+<span class="hljs-comment">   * x &gt;&gt; n presents the lower n bits, and (x ^ (x &gt;&gt; 31)) &lt;&lt; </span>
+<span class="hljs-comment">   * (31 ^ n) &lt;&lt; 1 presents the higher 32 - n bits. In order to</span>
+<span class="hljs-comment">   * clean the 1 generated by moving right, you can XOR the sign of </span>
+<span class="hljs-comment">   * x.It's x ^ (x &gt;&gt; 31)</span>
+<span class="hljs-comment">  */</span>
+  <span class="hljs-keyword">return</span> (x &gt;&gt; n) ^ ((x ^ (x &gt;&gt; <span class="hljs-number">31</span>)) &lt;&lt; (<span class="hljs-number">31</span> ^ n) &lt;&lt; <span class="hljs-number">1</span>);
+&#125;</code></pre>
+<p>这里要注意的是，&lt;&lt;的运算符优先级是高于^的，这里有一个很巧妙的处理方法：<code>(31 ^ n) &lt;&lt; 1</code>。因为如果要计算32 - n的话，如果使用补码来模拟减法运算，一则增加了运算符的个数，二则是，当n为0时，x &lt;&lt; 32会变成 x&lt;&lt;1。而31是$2^5 - 1$即11111, 和n异或运算后刚好把n中的1全部消除了，就相当于31-n。最后补上&lt;&lt;1 代表实际右移了32 - n步。</p>
+<p>另一个处理巧妙的地方在于使用符号位处理掉了x&gt;&gt;n产生的补充位，如果x是负数，则x ^ x&gt;&gt;31会让x每一位存储1，在于x&gt;&gt;n的高位异或之后刚好抵消。如果x是正数则没有影响。</p>
+<h3 id="logicalNeg"><a href="#logicalNeg" class="headerlink" title="logicalNeg"></a>logicalNeg</h3><pre><code class="hljs c"><span class="hljs-comment">/* </span>
+<span class="hljs-comment"> * logicalNeg - implement the ! operator, using all of </span>
+<span class="hljs-comment"> *              the legal operators except !</span>
+<span class="hljs-comment"> *   Examples: logicalNeg(3) = 0, logicalNeg(0) = 1</span>
+<span class="hljs-comment"> *   Legal ops: ~ &amp; ^ | + &lt;&lt; &gt;&gt;</span>
+<span class="hljs-comment"> *   Max ops: 12</span>
+<span class="hljs-comment"> *   Rating: 4 </span>
+<span class="hljs-comment"> */</span>
+<span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">logicalNeg</span><span class="hljs-params">(<span class="hljs-keyword">int</span> x)</span></span>
+<span class="hljs-function"></span>&#123;
+  <span class="hljs-comment">/**</span>
+<span class="hljs-comment">   * If x == 0, then negX | x &gt;&gt; 31 = 0,</span>
+<span class="hljs-comment">   * else it must be -1, so add 1 to the result is </span>
+<span class="hljs-comment">   * the final answer.</span>
+<span class="hljs-comment">  */</span>
+  <span class="hljs-keyword">return</span> (((~x + <span class="hljs-number">1</span>) | x) &gt;&gt; <span class="hljs-number">31</span>) + <span class="hljs-number">1</span>;
+&#125;</code></pre>
+<p><strong>0 和 非0的区别</strong>刚好可以通过补码来体现：只有0和0x8000 0000的补码才等于它们本身，而补码和自身或运算之后，又只有非0的数符号位为1，因此根据这个特点就能轻松区别0和非0数了。</p>
+<h3 id="isGreater"><a href="#isGreater" class="headerlink" title="isGreater"></a>isGreater</h3><pre><code class="hljs c"><span class="hljs-comment">/* </span>
+<span class="hljs-comment"> * isGreater - if x &gt; y  then return 1, else return 0 </span>
+<span class="hljs-comment"> *   Example: isGreater(4,5) = 0, isGreater(5,4) = 1</span>
+<span class="hljs-comment"> *   Legal ops: ! ~ &amp; ^ | + &lt;&lt; &gt;&gt;</span>
+<span class="hljs-comment"> *   Max ops: 24</span>
+<span class="hljs-comment"> *   Rating: 3</span>
+<span class="hljs-comment"> */</span>
+<span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">isGreater</span><span class="hljs-params">(<span class="hljs-keyword">int</span> x, <span class="hljs-keyword">int</span> y)</span></span>
+<span class="hljs-function"></span>&#123;
+  <span class="hljs-comment">/**</span>
+<span class="hljs-comment">   * first, we can get the average of x and y with no overflow happening</span>
+<span class="hljs-comment">   * by using the expression: (x &amp; y) + (x ^ y) &gt;&gt; 1.</span>
+<span class="hljs-comment">   * Ideas as follows:</span>
+<span class="hljs-comment">   * for these bits which are both 1 in x and y, then bits_x &amp; bits_y = average()</span>
+<span class="hljs-comment">   * eg: bits_x = 0100, bits_y = 0100, then average = bits_x &amp; bits_y = 0100</span>
+<span class="hljs-comment">   * for other bits, to get their average, we can use (bits_x ^ bits_y)&gt;&gt;1.</span>
+<span class="hljs-comment">   * eg: bits_x = 0100 = 4, bits_y = 0010 = 2, then average = (0110)&gt;&gt;1 = 0011 = 3</span>
+<span class="hljs-comment">   * So if we want to get the average of x and y, we can separate x and y to </span>
+<span class="hljs-comment">   * the two conditions above and deal with them with certain operator, then </span>
+<span class="hljs-comment">   * add them to get the correct result. Because this operation won't generate carrying,</span>
+<span class="hljs-comment">   * so the result won't overflow.</span>
+<span class="hljs-comment">   * </span>
+<span class="hljs-comment">   * In addition, because the sign of x - y and (x - y)/2 are the same, so we can </span>
+<span class="hljs-comment">   * get the sign of average(x , ~y), when x &gt; y, the sign is 0, else sign is 1,</span>
+<span class="hljs-comment">   * so the result is !sign.</span>
+<span class="hljs-comment">   * </span>
+<span class="hljs-comment">  */</span>
+  y = ~y;
+  <span class="hljs-keyword">return</span> !(((x &amp; y) + ((x ^ y) &gt;&gt; <span class="hljs-number">1</span>)) &gt;&gt; <span class="hljs-number">31</span>);
+&#125;</code></pre>
+<p>这题的处理方法甚为巧妙，如果对两个数直接相减，则可能有溢出的风险，但如果换种方式求解其<strong>平均数</strong>，则不会发生溢出，这样两个数的大小就可以直接用符号位来判断了。</p>
+<p>妙哉！（但还有个4步解题的，已经不是正常脑回路想得到的了… …）</p>
+<h3 id="satAdd"><a href="#satAdd" class="headerlink" title="satAdd"></a>satAdd</h3><pre><code class="hljs c"><span class="hljs-comment">/*</span>
+<span class="hljs-comment"> * satAdd - adds two numbers but when positive overflow occurs, returns</span>
+<span class="hljs-comment"> *          maximum possible value, and when negative overflow occurs,</span>
+<span class="hljs-comment"> *          it returns minimum positive value.</span>
+<span class="hljs-comment"> *   Examples: satAdd(0x40000000,0x40000000) = 0x7fffffff</span>
+<span class="hljs-comment"> *             satAdd(0x80000000,0xffffffff) = 0x80000000</span>
+<span class="hljs-comment"> *   Legal ops: ! ~ &amp; ^ | + &lt;&lt; &gt;&gt;</span>
+<span class="hljs-comment"> *   Max ops: 30</span>
+<span class="hljs-comment"> *   Rating: 4</span>
+<span class="hljs-comment"> */</span>
+<span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">satAdd</span><span class="hljs-params">(<span class="hljs-keyword">int</span> x, <span class="hljs-keyword">int</span> y)</span></span>
+<span class="hljs-function"></span>&#123;
+  <span class="hljs-comment">/**</span>
+<span class="hljs-comment">   * if x + y overflow, then sum has different sign with x and y.</span>
+<span class="hljs-comment">   * so if overflow, the value overFlow will be -1, overwise 0.</span>
+<span class="hljs-comment">   * </span>
+<span class="hljs-comment">   * In this case, if pos + pos = neg, then overFlow &lt;&lt; 31 will be </span>
+<span class="hljs-comment">   * 0x80000000, and sum &gt;&gt; overFlow will be 0xfffffffff, and both XOR </span>
+<span class="hljs-comment">   * will be 0x7fffffff. Same if neg + neg = pos.</span>
+<span class="hljs-comment">   * </span>
+<span class="hljs-comment">   * If not overflow, overFlow &lt;&lt; 31 is always 0, and sum &gt;&gt; overFlow is still</span>
+<span class="hljs-comment">   * sum. So the result is not changed.</span>
+<span class="hljs-comment">  */</span>
+  <span class="hljs-keyword">int</span> sum = x + y;
+  <span class="hljs-keyword">int</span> overFlow = ((sum ^ x) &amp; (sum ^ y)) &gt;&gt; <span class="hljs-number">31</span>;
+  <span class="hljs-keyword">return</span> (sum &gt;&gt; overFlow) ^ (overFlow &lt;&lt; <span class="hljs-number">31</span>);
+&#125;</code></pre>
+<p>也是运用异或运算来产生两个特殊的最大值和最小值。</p>
+<p>howManyBits</p>
+<pre><code class="hljs c"><span class="hljs-comment">/* howManyBits - return the minimum number of bits required to represent x in</span>
+<span class="hljs-comment"> *             two's complement</span>
+<span class="hljs-comment"> *  Examples: howManyBits(12) = 5</span>
+<span class="hljs-comment"> *            howManyBits(298) = 10</span>
+<span class="hljs-comment"> *            howManyBits(-5) = 4</span>
+<span class="hljs-comment"> *            howManyBits(0)  = 1</span>
+<span class="hljs-comment"> *            howManyBits(-1) = 1</span>
+<span class="hljs-comment"> *            howManyBits(0x80000000) = 32</span>
+<span class="hljs-comment"> *  Legal ops: ! ~ &amp; ^ | + &lt;&lt; &gt;&gt;</span>
+<span class="hljs-comment"> *  Max ops: 90</span>
+<span class="hljs-comment"> *  Rating: 4</span>
+<span class="hljs-comment"> */</span>
+<span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">howManyBits</span><span class="hljs-params">(<span class="hljs-keyword">int</span> x)</span></span>
+<span class="hljs-function"></span>&#123;
+  <span class="hljs-comment">/**</span>
+<span class="hljs-comment">   * To get the minimum bits needed by x, just get the first '1'</span>
+<span class="hljs-comment">   * from high bit to low bit of x if x &gt; 0 or ~x if x &lt; 0.</span>
+<span class="hljs-comment">   * </span>
+<span class="hljs-comment">   * The main idea is binary search, first check the high 16 bits.</span>
+<span class="hljs-comment">   * If it's not 0, then x must &gt;= 2^16, else x must &lt; 2^16. Record </span>
+<span class="hljs-comment">   * 16 in value.</span>
+<span class="hljs-comment">   * then check the high 8 bits in the none zero zone of x. Loop </span>
+<span class="hljs-comment">   * until the high 1 bit. Finally add all of the recorded values and the</span>
+<span class="hljs-comment">   * sign bit to get the result.</span>
+<span class="hljs-comment">   * </span>
+<span class="hljs-comment">  */</span>
+  <span class="hljs-keyword">int</span> b16, b8, b4, b2, b1, b0;
+  <span class="hljs-keyword">int</span> sign = x &gt;&gt; <span class="hljs-number">31</span>;
+  x ^= sign;
+
+  b16 = !!(x &gt;&gt; <span class="hljs-number">16</span>) &lt;&lt; <span class="hljs-number">4</span>;
+  x = x &gt;&gt; b16;
+  b8 = !!(x &gt;&gt; <span class="hljs-number">8</span>) &lt;&lt; <span class="hljs-number">3</span>;
+  x = x &gt;&gt; b8;
+  b4 = !!(x &gt;&gt; <span class="hljs-number">4</span>) &lt;&lt; <span class="hljs-number">2</span>;
+  x = x &gt;&gt; b4;
+  b2 = !!(x &gt;&gt; <span class="hljs-number">2</span>) &lt;&lt; <span class="hljs-number">1</span>;
+  x = x &gt;&gt; b2;
+  b1 = (x &gt;&gt; <span class="hljs-number">1</span>);
+  x = x &gt;&gt; b1;
+  b0 = x;
+  <span class="hljs-keyword">return</span> b16 + b8 + b4 + b2 + b1 + b0 + <span class="hljs-number">1</span>;
+&#125;</code></pre>
+<p><strong>二分查找</strong>在位运算中的运用。</p>
+<p>要判断x的最高位1在什么位置，先在较高的半位查找，如果确定在上半区域，则在这个区域继续查找，直到区域只剩下1个二进制位。</p>
+<p>具体方法见代码注释。</p>
+<h3 id="ilog2"><a href="#ilog2" class="headerlink" title="ilog2"></a>ilog2</h3><pre><code class="hljs c"><span class="hljs-comment">/*</span>
+<span class="hljs-comment"> * ilog2 - return floor(log base 2 of x), where x &gt; 0</span>
+<span class="hljs-comment"> *   Example: ilog2(16) = 4</span>
+<span class="hljs-comment"> *   Legal ops: ! ~ &amp; ^ | + &lt;&lt; &gt;&gt;</span>
+<span class="hljs-comment"> *   Max ops: 90</span>
+<span class="hljs-comment"> *   Rating: 4</span>
+<span class="hljs-comment"> */</span>
+<span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">ilog2</span><span class="hljs-params">(<span class="hljs-keyword">int</span> x)</span></span>
+<span class="hljs-function"></span>&#123;
+  <span class="hljs-comment">/**</span>
+<span class="hljs-comment">   * same idea as above problem</span>
+<span class="hljs-comment">  */</span>
+  <span class="hljs-keyword">int</span> sum1, sum2, sum3, sum4, sum5;
+  sum1 = (!!(x &gt;&gt; <span class="hljs-number">16</span>)) &lt;&lt; <span class="hljs-number">4</span>;
+  x = x &gt;&gt; sum1;
+  sum2 = (!!(x &gt;&gt; <span class="hljs-number">8</span>)) &lt;&lt; <span class="hljs-number">3</span>;
+  x = x &gt;&gt; sum2;
+  sum3 = (!!(x &gt;&gt; <span class="hljs-number">4</span>)) &lt;&lt; <span class="hljs-number">2</span>;
+  x = x &gt;&gt; sum3;
+  sum4 = (!!(x &gt;&gt; <span class="hljs-number">2</span>)) &lt;&lt; <span class="hljs-number">1</span>;
+  x = x &gt;&gt; sum4;
+  sum5 = (x &gt;&gt; <span class="hljs-number">1</span>);
+  <span class="hljs-keyword">return</span> sum1 + sum2 + sum3 + sum4 + sum5;
+&#125;</code></pre>
+<p>上个题的举一反三。</p>
+<h3 id="浮点数处理"><a href="#浮点数处理" class="headerlink" title="浮点数处理"></a>浮点数处理</h3><p>按照规则取出符号，阶码和尾码就好，在做除法时要考虑舍入的问题。</p>
+<pre><code class="hljs c"><span class="hljs-comment">/* </span>
+<span class="hljs-comment"> * float_half - Return bit-level equivalent of expression 0.5*f for</span>
+<span class="hljs-comment"> *   floating point argument f.</span>
+<span class="hljs-comment"> *   Both the argument and result are passed as unsigned int's, but</span>
+<span class="hljs-comment"> *   they are to be interpreted as the bit-level representation of</span>
+<span class="hljs-comment"> *   single-precision floating point values.</span>
+<span class="hljs-comment"> *   When argument is NaN, return argument</span>
+<span class="hljs-comment"> *   Legal ops: Any integer/unsigned operations incl. ||, &amp;&amp;. also if, while</span>
+<span class="hljs-comment"> *   Max ops: 30</span>
+<span class="hljs-comment"> *   Rating: 4</span>
+<span class="hljs-comment"> */</span>
+<span class="hljs-function"><span class="hljs-keyword">unsigned</span> <span class="hljs-title">float_half</span><span class="hljs-params">(<span class="hljs-keyword">unsigned</span> uf)</span></span>
+<span class="hljs-function"></span>&#123;
+  <span class="hljs-comment">/**</span>
+<span class="hljs-comment">   * first get sign, exp digit and check if uf need to round off.</span>
+<span class="hljs-comment">   * if uf = inf or nan, return uf</span>
+<span class="hljs-comment">   * if exp = 0 or exp = 1, as well as uf is 0 or not format digit or </span>
+<span class="hljs-comment">   * exp = 1, move left the addition of tail digit and the round bit.</span>
+<span class="hljs-comment">   * and finally add the sign bit.</span>
+<span class="hljs-comment">   * In other cases, DEC exp digit.</span>
+<span class="hljs-comment">  */</span>
+  <span class="hljs-keyword">unsigned</span> <span class="hljs-built_in">exp</span> = uf &amp; <span class="hljs-number">0xff800000</span>;
+  <span class="hljs-keyword">unsigned</span> frac;
+  <span class="hljs-keyword">unsigned</span> mask = <span class="hljs-number">0x7fffff</span>;
+  <span class="hljs-keyword">unsigned</span> shift = <span class="hljs-number">1</span>;
+
+  <span class="hljs-keyword">switch</span> (<span class="hljs-built_in">exp</span>)
+  &#123;
+  <span class="hljs-keyword">case</span> <span class="hljs-number">0x7f800000</span>:
+  <span class="hljs-keyword">case</span> <span class="hljs-number">0xff800000</span>:
+    <span class="hljs-keyword">return</span> uf;
+  <span class="hljs-keyword">case</span> <span class="hljs-number">0</span>:
+  <span class="hljs-keyword">case</span> <span class="hljs-number">0x80000000</span>:
+    <span class="hljs-keyword">break</span>;
+  <span class="hljs-keyword">default</span>:
+    <span class="hljs-keyword">switch</span> (sign_exp -= <span class="hljs-number">0x800000</span>)
+    &#123;
+    <span class="hljs-keyword">case</span> <span class="hljs-number">0</span>:
+    <span class="hljs-keyword">case</span> <span class="hljs-number">0x80000000</span>:
+      mask = <span class="hljs-number">0xfffff</span>;
+      <span class="hljs-keyword">break</span>;
+    <span class="hljs-keyword">default</span>:
+      shift = <span class="hljs-number">0</span>;
+    &#125;
+  &#125;
+
+  frac = uf &amp; mask;
+  frac = frac &gt;&gt; shift;
+
+  <span class="hljs-keyword">switch</span> (uf &amp; <span class="hljs-number">3</span>)
+  &#123;
+  <span class="hljs-keyword">case</span> <span class="hljs-number">3</span>:
+    frac += shift;
+  &#125;
+
+  <span class="hljs-keyword">return</span> sign_exp | frac;
+&#125;
+<span class="hljs-comment">/* </span>
+<span class="hljs-comment"> * float_f2i - Return bit-level equivalent of expression (int) f</span>
+<span class="hljs-comment"> *   for floating point argument f.</span>
+<span class="hljs-comment"> *   Argument is passed as unsigned int, but</span>
+<span class="hljs-comment"> *   it is to be interpreted as the bit-level representation of a</span>
+<span class="hljs-comment"> *   single-precision floating point value.</span>
+<span class="hljs-comment"> *   Anything out of range (including NaN and infinity) should return</span>
+<span class="hljs-comment"> *   0x80000000u.</span>
+<span class="hljs-comment"> *   Legal ops: Any integer/unsigned operations incl. ||, &amp;&amp;. also if, while</span>
+<span class="hljs-comment"> *   Max ops: 30</span>
+<span class="hljs-comment"> *   Rating: 4</span>
+<span class="hljs-comment"> */</span>
+<span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">float_f2i</span><span class="hljs-params">(<span class="hljs-keyword">unsigned</span> uf)</span></span>
+<span class="hljs-function"></span>&#123;
+  <span class="hljs-comment">/**</span>
+<span class="hljs-comment">   * first get sign, exp and frac digit, then check if uf is over the range of</span>
+<span class="hljs-comment">   * unsigned int and return the certain value.</span>
+<span class="hljs-comment">   * If not, add the hidden bit and move left frac by 7 bit so that every bit </span>
+<span class="hljs-comment">   * won't lose even if the right steps of movement is maxinum -- 30.</span>
+<span class="hljs-comment">   * Finally, return the result according the correct sign.</span>
+<span class="hljs-comment">  */</span>
+  <span class="hljs-keyword">int</span> sign = uf &gt;&gt; <span class="hljs-number">31</span>;
+  <span class="hljs-keyword">int</span> <span class="hljs-built_in">exp</span> = (uf &gt;&gt; <span class="hljs-number">23</span>) &amp; <span class="hljs-number">0xff</span>;
+  <span class="hljs-keyword">int</span> frac = uf &amp; <span class="hljs-number">0x007fffff</span>;
+  <span class="hljs-keyword">int</span> right = <span class="hljs-number">157</span> - <span class="hljs-built_in">exp</span>;
+  <span class="hljs-keyword">int</span> <span class="hljs-built_in">abs</span>;
+  <span class="hljs-keyword">if</span> (<span class="hljs-built_in">exp</span> &lt; <span class="hljs-number">127</span>)
+    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+  <span class="hljs-keyword">if</span> (<span class="hljs-built_in">exp</span> &gt; <span class="hljs-number">157</span>)
+    <span class="hljs-keyword">return</span> <span class="hljs-number">0x80000000</span>;
+  <span class="hljs-built_in">abs</span> = (<span class="hljs-number">0x40000000</span> + (frac &lt;&lt; <span class="hljs-number">7</span>)) &gt;&gt; right;
+  <span class="hljs-keyword">if</span> (sign)
+    <span class="hljs-keyword">return</span> -<span class="hljs-built_in">abs</span>;
+  <span class="hljs-keyword">else</span>
+    <span class="hljs-keyword">return</span> <span class="hljs-built_in">abs</span>;
+&#125;
+<span class="hljs-comment">/* </span>
+<span class="hljs-comment"> * float_twice - Return bit-level equivalent of expression 2*f for</span>
+<span class="hljs-comment"> *   floating point argument f.</span>
+<span class="hljs-comment"> *   Both the argument and result are passed as unsigned int's, but</span>
+<span class="hljs-comment"> *   they are to be interpreted as the bit-level representation of</span>
+<span class="hljs-comment"> *   single-precision floating point values.</span>
+<span class="hljs-comment"> *   When argument is NaN, return argument</span>
+<span class="hljs-comment"> *   Legal ops: Any integer/unsigned operations incl. ||, &amp;&amp;. also if, while</span>
+<span class="hljs-comment"> *   Max ops: 30</span>
+<span class="hljs-comment"> *   Rating: 4</span>
+<span class="hljs-comment"> */</span>
+<span class="hljs-function"><span class="hljs-keyword">unsigned</span> <span class="hljs-title">float_twice</span><span class="hljs-params">(<span class="hljs-keyword">unsigned</span> uf)</span></span>
+<span class="hljs-function"></span>&#123;
+  <span class="hljs-comment">/**</span>
+<span class="hljs-comment">   * first get exp and sign of uf, if exp is not 0, INC when exp is also </span>
+<span class="hljs-comment">   * not 255.</span>
+<span class="hljs-comment">   * else, it indicates that uf is 0 or not format digit, just double its </span>
+<span class="hljs-comment">   * frac and return the result according the correct sign.</span>
+<span class="hljs-comment">  */</span>
+  <span class="hljs-keyword">unsigned</span> <span class="hljs-built_in">exp</span> = uf &amp; <span class="hljs-number">0x7f800000</span>;
+  <span class="hljs-keyword">unsigned</span> sign = uf &amp; <span class="hljs-number">0x80000000</span>;
+  <span class="hljs-keyword">if</span> (<span class="hljs-built_in">exp</span>)
+  &#123;
+    <span class="hljs-keyword">if</span> (<span class="hljs-built_in">exp</span> != <span class="hljs-number">0x7f800000</span>)
+      uf = uf + <span class="hljs-number">0x00800000</span>;
+  &#125;
+  <span class="hljs-keyword">else</span>
+    uf = (uf &lt;&lt; <span class="hljs-number">1</span>) | sign;
+  <span class="hljs-keyword">return</span> uf;
+&#125;</code></pre>
+
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                  <div class="post-meta mr-3">
+                    <i class="iconfont icon-category"></i>
+                    
+                      <a class="hover-with-bg" href="/categories/%E4%BD%8D%E8%BF%90%E7%AE%97/">位运算</a>
+                    
+                  </div>
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/%E4%BD%8D%E8%BF%90%E7%AE%97/">位运算</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" target="_blank" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！</p>
+              
+              
+                <div class="post-prevnext row">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2020/10/17/AStar/">
+                        <span class="hidden-mobile">AStar</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div id="tocbot"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+  </main>
+
+  
+    <a id="scroll-top-button" href="#" role="button">
+      <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+    </a>
+  
+
+  
+    <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+  
+
+  
+
+  
+
+  <footer class="mt-5">
+  <div class="text-center py-3">
+    <div>
+      <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a>
+      <i class="iconfont icon-love"></i>
+      <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener">
+        <span>Fluid</span></a>
+    </div>
+    
+
+    
+
+    
+  </div>
+</footer>
+
+<!-- SCRIPTS -->
+<script  src="https://cdn.staticfile.org/jquery/3.4.1/jquery.min.js" ></script>
+<script  src="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/js/bootstrap.min.js" ></script>
+<script  src="/js/debouncer.js" ></script>
+<script  src="/js/main.js" ></script>
+
+<!-- Plugins -->
+
+
+  
+    <script  src="/js/lazyload.js" ></script>
+  
+
+
+
+  <script defer src="https://cdn.staticfile.org/clipboard.js/2.0.6/clipboard.min.js" ></script>
+  <script  src="/js/clipboard-use.js" ></script>
+
+
+
+
+
+
+
+  <script  src="https://cdn.staticfile.org/tocbot/4.11.1/tocbot.min.js" ></script>
+  <script>
+    $(document).ready(function () {
+      var boardCtn = $('#board-ctn');
+      var boardTop = boardCtn.offset().top;
+
+      tocbot.init({
+        tocSelector: '#tocbot',
+        contentSelector: '#post-body',
+        headingSelector: 'h1,h2,h3,h4,h5,h6',
+        linkClass: 'tocbot-link',
+        activeLinkClass: 'tocbot-active-link',
+        listClass: 'tocbot-list',
+        isCollapsedClass: 'tocbot-is-collapsed',
+        collapsibleClass: 'tocbot-is-collapsible',
+        collapseDepth: 0,
+        scrollSmooth: true,
+        headingsOffset: -boardTop
+      });
+      if ($('.toc-list-item').length > 0) {
+        $('#toc').css('visibility', 'visible');
+      }
+    });
+  </script>
+
+
+
+  <script  src="https://cdn.staticfile.org/typed.js/2.0.11/typed.min.js" ></script>
+  <script>
+    var typed = new Typed('#subtitle', {
+      strings: [
+        '  ',
+        "深入底层-数据的按位运算&nbsp;",
+      ],
+      cursorChar: "_",
+      typeSpeed: 70,
+      loop: false,
+    });
+    typed.stop();
+    $(document).ready(function () {
+      $(".typed-cursor").addClass("h2");
+      typed.start();
+    });
+  </script>
+
+
+
+  <script  src="https://cdn.staticfile.org/anchor-js/4.2.2/anchor.min.js" ></script>
+  <script>
+    anchors.options = {
+      placement: "right",
+      visible: "hover",
+      
+    };
+    var el = "h1,h2,h3,h4,h5,h6".split(",");
+    var res = [];
+    for (item of el) {
+      res.push(".markdown-body > " + item)
+    }
+    anchors.add(res.join(", "))
+  </script>
+
+
+
+  <script  src="/js/local-search.js" ></script>
+  <script>
+    var path = "/local-search.xml";
+    var inputArea = document.querySelector("#local-search-input");
+    inputArea.onclick = function () {
+      searchFunc(path, 'local-search-input', 'local-search-result');
+      this.onclick = null
+    }
+  </script>
+
+
+
+  <script  src="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+  <script>
+    $('#post img:not(.no-zoom img, img[no-zoom]), img[zoom]').each(
+      function () {
+        var element = document.createElement('a');
+        $(element).attr('data-fancybox', 'images');
+        $(element).attr('href', $(this).attr('src'));
+        $(this).wrap(element);
+      }
+    );
+  </script>
+
+
+
+
+
+  
+
+  
+    <!-- MathJax -->
+    <script>
+      MathJax = {
+        tex: {
+          inlineMath: [['$', '$'], ['\\(', '\\)']]
+        },
+        options: {
+          renderActions: {
+            findScript: [10, doc => {
+              document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+                const display = !!node.type.match(/; *mode=display/);
+                const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+                const text = document.createTextNode('');
+                node.parentNode.replaceChild(text, node);
+                math.start = { node: text, delim: '', n: 0 };
+                math.end = { node: text, delim: '', n: 0 };
+                doc.math.push(math);
+              });
+            }, '', false],
+            insertedScript: [200, () => {
+              document.querySelectorAll('mjx-container').forEach(node => {
+                let target = node.parentNode;
+                if (target.nodeName.toLowerCase() === 'li') {
+                  target.parentNode.classList.add('has-jax');
+                }
+              });
+            }, '', false]
+          }
+        }
+      };
+    </script>
+
+    <script async src="https://cdn.staticfile.org/mathjax/3.0.5/es5/tex-svg.js" ></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

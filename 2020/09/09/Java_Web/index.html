@@ -171,7 +171,7 @@
     
     <span class="post-meta mr-2">
       <i class="iconfont icon-chart"></i>
-      8k 字
+      9.3k 字
     </span>
   
 
@@ -181,7 +181,7 @@
       <i class="iconfont icon-clock-fill"></i>
       
       
-      111
+      128
        分钟
     </span>
   
@@ -1377,6 +1377,248 @@ application.setAttribute(<span class="hljs-string">"name4"</span>,<span class="h
 &lt;jsp:getProperty name=<span class="hljs-string">"people"</span> property=<span class="hljs-string">"id"</span>/&gt;
 &lt;jsp:getProperty name=<span class="hljs-string">"people"</span> property=<span class="hljs-string">"age"</span>/&gt;
 &lt;jsp:getProperty name=<span class="hljs-string">"people"</span> property=<span class="hljs-string">"address"</span>/&gt;</code></pre>
+<h2 id="MVC三层架构"><a href="#MVC三层架构" class="headerlink" title="MVC三层架构"></a>MVC三层架构</h2><p>概念：</p>
+<p>Model view Controller 模型 视图 控制器</p>
+<h3 id="早期架构"><a href="#早期架构" class="headerlink" title="早期架构"></a>早期架构</h3><p><img src="/2020/09/09/Java_Web/image-20201004100236448.png" srcset="/img/loading.gif" alt="image-20201004100236448"></p>
+<p>用户直接访问控制层，控制层就可以直接操作数据库</p>
+<pre><code class="hljs java">servlet--CRUD--&gt;数据库
+    弊端：
+    程序十分臃肿，不利于维护
+    servlet的代码中：处理请求，响应，视图跳转，处理JDBC，处理业务代码，处理逻辑代码
+架构：没有什么是加一层解决不了的;
+程序员调用
+|
+JDBC;
+|
+Mysql Oracle sqlServer... ...</code></pre>
+<h3 id="MVC三层架构-1"><a href="#MVC三层架构-1" class="headerlink" title="MVC三层架构"></a>MVC三层架构</h3><p><img src="/2020/09/09/Java_Web/image-20201004101527916.png" srcset="/img/loading.gif" alt="image-20201004101527916"></p>
+<p>Model</p>
+<ul>
+<li>业务处理：业务逻辑（Service）</li>
+<li>数据持久层：CRUD（Dao）</li>
+</ul>
+<p>View</p>
+<ul>
+<li>展示数据</li>
+<li>提供链接发起Servlet请求（a, form, img…）</li>
+</ul>
+<p>Controller</p>
+<ul>
+<li><p>接收用户的请求：（request:请求参数，Session信息… …）</p>
+</li>
+<li><p>交给业务层处理对应的代码</p>
+</li>
+<li><p>控制视图跳转</p>
+  <pre><code class="hljs java">登录--&gt; 接收用户的登录请求--&gt; 处理用户的请求(获取用户登录的参数) --&gt; 交给业务层处理登录业务(判断用户名密码是否正确:事务)
+--&gt; Dao层查询用户名和密码是否正确--&gt; 数据库</code></pre>
+</li>
+</ul>
+<h2 id="Filter"><a href="#Filter" class="headerlink" title="Filter"></a>Filter</h2><p>Filter：过滤器，用来过滤网站的数据；</p>
+<ul>
+<li>处理中文乱码</li>
+<li>登录验证</li>
+</ul>
+<p><img src="/2020/09/09/Java_Web/image-20201004102615729.png" srcset="/img/loading.gif" alt="image-20201004102615729"></p>
+<p>Filter开发步骤：</p>
+<ol>
+<li><p>导包</p>
+</li>
+<li><p>编写过滤器</p>
+<ol>
+<li><p>导包不要错，要导入java.servlet下面的Filter</p>
+</li>
+<li><p>实现filter接口，重写对应的方法</p>
+ <pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">CharacterEncodingFilter</span> <span class="hljs-keyword">implements</span> <span class="hljs-title">Filter</span> </span>&#123;
+
+    <span class="hljs-comment">//web 服务器启动时就已经初始化了，随时等待过滤对象出现</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">init</span><span class="hljs-params">(FilterConfig filterConfig)</span> <span class="hljs-keyword">throws</span> ServletException </span>&#123;
+        System.out.println(<span class="hljs-string">"CharacterEncodingFilter 初始化"</span>);
+    &#125;
+
+    <span class="hljs-comment">//1. 过滤器中的所有代码在过滤特定请求的时候都会执行</span>
+    <span class="hljs-comment">//2. 必须要让过滤器继续通行 chain.doFilter</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">doFilter</span><span class="hljs-params">(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain)</span> <span class="hljs-keyword">throws</span> IOException, ServletException </span>&#123;
+        servletRequest.setCharacterEncoding(<span class="hljs-string">"utf-8"</span>);
+        servletResponse.setCharacterEncoding(<span class="hljs-string">"utf-8"</span>);
+        servletResponse.setContentType(<span class="hljs-string">"text/html;charset=UTF-8"</span>);
+
+        System.out.println(<span class="hljs-string">"CharacterEncodingFilter 执行前..."</span>);
+        filterChain.doFilter(servletRequest, servletResponse);   <span class="hljs-comment">//让请求继续走，如果不写，程序到这里就会拦截停止</span>
+        System.out.println(<span class="hljs-string">"CharacterEncodingFilter 执行后..."</span>);
+    &#125;
+
+    <span class="hljs-comment">//Web 服务器关闭的时候，过滤器会销毁</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">destroy</span><span class="hljs-params">()</span> </span>&#123;
+        System.out.println(<span class="hljs-string">"CharacterEncodingFilter 销毁"</span>);
+    &#125;
+&#125;</code></pre>
+</li>
+<li><p>在Web.xml中配置Filter过滤器</p>
+ <pre><code class="hljs xml">    <span class="hljs-tag">&lt;<span class="hljs-name">filter</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">filter-name</span>&gt;</span>CharacterEncodingFilter<span class="hljs-tag">&lt;/<span class="hljs-name">filter-name</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">filter-class</span>&gt;</span>com.shuwen.filter.CharacterEncodingFilter<span class="hljs-tag">&lt;/<span class="hljs-name">filter-class</span>&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-name">filter</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">filter-mapping</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">filter-name</span>&gt;</span>CharacterEncodingFilter<span class="hljs-tag">&lt;/<span class="hljs-name">filter-name</span>&gt;</span>
+<span class="hljs-comment">&lt;!--        只要是/servlet下的任何请求，都会经过这个过滤器--&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">url-pattern</span>&gt;</span>/servlet/*<span class="hljs-tag">&lt;/<span class="hljs-name">url-pattern</span>&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-name">filter-mapping</span>&gt;</span></code></pre>
+</li>
+</ol>
+</li>
+</ol>
+<h2 id="监听器"><a href="#监听器" class="headerlink" title="监听器"></a>监听器</h2><p>实现一个监听器的接口；</p>
+<ol>
+<li><p>编写一个监听器</p>
+<p> 实现监听器的接口</p>
+ <pre><code class="hljs java"><span class="hljs-comment">//统计网站在线人数: 统计session</span>
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">OnlineCountListener</span> <span class="hljs-keyword">implements</span> <span class="hljs-title">HttpSessionListener</span> </span>&#123;
+    <span class="hljs-comment">//创建session监听：看你的一举一动</span>
+    <span class="hljs-comment">//一旦创建一个session，就会触发一次这个事件</span>
+    <span class="hljs-meta">@Override</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">sessionCreated</span><span class="hljs-params">(HttpSessionEvent httpSessionEvent)</span> </span>&#123;
+        ServletContext servletContext = httpSessionEvent.getSession().getServletContext();
+
+        System.out.println(httpSessionEvent.getSession().getId());
+
+        Integer onlineCount = (Integer) servletContext.getAttribute(<span class="hljs-string">"OnlineCount"</span>);
+        <span class="hljs-keyword">if</span>(onlineCount == <span class="hljs-keyword">null</span>)&#123;
+            onlineCount = <span class="hljs-number">1</span>;
+        &#125; <span class="hljs-keyword">else</span> &#123;
+            onlineCount += <span class="hljs-number">1</span>;
+        &#125;
+
+        servletContext.setAttribute(<span class="hljs-string">"OnlineCount"</span>, onlineCount);
+    &#125;
+
+    <span class="hljs-comment">//销毁session监听</span>
+    <span class="hljs-comment">//一旦销毁Session，就会触发一次这个事件</span>
+    <span class="hljs-meta">@Override</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">sessionDestroyed</span><span class="hljs-params">(HttpSessionEvent httpSessionEvent)</span> </span>&#123;
+        System.out.println(<span class="hljs-string">"会话销毁后..."</span>);
+        ServletContext servletContext = httpSessionEvent.getSession().getServletContext();
+        Integer onlineCount = (Integer) servletContext.getAttribute(<span class="hljs-string">"OnlineCount"</span>);
+        <span class="hljs-keyword">if</span>(onlineCount == <span class="hljs-keyword">null</span>)&#123;
+            onlineCount = <span class="hljs-number">0</span>;
+        &#125; <span class="hljs-keyword">else</span> &#123;
+            onlineCount -= <span class="hljs-number">1</span>;
+        &#125;
+
+        servletContext.setAttribute(<span class="hljs-string">"OnlineCount"</span>, onlineCount);
+    &#125;
+
+    <span class="hljs-comment">/*</span>
+<span class="hljs-comment">    * Session销毁</span>
+<span class="hljs-comment">    * 1. 手动销毁 httpSessionEvent.getSession().invalidate();</span>
+<span class="hljs-comment">    * 2. 自动销毁     &lt;session-config&gt;</span>
+<span class="hljs-comment">                        &lt;session-timeout&gt;1&lt;/session-timeout&gt;   -- 一分钟后自动销毁</span>
+<span class="hljs-comment">                    &lt;/session-config&gt;</span>
+<span class="hljs-comment">    * */</span>
+&#125;</code></pre>
+</li>
+<li><p>配置监听器</p>
+ <pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">listener</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">listener-class</span>&gt;</span>com.shuwen.listener.OnlineCountListener<span class="hljs-tag">&lt;/<span class="hljs-name">listener-class</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">listener</span>&gt;</span></code></pre>
+</li>
+<li><p>看情况是否使用</p>
+</li>
+</ol>
+<h2 id="过滤器、监听器常见应用"><a href="#过滤器、监听器常见应用" class="headerlink" title="过滤器、监听器常见应用"></a>过滤器、监听器常见应用</h2><p>监听器：GUI编程中经常使用</p>
+<pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">TestPanel</span> </span>&#123;
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">main</span><span class="hljs-params">(String[] args)</span> </span>&#123;
+        Frame frame = <span class="hljs-keyword">new</span> Frame(<span class="hljs-string">"中秋"</span>);    <span class="hljs-comment">//新建一个窗体</span>
+        Panel panel = <span class="hljs-keyword">new</span> Panel(<span class="hljs-keyword">null</span>);   <span class="hljs-comment">//面板</span>
+        frame.setLayout(<span class="hljs-keyword">null</span>);                  <span class="hljs-comment">//设置窗体布局</span>
+
+        frame.setBounds(<span class="hljs-number">300</span>, <span class="hljs-number">300</span>, <span class="hljs-number">500</span>, <span class="hljs-number">500</span>);
+        frame.setBackground(<span class="hljs-keyword">new</span> Color(<span class="hljs-number">0</span>,<span class="hljs-number">0</span>, <span class="hljs-number">255</span>));      <span class="hljs-comment">//设置背景颜色</span>
+
+        panel.setBounds(<span class="hljs-number">50</span>, <span class="hljs-number">50</span>, <span class="hljs-number">300</span>, <span class="hljs-number">300</span>);
+        panel.setBackground(<span class="hljs-keyword">new</span> Color(<span class="hljs-number">0</span>, <span class="hljs-number">255</span>, <span class="hljs-number">0</span>));
+
+        frame.add(panel);
+
+        frame.setVisible(<span class="hljs-keyword">true</span>);
+
+        <span class="hljs-comment">//监听事件，监听关闭事件</span>
+        frame.addWindowListener(<span class="hljs-keyword">new</span> WindowAdapter() &#123;
+            <span class="hljs-meta">@Override</span>
+            <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">windowClosing</span><span class="hljs-params">(WindowEvent e)</span> </span>&#123;
+                System.exit(<span class="hljs-number">0</span>);
+            &#125;
+        &#125;);
+    &#125;
+&#125;</code></pre>
+<p>用户登录之后才能进入首页，用户注销后就不能进入主页。</p>
+<ol>
+<li><p>用户登录之后向Session中放入用户的数据</p>
+</li>
+<li><p>进入主页的时候，要判断用户是否已经登录</p>
+ <pre><code class="hljs java"><span class="hljs-meta">@Override</span>
+<span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">doFilter</span><span class="hljs-params">(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain)</span> <span class="hljs-keyword">throws</span> IOException, ServletException </span>&#123;
+    <span class="hljs-comment">// ServletRequest</span>
+    HttpServletRequest httpServletRequest = (HttpServletRequest) servletRequest;
+    HttpServletResponse httpServletResponse = (HttpServletResponse) servletResponse;
+    Object userSession = httpServletRequest.getSession().getAttribute(Constant.USER_SESSION);
+    <span class="hljs-keyword">if</span>(userSession == <span class="hljs-keyword">null</span>)&#123;
+        httpServletResponse.sendRedirect(<span class="hljs-string">"/error.jsp"</span>);
+    &#125;
+    filterChain.doFilter(servletRequest, servletResponse);
+&#125;</code></pre>
+</li>
+</ol>
+<h2 id="JDBC"><a href="#JDBC" class="headerlink" title="JDBC"></a>JDBC</h2><p>详细内容见我的博客MySQL。</p>
+<p>Junit单元测试</p>
+<p>依赖：junit包</p>
+<p>简单实用</p>
+<p>@Test注解只有在方法上生效，只要加了这个方法，就可以直接运行。</p>
+<pre><code class="hljs java"><span class="hljs-meta">@Test</span>
+<span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">test</span><span class="hljs-params">()</span></span>&#123;
+    System.out.println(<span class="hljs-string">"Hello"</span>);
+&#125;</code></pre>
+<h2 id="项目实例：SMBMS"><a href="#项目实例：SMBMS" class="headerlink" title="项目实例：SMBMS"></a>项目实例：SMBMS</h2><h3 id="基本架构"><a href="#基本架构" class="headerlink" title="基本架构"></a>基本架构</h3><p><img src="/2020/09/09/Java_Web/image-20201004224144180.png" srcset="/img/loading.gif" alt="image-20201004224144180"></p>
+<h3 id="项目搭建"><a href="#项目搭建" class="headerlink" title="项目搭建"></a>项目搭建</h3><ol>
+<li><p>搭建一个Maven Web项目</p>
+</li>
+<li><p>配置Tomcat</p>
+</li>
+<li><p>测试项目是否能够跑起来</p>
+</li>
+<li><p>导入项目中会遇到的jar包</p>
+<p> jsp,servlet, mysql驱动, jstl, standard…</p>
+</li>
+<li><p>创建项目包结构</p>
+<p> <img src="/2020/09/09/Java_Web/image-20201005223120901.png" srcset="/img/loading.gif" alt="image-20201005223120901"></p>
+</li>
+<li><p>编写实体类</p>
+<p> ORM映射：表-类映射</p>
+</li>
+<li><p>编写基础公共类</p>
+<ol>
+<li><p>数据库配置文件</p>
+</li>
+<li><p>编写公共类</p>
+</li>
+<li><p>编写字符编码过滤器</p>
+</li>
+</ol>
+</li>
+<li><p>导入静态资源（前端的内容）</p>
+</li>
+</ol>
+<h3 id="登录功能"><a href="#登录功能" class="headerlink" title="登录功能"></a>登录功能</h3><p><img src="/2020/09/09/Java_Web/image-20201006163150542.png" srcset="/img/loading.gif" alt="image-20201006163150542"></p>
+<ol>
+<li>编写前端</li>
+<li>在web.xml中设置欢迎页</li>
+<li>编写Dao层，得到用户登录的接口</li>
+<li>编写Dao接口的实现类</li>
+<li>业务层接口</li>
+<li>业务层实现类</li>
+<li>编写Servlet</li>
+<li>注册Servlet</li>
+<li>测试访问，确保以上功能成功</li>
+</ol>
 
             </div>
             <hr>
