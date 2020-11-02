@@ -17,7 +17,7 @@
   <meta name="description" content="Shuwen Chen Blog">
   <meta name="author" content="Shuwen Chen">
   <meta name="keywords" content="">
-  <title>外卖评论情感分析 - MyBlog</title>
+  <title>快速排序 - MyBlog</title>
 
   <link  rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/css/bootstrap.min.css" />
 
@@ -160,8 +160,8 @@
               
   <div class="mt-3 post-meta">
     <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-    <time datetime="2020-10-11 19:51" pubdate>
-      2020年10月11日 晚上
+    <time datetime="2020-10-27 18:54" pubdate>
+      2020年10月27日 晚上
     </time>
   </div>
 
@@ -171,7 +171,7 @@
     
     <span class="post-meta mr-2">
       <i class="iconfont icon-chart"></i>
-      8 字
+      507 字
     </span>
   
 
@@ -181,7 +181,7 @@
       <i class="iconfont icon-clock-fill"></i>
       
       
-      1
+      7
        分钟
     </span>
   
@@ -211,10 +211,75 @@
         <div class="py-5" id="board">
           <article class="post-content mx-auto" id="post">
             <!-- SEO header -->
-            <h1 style="display: none">外卖评论情感分析</h1>
+            <h1 style="display: none">快速排序</h1>
             
             <div class="markdown-body" id="post-body">
-              <h1 id="外卖评论情感分析"><a href="#外卖评论情感分析" class="headerlink" title="外卖评论情感分析"></a>外卖评论情感分析</h1>
+              <h1 id="快速排序"><a href="#快速排序" class="headerlink" title="快速排序"></a>快速排序</h1><p>快速排序，顾名思义，是消耗时间较少的排序算法。其基本思想也是基于自顶向下，分而治之。</p>
+<p>对于升序排序，首先选取一个元素，将其放到特定的位置，使这个元素左边的值都比它小，右边的值都比它大。然后问题就被化解成对左边的数组进行排序和右边的数组进行排序，直到数组元素只剩一个时，直接返回最小解。</p>
+<p>使用递归算法的代码如下：</p>
+<pre><code class="hljs java"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">quickSort</span><span class="hljs-params">(<span class="hljs-keyword">int</span>[] numbers, <span class="hljs-keyword">int</span> s, <span class="hljs-keyword">int</span> e)</span> </span>&#123;
+    <span class="hljs-keyword">if</span> (s &gt;= e)
+        <span class="hljs-keyword">return</span>;
+    <span class="hljs-keyword">int</span> tmp = numbers[s];
+    <span class="hljs-keyword">int</span> i = s;
+    <span class="hljs-keyword">int</span> j = e;
+    <span class="hljs-keyword">while</span> (i &lt; j) &#123;
+        <span class="hljs-keyword">while</span> (i &lt; j &amp;&amp; numbers[j] &gt;= tmp) &#123;
+            j--;
+        &#125;
+        numbers[i] = numbers[j];
+        <span class="hljs-keyword">while</span> (i &lt; j &amp;&amp; numbers[i] &lt;= tmp) &#123;
+            i++;
+        &#125;
+        numbers[j] = numbers[i];
+    &#125;
+    numbers[i] = tmp;
+
+    quickSort(numbers, s, i - <span class="hljs-number">1</span>);
+    quickSort(numbers, i + <span class="hljs-number">1</span>, e);
+&#125;</code></pre>
+<p>但是，使用递归总是面临着栈溢出的风险，所以也需要考虑非递归的算法，究其本质，只是使用外部栈来实现递归的过程。</p>
+<p>其基本思想如下：</p>
+<p>在进行一轮划分后，把右边的数组先存到栈中，继续划分左边的数组，直到没有数组可以划分，这时从栈中取出数组继续划分，循环直到栈为空。</p>
+<p>Java代码如下：</p>
+<pre><code class="hljs java"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">quickSort2</span><span class="hljs-params">(<span class="hljs-keyword">int</span>[] numbers)</span> </span>&#123;
+    <span class="hljs-comment">/**</span>
+<span class="hljs-comment">     * 非递归算法，用栈来存储还未排序的片段，然后当只剩当前 一个元素时从栈中取数据，直到栈空</span>
+<span class="hljs-comment">     */</span>
+    <span class="hljs-keyword">int</span> s = <span class="hljs-number">0</span>;
+    <span class="hljs-keyword">int</span> e = numbers.length - <span class="hljs-number">1</span>;
+    Stack&lt;Integer&gt; start = <span class="hljs-keyword">new</span> Stack&lt;&gt;();
+    Stack&lt;Integer&gt; end = <span class="hljs-keyword">new</span> Stack&lt;&gt;();
+    <span class="hljs-keyword">int</span> tmp;
+    <span class="hljs-keyword">int</span> i;
+    <span class="hljs-keyword">int</span> j;
+
+    <span class="hljs-keyword">while</span> (s &lt; e || !start.isEmpty()) &#123;
+        <span class="hljs-keyword">if</span> (s &lt; e) &#123;
+            tmp = numbers[s];
+            i = s;
+            j = e;
+            <span class="hljs-keyword">while</span> (i &lt; j) &#123;
+                <span class="hljs-keyword">while</span> (i &lt; j &amp;&amp; numbers[j] &gt;= tmp) &#123;
+                    j--;
+                &#125;
+                numbers[i] = numbers[j];
+                <span class="hljs-keyword">while</span> (i &lt; j &amp;&amp; numbers[i] &lt;= tmp) &#123;
+                    i++;
+                &#125;
+                numbers[j] = numbers[i];
+            &#125;
+            numbers[i] = tmp;
+            start.add(i + <span class="hljs-number">1</span>);
+            end.add(e);
+            e = i - <span class="hljs-number">1</span>;
+        &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (!start.isEmpty()) &#123;
+            s = start.pop();
+            e = end.pop();
+        &#125;
+    &#125;
+&#125;</code></pre>
+
             </div>
             <hr>
             <div>
@@ -223,7 +288,7 @@
                   <div class="post-meta mr-3">
                     <i class="iconfont icon-category"></i>
                     
-                      <a class="hover-with-bg" href="/categories/python/">python</a>
+                      <a class="hover-with-bg" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/">数据结构与算法</a>
                     
                   </div>
                 
@@ -231,9 +296,11 @@
                   <div class="post-meta">
                     <i class="iconfont icon-tags"></i>
                     
-                      <a class="hover-with-bg" href="/tags/python/">python</a>
+                      <a class="hover-with-bg" href="/tags/Java/">Java</a>
                     
-                      <a class="hover-with-bg" href="/tags/%E8%87%AA%E7%84%B6%E8%AF%AD%E8%A8%80%E5%A4%84%E7%90%86/">自然语言处理</a>
+                      <a class="hover-with-bg" href="/tags/%E6%8E%92%E5%BA%8F/">排序</a>
+                    
+                      <a class="hover-with-bg" href="/tags/%E5%88%86%E6%B2%BB/">分治</a>
                     
                   </div>
                 
@@ -241,6 +308,29 @@
               
                 <p class="note note-warning">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" target="_blank" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！</p>
               
+              
+                <div class="post-prevnext row">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2020/10/27/%E6%A3%8B%E7%9B%98%E8%A6%86%E7%9B%96%E9%97%AE%E9%A2%98/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">棋盘覆盖问题</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2020/10/27/%E5%A4%A7%E6%95%B4%E6%95%B0%E4%B9%98%E6%B3%95/">
+                        <span class="hidden-mobile">大整数乘法</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
               
             </div>
 
@@ -373,7 +463,7 @@
     var typed = new Typed('#subtitle', {
       strings: [
         '  ',
-        "外卖评论情感分析&nbsp;",
+        "快速排序&nbsp;",
       ],
       cursorChar: "_",
       typeSpeed: 70,

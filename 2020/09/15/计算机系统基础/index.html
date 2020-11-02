@@ -171,7 +171,7 @@
     
     <span class="post-meta mr-2">
       <i class="iconfont icon-chart"></i>
-      3.7k 字
+      5.8k 字
     </span>
   
 
@@ -181,7 +181,7 @@
       <i class="iconfont icon-clock-fill"></i>
       
       
-      40
+      62
        分钟
     </span>
   
@@ -395,8 +395,8 @@ CPI = \sum\limits_{j=1}^{n}(CPI_{i}\times F_{i}) = 程序总时钟周期数\div 
 <p><strong>位截断</strong>：直接舍去多出来的位数，截断具有一定的风险，因为可能导致数据精度或者符号发生变化，也可能彻底改变数值。</p>
 <h4 id="2-2-数据的存储"><a href="#2-2-数据的存储" class="headerlink" title="2.2 数据的存储"></a>2.2 数据的存储</h4><p>最低有效位（LSB）：数字的最低位</p>
 <p>最高有效位（MSB）：数字的最高位</p>
-<p>大端方式：数据的最高有效位存储在小地址单元中</p>
-<p>小端方式：数据的最低有效位存储在小地址单元中</p>
+<p>大端方式：数据的最高有效位存储在小地址单元中，IBM采用这种方式</p>
+<p>小端方式：数据的最低有效位存储在小地址单元中，Intel使用，“低对低，高对高”，低字节对应低地址。</p>
 <h4 id="2-3-整数加减运算"><a href="#2-3-整数加减运算" class="headerlink" title="2.3 整数加减运算"></a>2.3 整数加减运算</h4><p><img src="/2020/09/15/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20201003153252707.png" srcset="/img/loading.gif" alt="image-20201003153252707"></p>
 <p>无符号整数和带符号整数的加减运算电路是完全一样的，都在整数加减运算器中实现。</p>
 <p>MUX是一个二路选择器，Sub控制信号会告诉MUX此时所做的是减法运算，那么MUX会选择把Y按位取反后进行输出，同时，控制端Sub作为低位进位送到加法器。当Sub为1时做减法，实现x-y = X + $\overline{Y}$ + 1, 当Sub为1时做加法，实现x + y = X + Y。</p>
@@ -480,6 +480,156 @@ CPI = \sum\limits_{j=1}^{n}(CPI_{i}\times F_{i}) = 程序总时钟周期数\div 
 <p>​    </p>
 <p>​    </p>
 <p>​    </p>
+<h2 id="第三章-程序的转换及机器级表示"><a href="#第三章-程序的转换及机器级表示" class="headerlink" title="第三章 程序的转换及机器级表示"></a>第三章 程序的转换及机器级表示</h2><p>计算机的指令有微指令，机器指令和伪（宏）指令之分。</p>
+<p>微指令：微程序级指令，属于微体系结构，硬件范畴</p>
+<p>宏指令：由若干机器指令组成的序列，软件范畴</p>
+<p>机器指令：位于两者之间，可由汇编语言来表示，属于指令集体系结构（ISA）</p>
+<p>他们分别对应着计算机系统的层次结构中的中间三个结构。</p>
+<h3 id="1-程序转换概述"><a href="#1-程序转换概述" class="headerlink" title="1. 程序转换概述"></a>1. 程序转换概述</h3><h4 id="1-1-机器指令及汇编指令"><a href="#1-1-机器指令及汇编指令" class="headerlink" title="1.1 机器指令及汇编指令"></a>1.1 机器指令及汇编指令</h4><p>机器语言程序是一个由若干条机器指令组成的序列。</p>
+<p>汇编语言程序将机器语言中的操作码或者操作数转换为汇编助记符。</p>
+<p>操作码字段：指出指令的操作性质</p>
+<p>立即数字段：指出操作数或者偏移量</p>
+<p>寄存器编号字段：给出操作数或操作数地址所在的寄存器编号。</p>
+<h4 id="1-2-指令集体系结构"><a href="#1-2-指令集体系结构" class="headerlink" title="1.2 指令集体系结构"></a>1.2 指令集体系结构</h4><p>Instruction Set Architecture，ISA，对使用硬件的软件屏蔽底层硬件的实现细节，将物理上的计算机硬件抽象成一个逻辑上的虚拟计算机，成为<strong>机器语言级虚拟机</strong>。</p>
+<blockquote>
+<p>正因为不同的硬件其指令集体系可能不同，因此同一个程序在不同的系统中运行时不一定能够兼容。可理解为在虚拟机A上运行的程序不能再虚拟机B上运行，但是Java程序不同，Java天生就运行在自己的虚拟机中，它不需要依赖于每个计算机的指令集体系，因此可以一次编译，到处运行。</p>
+</blockquote>
+<p><img src="/2020/09/15/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20201028000222620.png" srcset="/img/loading.gif" alt="image-20201028000222620"></p>
+<h4 id="1-3-生成机器代码的过程"><a href="#1-3-生成机器代码的过程" class="headerlink" title="1.3 生成机器代码的过程"></a>1.3 生成机器代码的过程</h4><ol>
+<li>预处理：展开include和宏</li>
+<li>编译：将c文件编译成汇编语言程序，使用的是AT&amp;T格式，目的操作数在右而源操作数在左。</li>
+<li>汇编：将汇编程序转变成机器语言程序，一般是.o文件，可通过objdump -d filename进行反汇编</li>
+<li>链接：将多个可重定位目标文件以及库函数链接起来，形成可执行文件</li>
+</ol>
+<p><strong>AT&amp;T格式：</strong></p>
+<p><img src="/2020/09/15/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20201028163025532.png" srcset="/img/loading.gif" alt="image-20201028163025532"></p>
+<p><strong>可执行文件的存储器映像</strong></p>
+<p><img src="/2020/09/15/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20201028164024259.png" srcset="/img/loading.gif" alt="image-20201028164024259"></p>
+<h3 id="2-IA-32指令系统概述"><a href="#2-IA-32指令系统概述" class="headerlink" title="2. IA-32指令系统概述"></a>2. IA-32指令系统概述</h3><h4 id="2-1-数据类型及其格式"><a href="#2-1-数据类型及其格式" class="headerlink" title="2.1 数据类型及其格式"></a>2.1 数据类型及其格式</h4><p>IBA规范中C语言基本数据类型和IA-32操作数长度之间的对应关系。</p>
+<p><img src="/2020/09/15/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20201028163347300.png" srcset="/img/loading.gif" alt="image-20201028163347300"></p>
+<h4 id="2-2-寄存器组织和寻址方式"><a href="#2-2-寄存器组织和寻址方式" class="headerlink" title="2.2 寄存器组织和寻址方式"></a>2.2 寄存器组织和寻址方式</h4><p>IA-32指令的操作数有三类：立即数，寄存器操作数，存储器操作数</p>
+<p><strong>定点寄存器</strong>：没有专门用途的可以存放各类定点操作数的寄存器。</p>
+<p><img src="/2020/09/15/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20201028164056724.png" srcset="/img/loading.gif" alt="image-20201028164056724"></p>
+<p><strong>通用寄存器编号</strong></p>
+<p><img src="/2020/09/15/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20201028164325127.png" srcset="/img/loading.gif" alt="image-20201028164325127"></p>
+<p><strong>寻址方式</strong></p>
+<p><img src="/2020/09/15/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20201028164134080.png" srcset="/img/loading.gif" alt="image-20201028164134080"></p>
+<p>对于数组元素的访问一般采用“基址加比例变址”的寻址方式。</p>
+<h4 id="2-3-机器指令格式"><a href="#2-3-机器指令格式" class="headerlink" title="2.3 机器指令格式"></a>2.3 机器指令格式</h4><p><img src="/2020/09/15/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20201028164422271.png" srcset="/img/loading.gif" alt="image-20201028164422271"></p>
+<h3 id="3-常用指令类型及其操作（重点）"><a href="#3-常用指令类型及其操作（重点）" class="headerlink" title="3. 常用指令类型及其操作（重点）"></a>3. 常用指令类型及其操作（重点）</h3><h4 id="3-1-传送指令"><a href="#3-1-传送指令" class="headerlink" title="3.1 传送指令"></a>3.1 传送指令</h4><ul>
+<li>通用数据传送指令：<ul>
+<li>MOV</li>
+<li>MOVS：符号扩展</li>
+<li>MOVZ：0扩展</li>
+<li>XCHG</li>
+<li>PUSH</li>
+<li>POP</li>
+</ul>
+</li>
+<li>地址传送指令：<ul>
+<li>LEA（Load Effect Address）：将源操作数的存储地址送到目的寄存器中</li>
+</ul>
+</li>
+<li>标志传送指令：<ul>
+<li>pushf：将标志寄存器的内容压栈</li>
+<li>popf：将栈顶内容送到标志寄存器</li>
+</ul>
+</li>
+</ul>
+<h4 id="3-2-定点算术运算指令"><a href="#3-2-定点算术运算指令" class="headerlink" title="3.2 定点算术运算指令"></a>3.2 定点算术运算指令</h4><p><img src="/2020/09/15/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20201028165255577.png" srcset="/img/loading.gif" alt="image-20201028165255577"></p>
+<ul>
+<li><p>减法指令：后一个数减前一个数</p>
+</li>
+<li><p>比较指令</p>
+<p>  类似使用SUB指令，置标志位后再接条件转移指令或者条件设置指令。</p>
+</li>
+<li><p>乘法指令</p>
+<ol>
+<li>只给出SRC，则另一个源操作数隐含在累加器AL/AX/EAX中，结果存放在<strong>2n位</strong>。</li>
+<li>给出DST和SRC，结果放在<strong>n位</strong>DST中。</li>
+<li><p>给出REG，SRC，IMM，则将SRC和立即数IMM相乘，结果存放在<strong>n位</strong>REG中。</p>
+<p>关于乘法指令<strong>标志位</strong>的设置：</p>
+</li>
+</ol>
+<ul>
+<li><p>对于MUL指令：</p>
+<p>  若高位全为0，则OF和CF皆为0，否则皆为1</p>
+</li>
+<li><p>对于IMUL指令：</p>
+<p>  若高位全为0或者1，并且等于低位中的最高位，则OF和CF全为0，否则全为1</p>
+</li>
+</ul>
+</li>
+<li><p>除法指令</p>
+<p>  指令中只会明显指出除数，用累加器AL/AX/EAX指出被除数</p>
+<p>  以8位除数为例，被除数被储存在AX寄存器中，商送回AL，余数在AH中（商在低位余在高）。</p>
+</li>
+</ul>
+<h4 id="3-3-按位运算指令"><a href="#3-3-按位运算指令" class="headerlink" title="3.3 按位运算指令"></a>3.3 按位运算指令</h4><ul>
+<li><p>逻辑运算指令</p>
+<p>  仅NOT指令不影响标志位，其他指令执行后，OF=CF=0，ZF和SF根据结果判断</p>
+<ul>
+<li>NOT</li>
+<li>AND</li>
+<li>OR</li>
+<li>XOR</li>
+<li>TEST：根据两个操作数相与的结果来设置条件标志，<strong>常用于需检测某种条件但是不能改变原操作数的场合</strong>。</li>
+</ul>
+</li>
+<li><p>移位指令</p>
+<ul>
+<li>SHL</li>
+<li>SHR</li>
+<li>SAL</li>
+<li>SAR</li>
+<li>ROL</li>
+<li>ROR</li>
+<li>RCL：带进位循环左移，将CF作为操作数的一部分循环左移</li>
+<li>RCR</li>
+</ul>
+</li>
+</ul>
+<h4 id="3-4-控制转移指令"><a href="#3-4-控制转移指令" class="headerlink" title="3.4 控制转移指令"></a>3.4 控制转移指令</h4><p><strong>直接转移</strong>：转移的目标地址作为立即数直接出现在指令的机器码中</p>
+<p><strong>间接转移</strong>：转移的目标地址间接存储在某一寄存器或存储单元中</p>
+<p>在IA-32指令系统中，所有<strong>段内直接转移</strong>都是<strong>相对转移</strong>，所有<strong>段内间接转移或者段间转移</strong>都是<strong>绝对转移</strong>。</p>
+<p><strong>条件转移指令</strong></p>
+<p><img src="/2020/09/15/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20201028172009852.png" srcset="/img/loading.gif" alt="image-20201028172009852"></p>
+<p>对于带符号数可以这样判断：根据SF直接得出结果符号，在根据OF判断结果是否正确，若结果不正确则实际的大小判断要反过来</p>
+<p>例如，SF=1表示a-b结果是负的，本来应该是a<b，但是OF=1表示结果是错的，所以实际a>b。</b，但是OF=1表示结果是错的，所以实际a></p>
+<p><strong>条件设置指令</strong></p>
+<p>将条件标志组合得到的条件值设置到一个8位通用寄存器中，其设置的条件值与上表中的转移条件值完全一样。</p>
+<p><strong>调用和返回指令</strong></p>
+<ul>
+<li>CALL DST：返回地址RA入栈，转到DST处执行</li>
+<li>RET：从栈中取出返回地址RA，转到RA处执行</li>
+</ul>
+<h4 id="3-5-x87浮点处理指令"><a href="#3-5-x87浮点处理指令" class="headerlink" title="3.5 x87浮点处理指令"></a>3.5 x87浮点处理指令</h4><p>略</p>
+<h4 id="3-6-MMX-SSE指令集"><a href="#3-6-MMX-SSE指令集" class="headerlink" title="3.6 MMX/SSE指令集"></a>3.6 MMX/SSE指令集</h4><p>略</p>
+<h3 id="4-C语言的机器级表示"><a href="#4-C语言的机器级表示" class="headerlink" title="4. C语言的机器级表示"></a>4. C语言的机器级表示</h3><h4 id="4-1-过程调用的机器级表示"><a href="#4-1-过程调用的机器级表示" class="headerlink" title="4.1 过程调用的机器级表示"></a>4.1 过程调用的机器级表示</h4><p>IA-32中用于过程调用的指令：CALL和RET</p>
+<p>为了支持嵌套和递归调用，通常利用栈来保存返回地址，入口参数和过程内部定义的非静态局部变量。</p>
+<p>CALL在跳转之前会将返回地址压栈，RET在返回之前会从栈中取出返回地址。</p>
+<p><span style="color:blue; font-weight:bold; font-size:20px">过程调用执行步骤</span></p>
+<p>令P为调用者（caller），Q为被调用者（callee）。</p>
+<ol>
+<li>P将入口参数（实参）放到Q能访问到的地方。</li>
+<li>P将返回地址存到特定地方，然后将控制转移到Q。</li>
+<li>Q保存P的现场，并为自己的非静态局部变量分配空间。（准备阶段）</li>
+<li>执行Q的过程体（函数体）。</li>
+<li>Q恢复P的现场，并释放局部变量所占用的空间。（结束阶段）</li>
+<li>Q取出返回地址，将控制转移到P。</li>
+</ol>
+<p>原因：调用者和被调用者公用一套通用寄存器，因此被调用者不能破坏原有寄存器的内容，需要先保存到栈中。</p>
+<p><strong>现场</strong>：通用寄存器中原先的值</p>
+<p><span style="color:blue;font-weight:bold">IA-32的寄存器使用规定</span></p>
+<p><strong>调用者保存寄存器</strong>：EAX，EDX，ECX（ADC），P在<strong>转到Q之前</strong>先保存他们的值，并在Q返回后先回复他们的值再使用。Q能够直接使用他们。</p>
+<p><strong>被调用者保存寄存器</strong>：EBX，ESI，EDI，Q必须在使用他们之前先将他们的值保存到栈中，并在返回P之前恢复它们的值。</p>
+<p><span style="color:blue;font-weight:bold">IA-32的栈，栈帧及其结构</span></p>
+<p><strong>需要压入栈中的内容</strong>：过程的入口参数，返回地址，被保存寄存器的值，被调用过程中的非静态局部变量。</p>
+<p><strong>栈帧</strong>：为每个过程分配的栈区，一个栈由若干个栈帧组成。</p>
+<p><strong>帧指针寄存器</strong>：存放每个栈帧的起始位置，当前栈帧的范围在EBP和ESP指向的内存地址之间。在过程执行时，<strong>栈指针</strong>会不断移动，而<strong>帧指针</strong>可以固定不变。</p>
+<p><img src="/2020/09/15/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20201101093210811.png" srcset="/img/loading.gif" alt="image-20201101093210811"></p>
+<p><span style="color:red;font-weight:bold">注意</span>：参数是倒着放的！</p>
+<p>ESP+8总是指向第一个参数，之后的参数在此基础上每个+4。</p>
 
             </div>
             <hr>

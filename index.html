@@ -176,6 +176,168 @@
     
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
+        <a href="/2020/10/27/%E6%A3%8B%E7%9B%98%E8%A6%86%E7%9B%96%E9%97%AE%E9%A2%98/">棋盘覆盖问题</a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2020/10/27/%E6%A3%8B%E7%9B%98%E8%A6%86%E7%9B%96%E9%97%AE%E9%A2%98/">
+          
+          
+            
+          
+          棋盘覆盖问题问题描述有一个边长为2的n次方的正方形棋盘，其中一个位置被图上了颜色，如图：
+
+现在要使用角形的图案来填满这块棋盘，请问填法是什么？
+示例：
+
+主要思想因为棋盘的边长是2的幂次，所以对半分块是很容易的，在把棋盘分成四块后，其中有一块一定被上过色，那么这时只需要放置一个角形图案到剩余的三块中间，那么这四块有可以分别视为涂过色的新棋盘，当棋盘的边长只剩2时，可以直接放置角形图案充满棋盘。因
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2020-10-27 19:16" pubdate>
+              2020-10-27
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-category"></i>
+            
+              <a href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/">数据结构与算法</a>
+            
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/Java/">Java</a>
+            
+              <a href="/tags/%E5%88%86%E6%B2%BB/">分治</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        <a href="/2020/10/27/%E5%BF%AB%E9%80%9F%E6%8E%92%E5%BA%8F/">快速排序</a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2020/10/27/%E5%BF%AB%E9%80%9F%E6%8E%92%E5%BA%8F/">
+          
+          
+            
+          
+          快速排序快速排序，顾名思义，是消耗时间较少的排序算法。其基本思想也是基于自顶向下，分而治之。
+对于升序排序，首先选取一个元素，将其放到特定的位置，使这个元素左边的值都比它小，右边的值都比它大。然后问题就被化解成对左边的数组进行排序和右边的数组进行排序，直到数组元素只剩一个时，直接返回最小解。
+使用递归算法的代码如下：
+public static void quickSort(int[] numbe
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2020-10-27 18:54" pubdate>
+              2020-10-27
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-category"></i>
+            
+              <a href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/">数据结构与算法</a>
+            
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/Java/">Java</a>
+            
+              <a href="/tags/%E6%8E%92%E5%BA%8F/">排序</a>
+            
+              <a href="/tags/%E5%88%86%E6%B2%BB/">分治</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        <a href="/2020/10/27/%E5%A4%A7%E6%95%B4%E6%95%B0%E4%B9%98%E6%B3%95/">大整数乘法</a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2020/10/27/%E5%A4%A7%E6%95%B4%E6%95%B0%E4%B9%98%E6%B3%95/">
+          
+          
+            
+          
+          大整数乘法对于位数不超过10位的整数而言，可以直接使用运算符做乘法，但是遇到更大的整数只能使用数组来模拟运算。
+这里总结了二进制表示的大整数的乘法。
+假设u和v是两个二进制大整数，如果直接相乘，需要$O(n^2)$的时间复杂度，当然思路也是十分清晰的，直接把每一位相乘得到的数字加起来就好。
+也可以使用分治的思想来实现乘法，并且如果能够使用移位指令的话，时间复杂度能够降低到$O(n^{1.59})$
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2020-10-27 16:59" pubdate>
+              2020-10-27
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-category"></i>
+            
+              <a href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/">数据结构与算法</a>
+            
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/%E9%AB%98%E7%B2%BE%E5%BA%A6/">高精度</a>
+            
+              <a href="/tags/Java/">Java</a>
+            
+              <a href="/tags/%E5%88%86%E6%B2%BB/">分治</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
         <a href="/2020/10/23/%E6%B7%B1%E5%85%A5%E5%BA%95%E5%B1%82-%E6%95%B0%E6%8D%AE%E7%9A%84%E6%8C%89%E4%BD%8D%E8%BF%90%E7%AE%97/">深入底层-数据的按位运算</a>
       </h1>
 
@@ -541,168 +703,6 @@ s1
               <a href="/tags/%E5%AD%97%E7%AC%A6%E4%B8%B2/">字符串</a>
             
               <a href="/tags/%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/">正则表达式</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        <a href="/2020/09/25/Java_Arrays/">Arrays and ArrayLists</a>
-      </h1>
-
-      <p class="index-excerpt">
-        <a href="/2020/09/25/Java_Arrays/">
-          
-          
-            
-          
-          Arrays and ArrayLists创建数组
-直接创建
-  int[] c = new int[12];
-
-先声明后创建
-  int[] c;
-c = new int[12];
-
-使用数组的初始化表达式(array initializer list)
-  int[] n = &#123;1,2,3&#125;;
-
-//多维数组的初始化
-int[][] b = &#123;&#123;1,2&
-        </a>
-      </p>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2020-09-25 17:29" pubdate>
-              2020-09-25
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-category"></i>
-            
-              <a href="/categories/Java/">Java</a>
-            
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/Java/">Java</a>
-            
-              <a href="/tags/Arrays/">Arrays</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        <a href="/2020/09/15/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/">计算机系统基础</a>
-      </h1>
-
-      <p class="index-excerpt">
-        <a href="/2020/09/15/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/">
-          
-          
-            
-          
-          计算机系统基础第一章 计算机系统概述1. 计算机基本执行过程1.1 冯·诺依曼机基本结构绝大部分通用计算机的硬件基本组成仍然就有冯·诺依曼结构特征
-
-图解：
-
-主存储器（主存，内存）：存放指令和数据
-算术逻辑部件（ALU）：进行算术逻辑运算的核心部件，可以对输入端A和B进行不同的运算，得到结果F
-控制部件（CU，控制器）：自动逐条取出指令并进行译码（将二进制的操作码翻译成对应的操作）
-通用寄存器（
-        </a>
-      </p>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2020-09-15 17:55" pubdate>
-              2020-09-15
-            </time>
-          </div>
-        
-        
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        <a href="/2020/09/13/MySQL/">MySQL</a>
-      </h1>
-
-      <p class="index-excerpt">
-        <a href="/2020/09/13/MySQL/">
-          
-          
-            
-          
-          MySQLJavaEE: 企业级Java开发 Web
-前端（页面：展示数据） 
-后台（连接点：连接数据库JDBC，连接前端（控制视图跳转，和给前端传递数据））
-数据库（存数据，txt, excel, word… …）
-初识MySQL数据库的重要性
-大数据时代，得数据者得天下
-存数据
-数据库是所有软件体系最核心的存在
-
-什么是数据库数据库（DB，DataBase）
-概念：数据仓库，软件，安装在操作系
-        </a>
-      </p>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2020-09-13 19:21" pubdate>
-              2020-09-13
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-category"></i>
-            
-              <a href="/categories/Java/">Java</a>
-            
-              <a href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/">数据库</a>
-            
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/Java/">Java</a>
-            
-              <a href="/tags/SQL/">SQL</a>
             
           </div>
         
