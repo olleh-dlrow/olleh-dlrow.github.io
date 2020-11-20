@@ -4,6 +4,31 @@
   
   
   <entry>
+    <title>接水问题-短板效应</title>
+    <link href="/2020/11/20/%E6%8E%A5%E6%B0%B4%E9%97%AE%E9%A2%98-%E7%9F%AD%E6%9D%BF%E6%95%88%E5%BA%94/"/>
+    <url>/2020/11/20/%E6%8E%A5%E6%B0%B4%E9%97%AE%E9%A2%98-%E7%9F%AD%E6%9D%BF%E6%95%88%E5%BA%94/</url>
+    
+    <content type="html"><![CDATA[<h1 id="接水问题-短板效应"><a href="#接水问题-短板效应" class="headerlink" title="接水问题-短板效应"></a>接水问题-短板效应</h1><h2 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h2><p>在一个二维坐标系中竖立了很多根柱子（从0~n），这些柱子各有一个高度，每两个柱子能形成一个容器，底是距离，高是短的那根柱子，求最大接水量。</p><p><img src="/2020/11/20/%E6%8E%A5%E6%B0%B4%E9%97%AE%E9%A2%98-%E7%9F%AD%E6%9D%BF%E6%95%88%E5%BA%94/image-20201120205412425.png" srcset="/img/loading.gif" alt="image-20201120205412425"></p><h2 id="解决思路"><a href="#解决思路" class="headerlink" title="解决思路"></a>解决思路</h2><p>双指针法：头尾指针各一，每次移动矮的那个，直到两者重合。</p><pre><code class="hljs java"><span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">maxValue</span><span class="hljs-params">(<span class="hljs-keyword">int</span>[] height)</span></span>&#123;    <span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>;    <span class="hljs-keyword">int</span> j = height.length - <span class="hljs-number">1</span>;    <span class="hljs-keyword">int</span> ans = <span class="hljs-number">0</span>;    <span class="hljs-keyword">while</span>(i &lt; j)&#123;        ans = Integer.max(ans, (j - i) * Integer.min(height[i], height[j]));        <span class="hljs-keyword">if</span>(height[i] &gt; height[j])&#123;            --j;        &#125; <span class="hljs-keyword">else</span> &#123;            i++;        &#125;    &#125;    <span class="hljs-keyword">return</span> ans;&#125;</code></pre><p>原因：如果动高的那根柱子，那么由于容器变短了，而高度变矮或者不变，接的水一定变少了，所以每次移动矮的那根柱子才有效。</p>]]></content>
+    
+    
+    <categories>
+      
+      <category>数据结构与算法</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>数组</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>棋盘覆盖问题</title>
     <link href="/2020/10/27/%E6%A3%8B%E7%9B%98%E8%A6%86%E7%9B%96%E9%97%AE%E9%A2%98/"/>
     <url>/2020/10/27/%E6%A3%8B%E7%9B%98%E8%A6%86%E7%9B%96%E9%97%AE%E9%A2%98/</url>
