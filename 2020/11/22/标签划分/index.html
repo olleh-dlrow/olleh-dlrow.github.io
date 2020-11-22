@@ -17,7 +17,7 @@
   <meta name="description" content="Shuwen Chen Blog">
   <meta name="author" content="Shuwen Chen">
   <meta name="keywords" content="">
-  <title>接水问题-短板效应 - MyBlog</title>
+  <title>标签划分 - MyBlog</title>
 
   <link  rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/css/bootstrap.min.css" />
 
@@ -160,8 +160,8 @@
               
   <div class="mt-3 post-meta">
     <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-    <time datetime="2020-11-20 20:46" pubdate>
-      2020年11月20日 晚上
+    <time datetime="2020-11-22 12:55" pubdate>
+      2020年11月22日 下午
     </time>
   </div>
 
@@ -171,7 +171,7 @@
     
     <span class="post-meta mr-2">
       <i class="iconfont icon-chart"></i>
-      202 字
+      267 字
     </span>
   
 
@@ -181,7 +181,7 @@
       <i class="iconfont icon-clock-fill"></i>
       
       
-      2
+      3
        分钟
     </span>
   
@@ -211,27 +211,30 @@
         <div class="py-5" id="board">
           <article class="post-content mx-auto" id="post">
             <!-- SEO header -->
-            <h1 style="display: none">接水问题-短板效应</h1>
+            <h1 style="display: none">标签划分</h1>
             
             <div class="markdown-body" id="post-body">
-              <h1 id="接水问题-短板效应"><a href="#接水问题-短板效应" class="headerlink" title="接水问题-短板效应"></a>接水问题-短板效应</h1><h2 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h2><p>在一个二维坐标系中竖立了很多根柱子（从0~n），这些柱子各有一个高度，每两个柱子能形成一个容器，底是距离，高是短的那根柱子，求最大接水量。</p>
-<p><img src="/2020/11/20/%E6%8E%A5%E6%B0%B4%E9%97%AE%E9%A2%98-%E7%9F%AD%E6%9D%BF%E6%95%88%E5%BA%94/image-20201120205412425.png" srcset="/img/loading.gif" alt="image-20201120205412425"></p>
-<h2 id="解决思路"><a href="#解决思路" class="headerlink" title="解决思路"></a>解决思路</h2><p>双指针法：头尾指针各一，每次移动矮的那个，直到两者重合。</p>
-<pre><code class="hljs java"><span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">maxValue</span><span class="hljs-params">(<span class="hljs-keyword">int</span>[] height)</span></span>&#123;
-    <span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>;
-    <span class="hljs-keyword">int</span> j = height.length - <span class="hljs-number">1</span>;
-    <span class="hljs-keyword">int</span> ans = <span class="hljs-number">0</span>;
-    <span class="hljs-keyword">while</span>(i &lt; j)&#123;
-        ans = Integer.max(ans, (j - i) * Integer.min(height[i], height[j]));
-        <span class="hljs-keyword">if</span>(height[i] &gt; height[j])&#123;
-            --j;
-        &#125; <span class="hljs-keyword">else</span> &#123;
-            i++;
+              <h1 id="标签划分"><a href="#标签划分" class="headerlink" title="标签划分"></a>标签划分</h1><h2 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h2><p>给定一个字符串，将该字符串划分成尽可能多的部分，使得这些每个字母最多只能出现在这些部分中的一个</p>
+<p><img src="/2020/11/22/%E6%A0%87%E7%AD%BE%E5%88%92%E5%88%86/image-20201122125753144.png" srcset="/img/loading.gif" alt="image-20201122125753144"></p>
+<h2 id="解决办法"><a href="#解决办法" class="headerlink" title="解决办法"></a>解决办法</h2><p>首先获得每个字符最后出现的下标，然后从头开始遍历每一个字符，如果某个字符的范围超出当前划分的右边界，则扩展右边界，这是当前的最优解。直到遍历指针到达右边界，此时说明划分里的字符都是只出现在这个划分里的，将该划分放入答案中，然后把下一个下标作为下一个划分的起点，直到字符串遍历完。</p>
+<pre><code class="hljs java"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Solution</span> </span>&#123;
+    <span class="hljs-function"><span class="hljs-keyword">public</span> List&lt;Integer&gt; <span class="hljs-title">partitionLabels</span><span class="hljs-params">(String S)</span> </span>&#123;
+        <span class="hljs-keyword">int</span>[] last = <span class="hljs-keyword">new</span> <span class="hljs-keyword">int</span>[<span class="hljs-number">26</span>];
+        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i &lt; S.length(); ++i)
+            last[S.charAt(i) - <span class="hljs-string">'a'</span>] = i;
+        
+        <span class="hljs-keyword">int</span> j = <span class="hljs-number">0</span>, anchor = <span class="hljs-number">0</span>;
+        List&lt;Integer&gt; ans = <span class="hljs-keyword">new</span> ArrayList();
+        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i &lt; S.length(); ++i) &#123;
+            j = Math.max(j, last[S.charAt(i) - <span class="hljs-string">'a'</span>]);
+            <span class="hljs-keyword">if</span> (i == j) &#123;
+                ans.add(i - anchor + <span class="hljs-number">1</span>);
+                anchor = i + <span class="hljs-number">1</span>;
+            &#125;
         &#125;
+        <span class="hljs-keyword">return</span> ans;
     &#125;
-    <span class="hljs-keyword">return</span> ans;
 &#125;</code></pre>
-<p>原因：如果动高的那根柱子，那么由于容器变短了，而高度变矮或者不变，接的水一定变少了，所以每次移动矮的那根柱子才有效。</p>
 
             </div>
             <hr>
@@ -249,7 +252,7 @@
                   <div class="post-meta">
                     <i class="iconfont icon-tags"></i>
                     
-                      <a class="hover-with-bg" href="/tags/%E6%95%B0%E7%BB%84/">数组</a>
+                      <a class="hover-with-bg" href="/tags/%E8%B4%AA%E5%BF%83%E7%AE%97%E6%B3%95/">贪心算法</a>
                     
                   </div>
                 
@@ -262,18 +265,12 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2020/11/22/%E6%A0%87%E7%AD%BE%E5%88%92%E5%88%86/">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">标签划分</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
                   </article>
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2020/10/27/%E6%A3%8B%E7%9B%98%E8%A6%86%E7%9B%96%E9%97%AE%E9%A2%98/">
-                        <span class="hidden-mobile">棋盘覆盖问题</span>
+                      <a href="/2020/11/20/%E6%8E%A5%E6%B0%B4%E9%97%AE%E9%A2%98-%E7%9F%AD%E6%9D%BF%E6%95%88%E5%BA%94/">
+                        <span class="hidden-mobile">接水问题-短板效应</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
@@ -412,7 +409,7 @@
     var typed = new Typed('#subtitle', {
       strings: [
         '  ',
-        "接水问题-短板效应&nbsp;",
+        "标签划分&nbsp;",
       ],
       cursorChar: "_",
       typeSpeed: 70,
