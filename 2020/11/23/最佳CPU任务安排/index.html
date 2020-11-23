@@ -17,7 +17,7 @@
   <meta name="description" content="Shuwen Chen Blog">
   <meta name="author" content="Shuwen Chen">
   <meta name="keywords" content="">
-  <title>标签划分 - MyBlog</title>
+  <title>最佳CPU任务安排 - MyBlog</title>
 
   <link  rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/css/bootstrap.min.css" />
 
@@ -160,8 +160,8 @@
               
   <div class="mt-3 post-meta">
     <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-    <time datetime="2020-11-22 12:55" pubdate>
-      2020年11月22日 下午
+    <time datetime="2020-11-23 09:54" pubdate>
+      2020年11月23日 上午
     </time>
   </div>
 
@@ -171,7 +171,7 @@
     
     <span class="post-meta mr-2">
       <i class="iconfont icon-chart"></i>
-      267 字
+      532 字
     </span>
   
 
@@ -181,7 +181,7 @@
       <i class="iconfont icon-clock-fill"></i>
       
       
-      3
+      7
        分钟
     </span>
   
@@ -211,30 +211,71 @@
         <div class="py-5" id="board">
           <article class="post-content mx-auto" id="post">
             <!-- SEO header -->
-            <h1 style="display: none">标签划分</h1>
+            <h1 style="display: none">最佳CPU任务安排</h1>
             
             <div class="markdown-body" id="post-body">
-              <h1 id="标签划分"><a href="#标签划分" class="headerlink" title="标签划分"></a>标签划分</h1><h2 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h2><p>给定一个字符串，将该字符串划分成尽可能多的部分，使得这些每个字母最多只能出现在这些部分中的一个</p>
-<p><img src="/2020/11/22/%E6%A0%87%E7%AD%BE%E5%88%92%E5%88%86/image-20201122125753144.png" srcset="/img/loading.gif" alt="image-20201122125753144"></p>
-<h2 id="解决办法"><a href="#解决办法" class="headerlink" title="解决办法"></a>解决办法</h2><p>首先获得每个字符最后出现的下标，然后从头开始遍历每一个字符，如果某个字符的范围超出当前划分的右边界，则扩展右边界，这是当前的最优解。直到遍历指针到达右边界，此时说明划分里的字符都是只出现在这个划分里的，将该划分放入答案中，然后把下一个下标作为下一个划分的起点，直到字符串遍历完。</p>
-<pre><code class="hljs java"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Solution</span> </span>&#123;
-    <span class="hljs-function"><span class="hljs-keyword">public</span> List&lt;Integer&gt; <span class="hljs-title">partitionLabels</span><span class="hljs-params">(String S)</span> </span>&#123;
-        <span class="hljs-keyword">int</span>[] last = <span class="hljs-keyword">new</span> <span class="hljs-keyword">int</span>[<span class="hljs-number">26</span>];
-        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i &lt; S.length(); ++i)
-            last[S.charAt(i) - <span class="hljs-string">'a'</span>] = i;
-        
-        <span class="hljs-keyword">int</span> j = <span class="hljs-number">0</span>, anchor = <span class="hljs-number">0</span>;
-        List&lt;Integer&gt; ans = <span class="hljs-keyword">new</span> ArrayList();
-        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i &lt; S.length(); ++i) &#123;
-            j = Math.max(j, last[S.charAt(i) - <span class="hljs-string">'a'</span>]);
-            <span class="hljs-keyword">if</span> (i == j) &#123;
-                ans.add(i - anchor + <span class="hljs-number">1</span>);
-                anchor = i + <span class="hljs-number">1</span>;
-            &#125;
+              <h1 id="最佳CPU任务安排"><a href="#最佳CPU任务安排" class="headerlink" title="最佳CPU任务安排"></a>最佳CPU任务安排</h1><h2 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h2><p>有一条任务队列，其中每个任务用一个大写的字母表示，CPU在执行任务时，两个相同任务之间的最大间隔最少是一个给定的值n，不同任务之间可以没有空闲（间隔），求CPU执行的最小周期数（每一个空闲也算一个周期）。</p>
+<p><img src="/2020/11/23/%E6%9C%80%E4%BD%B3CPU%E4%BB%BB%E5%8A%A1%E5%AE%89%E6%8E%92/image-20201123095843719.png" srcset="/img/loading.gif" alt="image-20201123095843719"></p>
+<h2 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h2><ol>
+<li><p>贪心算法O(tasks.length)</p>
+<p> 显然，要想让任务周期最短，数量最多的任务的处理方式是最重要的，当该任务处理完毕后，剩下的任务可以采取插空的方法。比如3A,2B,1C，n=2，此时先放A，得到A##A##A，那么实际空闲数等于(Count(A)-1)*n-(Count(tasks)-Count(A))和0中较大的那个。如果有多个最大值，则可以将他们捆绑起来看，比如3A,3B,1C,n=2, 则AB#AB#AB-&gt;X#X#X，此时空闲数=max(0，(Count(A)-1)*(n-maxCount+1)-(Count(tasks)-Count(A)))，如果n-maxCount+1为负数，则说明空闲已经被挤占完 了，不会影响最终结果。</p>
+ <pre><code class="hljs java"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">int</span> <span class="hljs-title">leastInterval</span><span class="hljs-params">(<span class="hljs-keyword">char</span>[] tasks, <span class="hljs-keyword">int</span> n)</span> </span>&#123;
+    <span class="hljs-keyword">int</span>[] counter = <span class="hljs-keyword">new</span> <span class="hljs-keyword">int</span>[<span class="hljs-number">26</span>];
+    <span class="hljs-keyword">int</span> max = <span class="hljs-number">0</span>;
+    <span class="hljs-keyword">int</span> maxCount = <span class="hljs-number">0</span>;
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">char</span> task : tasks) &#123;
+        counter[task - <span class="hljs-string">'A'</span>]++;
+        <span class="hljs-keyword">if</span> (max == counter[task - <span class="hljs-string">'A'</span>]) &#123;
+            maxCount++;
+        &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (max &lt; counter[task - <span class="hljs-string">'A'</span>]) &#123;
+            max = counter[task - <span class="hljs-string">'A'</span>];
+            maxCount = <span class="hljs-number">1</span>;
         &#125;
-        <span class="hljs-keyword">return</span> ans;
     &#125;
+    
+    <span class="hljs-keyword">int</span> partCount = max - <span class="hljs-number">1</span>;
+    <span class="hljs-keyword">int</span> partLength = n - (maxCount - <span class="hljs-number">1</span>);
+    <span class="hljs-keyword">int</span> emptySlots = partCount * partLength;
+    <span class="hljs-keyword">int</span> availableTasks = tasks.length - max * maxCount;
+    <span class="hljs-keyword">int</span> idles = Math.max(<span class="hljs-number">0</span>, emptySlots - availableTasks);
+    
+    <span class="hljs-keyword">return</span> tasks.length + idles;
 &#125;</code></pre>
+</li>
+<li><p>优先队列O(n*tasks.length)</p>
+<p> 先统计每个任务的数目，在安排任务时，依次安排任务数最多的任务，直到所有的任务被安排完。</p>
+ <pre><code class="hljs java"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">int</span> <span class="hljs-title">leastInterval</span><span class="hljs-params">(<span class="hljs-keyword">char</span>[] tasks, <span class="hljs-keyword">int</span> n)</span> </span>&#123;
+        Map&lt;Character, Integer&gt; counts = <span class="hljs-keyword">new</span> HashMap&lt;Character, Integer&gt;();
+        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">char</span> t : tasks) &#123;
+            counts.put(t, counts.getOrDefault(t, <span class="hljs-number">0</span>) + <span class="hljs-number">1</span>);
+        &#125;
+
+        PriorityQueue&lt;Integer&gt; pq = <span class="hljs-keyword">new</span> PriorityQueue&lt;Integer&gt;((a, b) -&gt; b - a);
+        pq.addAll(counts.values());
+
+        <span class="hljs-keyword">int</span> alltime = <span class="hljs-number">0</span>;
+        <span class="hljs-keyword">int</span> cycle = n + <span class="hljs-number">1</span>;
+        <span class="hljs-keyword">while</span> (!pq.isEmpty()) &#123;
+            <span class="hljs-keyword">int</span> worktime = <span class="hljs-number">0</span>;
+            List&lt;Integer&gt; tmp = <span class="hljs-keyword">new</span> ArrayList&lt;Integer&gt;();
+            <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i &lt; cycle; i++) &#123;
+                <span class="hljs-keyword">if</span> (!pq.isEmpty()) &#123;
+                    tmp.add(pq.poll());
+                    worktime++;
+                &#125;
+            &#125;
+            <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> cnt : tmp) &#123;
+                <span class="hljs-keyword">if</span> (--cnt &gt; <span class="hljs-number">0</span>) &#123;
+                    pq.offer(cnt);
+                &#125;
+            &#125;
+            alltime += !pq.isEmpty() ? cycle : worktime;
+        &#125;
+        
+        <span class="hljs-keyword">return</span> alltime;
+    &#125;</code></pre>
+</li>
+</ol>
 
             </div>
             <hr>
@@ -252,6 +293,8 @@
                   <div class="post-meta">
                     <i class="iconfont icon-tags"></i>
                     
+                      <a class="hover-with-bg" href="/tags/%E4%BC%98%E5%85%88%E9%98%9F%E5%88%97/">优先队列</a>
+                    
                       <a class="hover-with-bg" href="/tags/%E8%B4%AA%E5%BF%83%E7%AE%97%E6%B3%95/">贪心算法</a>
                     
                   </div>
@@ -265,18 +308,12 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2020/11/23/%E6%9C%80%E4%BD%B3CPU%E4%BB%BB%E5%8A%A1%E5%AE%89%E6%8E%92/">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">最佳CPU任务安排</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
                   </article>
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2020/11/20/%E6%8E%A5%E6%B0%B4%E9%97%AE%E9%A2%98-%E7%9F%AD%E6%9D%BF%E6%95%88%E5%BA%94/">
-                        <span class="hidden-mobile">接水问题-短板效应</span>
+                      <a href="/2020/11/22/%E6%A0%87%E7%AD%BE%E5%88%92%E5%88%86/">
+                        <span class="hidden-mobile">标签划分</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
@@ -415,7 +452,7 @@
     var typed = new Typed('#subtitle', {
       strings: [
         '  ',
-        "标签划分&nbsp;",
+        "最佳CPU任务安排&nbsp;",
       ],
       cursorChar: "_",
       typeSpeed: 70,
