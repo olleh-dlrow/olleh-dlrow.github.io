@@ -4,6 +4,31 @@
   
   
   <entry>
+    <title>和等于K的子数组</title>
+    <link href="/2020/11/25/%E5%92%8C%E7%AD%89%E4%BA%8EK%E7%9A%84%E5%AD%90%E6%95%B0%E7%BB%84/"/>
+    <url>/2020/11/25/%E5%92%8C%E7%AD%89%E4%BA%8EK%E7%9A%84%E5%AD%90%E6%95%B0%E7%BB%84/</url>
+    
+    <content type="html"><![CDATA[<h1 id="和等于K的子数组"><a href="#和等于K的子数组" class="headerlink" title="和等于K的子数组"></a>和等于K的子数组</h1><h2 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h2><p>给定一个整数数组，返回子数组的个数，这些子数组的和为K。</p><p><img src="/2020/11/25/%E5%92%8C%E7%AD%89%E4%BA%8EK%E7%9A%84%E5%AD%90%E6%95%B0%E7%BB%84/image-20201125174349534.png" srcset="/img/loading.gif" alt="image-20201125174349534"></p><h2 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h2><p>法一：可以使用DP来解决，因为dp[i][j] = dp[0][j] - dp[0][i]，其中dp表示下标i+1到下标i之间的和。这种算法的时间复杂度为$O(n^2)$。</p><p>法二：采用字典（Map）才存储每个值出现的次数</p><p>这种方法只需要经历一次遍历，问题的核心是求sum[i][j] == k，而根据公式sum[i][j] = sum[0][i] + sum[0][j]可知，如果把 j 作为遍历的指针，而把sum[0][i]存储在字典中，那么当sum[0][j] - k = sum[0][i]时，我们就找到了结果，并且结果的个数取决于字典中键等于sum[0][i]的个数。</p><pre><code class="hljs java"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Solution</span> </span>&#123;    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">int</span> <span class="hljs-title">subarraySum</span><span class="hljs-params">(<span class="hljs-keyword">int</span>[] nums, <span class="hljs-keyword">int</span> k)</span> </span>&#123;        <span class="hljs-keyword">int</span> count = <span class="hljs-number">0</span>, sum = <span class="hljs-number">0</span>;        HashMap&lt;Integer, Integer&gt; map = <span class="hljs-keyword">new</span> HashMap&lt;&gt;();        map.put(<span class="hljs-number">0</span>, <span class="hljs-number">1</span>);        <span class="hljs-keyword">for</span>(<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i &lt; nums.length; i++)&#123;            sum += nums[i];            <span class="hljs-keyword">if</span>(map.containsKey(sum - k))&#123;                count += map.get(sum - k);            &#125;            map.put(sum, map.getOrDefault(sum, <span class="hljs-number">0</span>) + <span class="hljs-number">1</span>);        &#125;        <span class="hljs-keyword">return</span> count;    &#125;&#125;</code></pre>]]></content>
+    
+    
+    <categories>
+      
+      <category>数据结构与算法</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>字典</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>最短未排序数组</title>
     <link href="/2020/11/24/%E6%9C%80%E7%9F%AD%E6%9C%AA%E6%8E%92%E5%BA%8F%E6%95%B0%E7%BB%84/"/>
     <url>/2020/11/24/%E6%9C%80%E7%9F%AD%E6%9C%AA%E6%8E%92%E5%BA%8F%E6%95%B0%E7%BB%84/</url>
