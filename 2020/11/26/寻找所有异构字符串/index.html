@@ -17,7 +17,7 @@
   <meta name="description" content="Shuwen Chen Blog">
   <meta name="author" content="Shuwen Chen">
   <meta name="keywords" content="">
-  <title>和等于K的子数组 - MyBlog</title>
+  <title>寻找所有异构字符串 - MyBlog</title>
 
   <link  rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/css/bootstrap.min.css" />
 
@@ -160,8 +160,8 @@
               
   <div class="mt-3 post-meta">
     <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-    <time datetime="2020-11-25 17:40" pubdate>
-      2020年11月25日 下午
+    <time datetime="2020-11-26 16:36" pubdate>
+      2020年11月26日 下午
     </time>
   </div>
 
@@ -171,7 +171,7 @@
     
     <span class="post-meta mr-2">
       <i class="iconfont icon-chart"></i>
-      280 字
+      922 字
     </span>
   
 
@@ -181,7 +181,7 @@
       <i class="iconfont icon-clock-fill"></i>
       
       
-      3
+      12
        分钟
     </span>
   
@@ -211,27 +211,99 @@
         <div class="py-5" id="board">
           <article class="post-content mx-auto" id="post">
             <!-- SEO header -->
-            <h1 style="display: none">和等于K的子数组</h1>
+            <h1 style="display: none">寻找所有异构字符串</h1>
             
             <div class="markdown-body" id="post-body">
-              <h1 id="和等于K的子数组"><a href="#和等于K的子数组" class="headerlink" title="和等于K的子数组"></a>和等于K的子数组</h1><h2 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h2><p>给定一个整数数组，返回子数组的个数，这些子数组的和为K。</p>
-<p><img src="/2020/11/25/%E5%92%8C%E7%AD%89%E4%BA%8EK%E7%9A%84%E5%AD%90%E6%95%B0%E7%BB%84/image-20201125174349534.png" srcset="/img/loading.gif" alt="image-20201125174349534"></p>
-<h2 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h2><p>法一：可以使用DP来解决，因为dp[i][j] = dp[0][j] - dp[0][i]，其中dp表示下标i+1到下标i之间的和。这种算法的时间复杂度为$O(n^2)$。</p>
-<p>法二：采用字典（Map）才存储每个值出现的次数</p>
-<p>这种方法只需要经历一次遍历，问题的核心是求sum[i][j] == k，而根据公式sum[i][j] = sum[0][i] + sum[0][j]可知，如果把 j 作为遍历的指针，而把sum[0][i]存储在字典中，那么当sum[0][j] - k = sum[0][i]时，我们就找到了结果，并且结果的个数取决于字典中键等于sum[0][i]的个数。</p>
+              <h1 id="寻找所有异构字符串"><a href="#寻找所有异构字符串" class="headerlink" title="寻找所有异构字符串"></a>寻找所有异构字符串</h1><h2 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h2><p>对于一个字符串s，给定一个字符串p，找到s中所有和p同分异构（字母的种类和数量相同，但组合可以不同）的字符串，输出他们的起始下标。</p>
+<p><img src="/2020/11/26/%E5%AF%BB%E6%89%BE%E6%89%80%E6%9C%89%E5%BC%82%E6%9E%84%E5%AD%97%E7%AC%A6%E4%B8%B2/image-20201126164101209.png" srcset="/img/loading.gif" alt="image-20201126164101209"></p>
+<h2 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h2><p>问题解决的核心在于统计每一个字符串中字符的频率，如果两者相等，则说明是要寻找的字符串。一种方式是创建两个哈希表，其中一个存储字符串p中字符的频率，然后遍历s中和p字符串长度相同的子字符串，并采取类似队列进出的方式计算它们的频率（前一个子字符串扔掉最后一个字符在加上前面一个字符就得到新的字符串），比较该值和p，如果相同则得到一个解。但是该算法的时间复杂度为两个字符串长度的乘积，因此一般会比较慢。</p>
 <pre><code class="hljs java"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Solution</span> </span>&#123;
-    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">int</span> <span class="hljs-title">subarraySum</span><span class="hljs-params">(<span class="hljs-keyword">int</span>[] nums, <span class="hljs-keyword">int</span> k)</span> </span>&#123;
-        <span class="hljs-keyword">int</span> count = <span class="hljs-number">0</span>, sum = <span class="hljs-number">0</span>;
-        HashMap&lt;Integer, Integer&gt; map = <span class="hljs-keyword">new</span> HashMap&lt;&gt;();
-        map.put(<span class="hljs-number">0</span>, <span class="hljs-number">1</span>);
-        <span class="hljs-keyword">for</span>(<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i &lt; nums.length; i++)&#123;
-            sum += nums[i];
-            <span class="hljs-keyword">if</span>(map.containsKey(sum - k))&#123;
-                count += map.get(sum - k);
-            &#125;
-            map.put(sum, map.getOrDefault(sum, <span class="hljs-number">0</span>) + <span class="hljs-number">1</span>);
+    <span class="hljs-function"><span class="hljs-keyword">public</span> List&lt;Integer&gt; <span class="hljs-title">findAnagrams</span><span class="hljs-params">(String s, String p)</span> </span>&#123;
+        
+        Map&lt;Character, Integer&gt; map = <span class="hljs-keyword">new</span> HashMap&lt;&gt;();
+        <span class="hljs-keyword">for</span>(<span class="hljs-keyword">char</span> ch : p.toCharArray())&#123;
+            map.put(ch, map.getOrDefault(ch, <span class="hljs-number">0</span>) + <span class="hljs-number">1</span>);
         &#125;
-        <span class="hljs-keyword">return</span> count;
+        List&lt;Integer&gt; ans = <span class="hljs-keyword">new</span> ArrayList&lt;&gt;();
+        <span class="hljs-keyword">if</span>(s.length() &lt; p.length())&#123;
+            <span class="hljs-keyword">return</span> ans;
+        &#125;
+        
+        Map&lt;Character, Integer&gt; cp = <span class="hljs-keyword">new</span> HashMap&lt;&gt;();
+        <span class="hljs-keyword">for</span>(<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i &lt; p.length() - <span class="hljs-number">1</span>; i++)&#123;
+            <span class="hljs-keyword">char</span> ch = s.charAt(i);
+            cp.put(ch, cp.getOrDefault(ch, <span class="hljs-number">0</span>) + <span class="hljs-number">1</span>);
+        &#125;
+        <span class="hljs-keyword">for</span>(<span class="hljs-keyword">int</span> i = p.length() - <span class="hljs-number">1</span>; i &lt; s.length(); i++)&#123;
+            <span class="hljs-keyword">char</span> ch = s.charAt(i);
+            cp.put(ch, cp.getOrDefault(ch, <span class="hljs-number">0</span>) + <span class="hljs-number">1</span>);
+            <span class="hljs-keyword">if</span>(cp.size() == map.size())&#123;
+                <span class="hljs-keyword">boolean</span> flag = <span class="hljs-keyword">true</span>;
+                <span class="hljs-keyword">for</span>(Map.Entry&lt;Character, Integer&gt; entry : map.entrySet())&#123;
+                    <span class="hljs-keyword">char</span> key = entry.getKey();
+                    <span class="hljs-keyword">if</span>(!entry.getValue().equals(cp.getOrDefault(key, -<span class="hljs-number">1</span>)))&#123;
+                        flag = <span class="hljs-keyword">false</span>;
+                        <span class="hljs-keyword">break</span>;
+                    &#125;
+                &#125;
+                <span class="hljs-keyword">if</span>(flag)ans.add(i + <span class="hljs-number">1</span> - p.length());
+            &#125;
+            <span class="hljs-keyword">char</span> head = s.charAt(i + <span class="hljs-number">1</span> - p.length());
+            <span class="hljs-keyword">if</span>(cp.get(head).equals(<span class="hljs-number">1</span>))&#123;
+                cp.remove(head);
+            &#125;
+            <span class="hljs-keyword">else</span> cp.replace(head, cp.get(head) - <span class="hljs-number">1</span>);
+        &#125;
+        <span class="hljs-keyword">return</span> ans;
+    &#125;
+&#125;</code></pre>
+<p>更好的方法是采用类似滑动窗口的方法：</p>
+<p>依然使用一个哈希表来存储p中字符串的频率，再初始化begin和end两个指针，这是我们把哈希表中的内容当做是begin,end之间的字符串还欠缺的值，所求的解应该满足一下条件：</p>
+<ol>
+<li>包含p中的所有字符</li>
+<li>每个字符的值都相等</li>
+<li>两者的长度相等</li>
+</ol>
+<p>因此，可以先移动end指针，每找到一个符合条件的字符，就在哈希表中减去一个该字符，说明这个字符的需求少了一个，直到哈希表中的字符个数都小于等于0，说明当前begin,end字符串的字符集合包含p的字符集合，这时移动begin，表示抛弃掉多余的字符，如果抛弃的这个字符是我们需要的，则需要继续移动end来添加，否则当begin，end字符串的长度等于p的长度时，说明该字符串的字符集包含p的字符集并且两个集合的大小相等，这正是两个者相等的条件，得到一个解。以此类推，当end遍历完s时输出所有解。</p>
+<pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Solution</span> </span>&#123;
+    <span class="hljs-function"><span class="hljs-keyword">public</span> List&lt;Integer&gt; <span class="hljs-title">findAnagrams</span><span class="hljs-params">(String s, String t)</span> </span>&#123;
+        List&lt;Integer&gt; result = <span class="hljs-keyword">new</span> LinkedList&lt;&gt;();
+        <span class="hljs-keyword">if</span>(t.length()&gt; s.length()) <span class="hljs-keyword">return</span> result;
+        Map&lt;Character, Integer&gt; map = <span class="hljs-keyword">new</span> HashMap&lt;&gt;();
+        <span class="hljs-keyword">for</span>(<span class="hljs-keyword">char</span> c : t.toCharArray())&#123;
+            map.put(c, map.getOrDefault(c, <span class="hljs-number">0</span>) + <span class="hljs-number">1</span>);
+        &#125;
+        <span class="hljs-keyword">int</span> counter = map.size();
+        
+        <span class="hljs-keyword">int</span> begin = <span class="hljs-number">0</span>, end = <span class="hljs-number">0</span>;
+        <span class="hljs-keyword">int</span> head = <span class="hljs-number">0</span>;
+        <span class="hljs-keyword">int</span> len = Integer.MAX_VALUE;
+        
+        
+        <span class="hljs-keyword">while</span>(end &lt; s.length())&#123;
+            <span class="hljs-keyword">char</span> c = s.charAt(end);
+            <span class="hljs-keyword">if</span>( map.containsKey(c) )&#123;
+                map.put(c, map.get(c)-<span class="hljs-number">1</span>);
+                <span class="hljs-keyword">if</span>(map.get(c) == <span class="hljs-number">0</span>) counter--;
+            &#125;
+            end++;
+            
+            <span class="hljs-keyword">while</span>(counter == <span class="hljs-number">0</span>)&#123;
+                <span class="hljs-keyword">char</span> tempc = s.charAt(begin);
+                <span class="hljs-keyword">if</span>(map.containsKey(tempc))&#123;
+                    map.put(tempc, map.get(tempc) + <span class="hljs-number">1</span>);
+                    <span class="hljs-keyword">if</span>(map.get(tempc) &gt; <span class="hljs-number">0</span>)&#123;
+                        counter++;
+                    &#125;
+                &#125;
+                <span class="hljs-keyword">if</span>(end-begin == t.length())&#123;
+                    result.add(begin);
+                &#125;
+                begin++;
+            &#125;
+            
+        &#125;
+        <span class="hljs-keyword">return</span> result;
     &#125;
 &#125;</code></pre>
 
@@ -251,7 +323,7 @@
                   <div class="post-meta">
                     <i class="iconfont icon-tags"></i>
                     
-                      <a class="hover-with-bg" href="/tags/%E5%AD%97%E5%85%B8/">字典</a>
+                      <a class="hover-with-bg" href="/tags/%E5%AD%97%E7%AC%A6%E4%B8%B2/">字符串</a>
                     
                   </div>
                 
@@ -264,18 +336,12 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2020/11/26/%E5%AF%BB%E6%89%BE%E6%89%80%E6%9C%89%E5%BC%82%E6%9E%84%E5%AD%97%E7%AC%A6%E4%B8%B2/">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">寻找所有异构字符串</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
                   </article>
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2020/11/24/%E6%9C%80%E7%9F%AD%E6%9C%AA%E6%8E%92%E5%BA%8F%E6%95%B0%E7%BB%84/">
-                        <span class="hidden-mobile">最短未排序数组</span>
+                      <a href="/2020/11/25/%E5%92%8C%E7%AD%89%E4%BA%8EK%E7%9A%84%E5%AD%90%E6%95%B0%E7%BB%84/">
+                        <span class="hidden-mobile">和等于K的子数组</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
@@ -414,7 +480,7 @@
     var typed = new Typed('#subtitle', {
       strings: [
         '  ',
-        "和等于K的子数组&nbsp;",
+        "寻找所有异构字符串&nbsp;",
       ],
       cursorChar: "_",
       typeSpeed: 70,
