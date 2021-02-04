@@ -17,7 +17,7 @@
   <meta name="description" content="Shuwen Chen Blog">
   <meta name="author" content="Shuwen Chen">
   <meta name="keywords" content="">
-  <title>寻找所有异构字符串 - MyBlog</title>
+  <title>二叉树的路径和 - MyBlog</title>
 
   <link  rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/css/bootstrap.min.css" />
 
@@ -160,8 +160,8 @@
               
   <div class="mt-3 post-meta">
     <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-    <time datetime="2020-11-26 16:36" pubdate>
-      2020年11月26日 下午
+    <time datetime="2020-11-27 13:06" pubdate>
+      2020年11月27日 下午
     </time>
   </div>
 
@@ -171,7 +171,7 @@
     
     <span class="post-meta mr-2">
       <i class="iconfont icon-chart"></i>
-      922 字
+      433 字
     </span>
   
 
@@ -181,7 +181,7 @@
       <i class="iconfont icon-clock-fill"></i>
       
       
-      12
+      5
        分钟
     </span>
   
@@ -211,101 +211,34 @@
         <div class="py-5" id="board">
           <article class="post-content mx-auto" id="post">
             <!-- SEO header -->
-            <h1 style="display: none">寻找所有异构字符串</h1>
+            <h1 style="display: none">二叉树的路径和</h1>
             
             <div class="markdown-body" id="post-body">
-              <h1 id="寻找所有异构字符串"><a href="#寻找所有异构字符串" class="headerlink" title="寻找所有异构字符串"></a>寻找所有异构字符串</h1><h2 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h2><p>对于一个字符串s，给定一个字符串p，找到s中所有和p同分异构（字母的种类和数量相同，但组合可以不同）的字符串，输出他们的起始下标。</p>
-<p><img src="/2020/11/26/%E5%AF%BB%E6%89%BE%E6%89%80%E6%9C%89%E5%BC%82%E6%9E%84%E5%AD%97%E7%AC%A6%E4%B8%B2/image-20201126164101209.png" srcset="/img/loading.gif" alt="image-20201126164101209"></p>
-<h2 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h2><p>问题解决的核心在于统计每一个字符串中字符的频率，如果两者相等，则说明是要寻找的字符串。一种方式是创建两个哈希表，其中一个存储字符串p中字符的频率，然后遍历s中和p字符串长度相同的子字符串，并采取类似队列进出的方式计算它们的频率（前一个子字符串扔掉最后一个字符在加上前面一个字符就得到新的字符串），比较该值和p，如果相同则得到一个解。但是该算法的时间复杂度为两个字符串长度的乘积，因此一般会比较慢。</p>
-<pre><code class="hljs java"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Solution</span> </span>&#123;
-    <span class="hljs-function"><span class="hljs-keyword">public</span> List&lt;Integer&gt; <span class="hljs-title">findAnagrams</span><span class="hljs-params">(String s, String p)</span> </span>&#123;
-        
-        Map&lt;Character, Integer&gt; map = <span class="hljs-keyword">new</span> HashMap&lt;&gt;();
-        <span class="hljs-keyword">for</span>(<span class="hljs-keyword">char</span> ch : p.toCharArray())&#123;
-            map.put(ch, map.getOrDefault(ch, <span class="hljs-number">0</span>) + <span class="hljs-number">1</span>);
-        &#125;
-        List&lt;Integer&gt; ans = <span class="hljs-keyword">new</span> ArrayList&lt;&gt;();
-        <span class="hljs-keyword">if</span>(s.length() &lt; p.length())&#123;
-            <span class="hljs-keyword">return</span> ans;
-        &#125;
-        
-        Map&lt;Character, Integer&gt; cp = <span class="hljs-keyword">new</span> HashMap&lt;&gt;();
-        <span class="hljs-keyword">for</span>(<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i &lt; p.length() - <span class="hljs-number">1</span>; i++)&#123;
-            <span class="hljs-keyword">char</span> ch = s.charAt(i);
-            cp.put(ch, cp.getOrDefault(ch, <span class="hljs-number">0</span>) + <span class="hljs-number">1</span>);
-        &#125;
-        <span class="hljs-keyword">for</span>(<span class="hljs-keyword">int</span> i = p.length() - <span class="hljs-number">1</span>; i &lt; s.length(); i++)&#123;
-            <span class="hljs-keyword">char</span> ch = s.charAt(i);
-            cp.put(ch, cp.getOrDefault(ch, <span class="hljs-number">0</span>) + <span class="hljs-number">1</span>);
-            <span class="hljs-keyword">if</span>(cp.size() == map.size())&#123;
-                <span class="hljs-keyword">boolean</span> flag = <span class="hljs-keyword">true</span>;
-                <span class="hljs-keyword">for</span>(Map.Entry&lt;Character, Integer&gt; entry : map.entrySet())&#123;
-                    <span class="hljs-keyword">char</span> key = entry.getKey();
-                    <span class="hljs-keyword">if</span>(!entry.getValue().equals(cp.getOrDefault(key, -<span class="hljs-number">1</span>)))&#123;
-                        flag = <span class="hljs-keyword">false</span>;
-                        <span class="hljs-keyword">break</span>;
-                    &#125;
-                &#125;
-                <span class="hljs-keyword">if</span>(flag)ans.add(i + <span class="hljs-number">1</span> - p.length());
-            &#125;
-            <span class="hljs-keyword">char</span> head = s.charAt(i + <span class="hljs-number">1</span> - p.length());
-            <span class="hljs-keyword">if</span>(cp.get(head).equals(<span class="hljs-number">1</span>))&#123;
-                cp.remove(head);
-            &#125;
-            <span class="hljs-keyword">else</span> cp.replace(head, cp.get(head) - <span class="hljs-number">1</span>);
-        &#125;
-        <span class="hljs-keyword">return</span> ans;
+              <h1 id="二叉树的路径和"><a href="#二叉树的路径和" class="headerlink" title="二叉树的路径和"></a>二叉树的路径和</h1><h2 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h2><p>给定一个二叉树和一个整数sum，求二叉树中的一条连续的路径，使该路径上结点的和等于sum。</p>
+<p><img src="/2020/11/27/%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E8%B7%AF%E5%BE%84%E5%92%8C/image-20201127131154062.png" srcset="/img/loading.gif" alt="image-20201127131154062"></p>
+<h2 id="解决思路"><a href="#解决思路" class="headerlink" title="解决思路"></a>解决思路</h2><p>这题和前面的一个题“和等于K的子数组”非常相似，因为他们都是采用<strong>哈希表</strong>来存储数据，然后通过间接的方法求得一段连续的值的和。</p>
+<p>思路如下：</p>
+<p>因为所求的结果是一段连续的路径，因此可以通过<strong>求差值的方法</strong>来判断该路径是否符合要求。因此，在先序遍历二叉树的时候，记录下每个路径的和出现的次数，这样，当我们处于某条路径时，如果该路径的和减去sum的值再哈希表中，说明我们曾经走过一条路径，该路径的和等于上述差值，而当前路径和该路径之间的路径就是一个解，通过这种方法就能在线性时间内找到所要求的答案。</p>
+<pre><code class="hljs java"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">int</span> <span class="hljs-title">pathSum</span><span class="hljs-params">(TreeNode root, <span class="hljs-keyword">int</span> sum)</span> </span>&#123;
+    HashMap&lt;Integer, Integer&gt; preSum = <span class="hljs-keyword">new</span> HashMap();
+    preSum.put(<span class="hljs-number">0</span>,<span class="hljs-number">1</span>);
+    <span class="hljs-keyword">return</span> helper(root, <span class="hljs-number">0</span>, sum, preSum);
+&#125;
+
+<span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">int</span> <span class="hljs-title">helper</span><span class="hljs-params">(TreeNode root, <span class="hljs-keyword">int</span> currSum, <span class="hljs-keyword">int</span> target, HashMap&lt;Integer, Integer&gt; preSum)</span> </span>&#123;
+    <span class="hljs-keyword">if</span> (root == <span class="hljs-keyword">null</span>) &#123;
+        <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
     &#125;
+    
+    currSum += root.val;
+    <span class="hljs-keyword">int</span> res = preSum.getOrDefault(currSum - target, <span class="hljs-number">0</span>);
+    preSum.put(currSum, preSum.getOrDefault(currSum, <span class="hljs-number">0</span>) + <span class="hljs-number">1</span>);
+    
+    res += helper(root.left, currSum, target, preSum) + helper(root.right, currSum, target, preSum);
+    preSum.put(currSum, preSum.get(currSum) - <span class="hljs-number">1</span>);
+    <span class="hljs-keyword">return</span> res;
 &#125;</code></pre>
-<p>更好的方法是采用类似滑动窗口的方法：</p>
-<p>依然使用一个哈希表来存储p中字符串的频率，再初始化begin和end两个指针，这是我们把哈希表中的内容当做是begin,end之间的字符串还欠缺的值，所求的解应该满足一下条件：</p>
-<ol>
-<li>包含p中的所有字符</li>
-<li>每个字符的值都相等</li>
-<li>两者的长度相等</li>
-</ol>
-<p>因此，可以先移动end指针，每找到一个符合条件的字符，就在哈希表中减去一个该字符，说明这个字符的需求少了一个，直到哈希表中的字符个数都小于等于0，说明当前begin,end字符串的字符集合包含p的字符集合，这时移动begin，表示抛弃掉多余的字符，如果抛弃的这个字符是我们需要的，则需要继续移动end来添加，否则当begin，end字符串的长度等于p的长度时，说明该字符串的字符集包含p的字符集并且两个集合的大小相等，这正是两个者相等的条件，得到一个解。以此类推，当end遍历完s时输出所有解。</p>
-<pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Solution</span> </span>&#123;
-    <span class="hljs-function"><span class="hljs-keyword">public</span> List&lt;Integer&gt; <span class="hljs-title">findAnagrams</span><span class="hljs-params">(String s, String t)</span> </span>&#123;
-        List&lt;Integer&gt; result = <span class="hljs-keyword">new</span> LinkedList&lt;&gt;();
-        <span class="hljs-keyword">if</span>(t.length()&gt; s.length()) <span class="hljs-keyword">return</span> result;
-        Map&lt;Character, Integer&gt; map = <span class="hljs-keyword">new</span> HashMap&lt;&gt;();
-        <span class="hljs-keyword">for</span>(<span class="hljs-keyword">char</span> c : t.toCharArray())&#123;
-            map.put(c, map.getOrDefault(c, <span class="hljs-number">0</span>) + <span class="hljs-number">1</span>);
-        &#125;
-        <span class="hljs-keyword">int</span> counter = map.size();
-        
-        <span class="hljs-keyword">int</span> begin = <span class="hljs-number">0</span>, end = <span class="hljs-number">0</span>;
-        <span class="hljs-keyword">int</span> head = <span class="hljs-number">0</span>;
-        <span class="hljs-keyword">int</span> len = Integer.MAX_VALUE;
-        
-        
-        <span class="hljs-keyword">while</span>(end &lt; s.length())&#123;
-            <span class="hljs-keyword">char</span> c = s.charAt(end);
-            <span class="hljs-keyword">if</span>( map.containsKey(c) )&#123;
-                map.put(c, map.get(c)-<span class="hljs-number">1</span>);
-                <span class="hljs-keyword">if</span>(map.get(c) == <span class="hljs-number">0</span>) counter--;
-            &#125;
-            end++;
-            
-            <span class="hljs-keyword">while</span>(counter == <span class="hljs-number">0</span>)&#123;
-                <span class="hljs-keyword">char</span> tempc = s.charAt(begin);
-                <span class="hljs-keyword">if</span>(map.containsKey(tempc))&#123;
-                    map.put(tempc, map.get(tempc) + <span class="hljs-number">1</span>);
-                    <span class="hljs-keyword">if</span>(map.get(tempc) &gt; <span class="hljs-number">0</span>)&#123;
-                        counter++;
-                    &#125;
-                &#125;
-                <span class="hljs-keyword">if</span>(end-begin == t.length())&#123;
-                    result.add(begin);
-                &#125;
-                begin++;
-            &#125;
-            
-        &#125;
-        <span class="hljs-keyword">return</span> result;
-    &#125;
-&#125;</code></pre>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>哈希表的功能和数组很相似，能够很快地查找到一些我们曾经求得的有用的值，这样，如果答案能够通过当前的值和旧值间接求出，那么哈希表能够发挥很大的作用。</p>
 
             </div>
             <hr>
@@ -323,7 +256,9 @@
                   <div class="post-meta">
                     <i class="iconfont icon-tags"></i>
                     
-                      <a class="hover-with-bg" href="/tags/%E5%AD%97%E7%AC%A6%E4%B8%B2/">字符串</a>
+                      <a class="hover-with-bg" href="/tags/%E5%93%88%E5%B8%8C%E8%A1%A8/">哈希表</a>
+                    
+                      <a class="hover-with-bg" href="/tags/%E4%BA%8C%E5%8F%89%E6%A0%91/">二叉树</a>
                     
                   </div>
                 
@@ -336,18 +271,12 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2020/11/27/%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E8%B7%AF%E5%BE%84%E5%92%8C/">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">二叉树的路径和</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
                   </article>
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2020/11/25/%E5%92%8C%E7%AD%89%E4%BA%8EK%E7%9A%84%E5%AD%90%E6%95%B0%E7%BB%84/">
-                        <span class="hidden-mobile">和等于K的子数组</span>
+                      <a href="/2020/11/26/%E5%AF%BB%E6%89%BE%E6%89%80%E6%9C%89%E5%BC%82%E6%9E%84%E5%AD%97%E7%AC%A6%E4%B8%B2/">
+                        <span class="hidden-mobile">寻找所有异构字符串</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
@@ -486,7 +415,7 @@
     var typed = new Typed('#subtitle', {
       strings: [
         '  ',
-        "寻找所有异构字符串&nbsp;",
+        "二叉树的路径和&nbsp;",
       ],
       cursorChar: "_",
       typeSpeed: 70,
