@@ -1,0 +1,748 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Chen Shuwen">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="DES简介1975年IBM公司颁布的算法，在当时被美国选为国家标准并沿用至今天 DES多用于加密商业部门的非机密的敏感数据 特点： 分组密码：明文、密文、密钥的分组长度都是64位 能够加密任何形式的计算机数据 对合运算，加密和解密共用一套算法 基本结构输入Feistel结构 理论基础DES算法可分为密钥生成和加&#x2F;解密过程两个阶段，整体工作流程如下图：  密钥生成DES算法共有16轮加&amp;#">
+<meta property="og:type" content="article">
+<meta property="og:title" content="DES">
+<meta property="og:url" content="http://example.com/2023/01/10/DES/index.html">
+<meta property="og:site_name" content="Chen Shuwen&#39;s Tech Site">
+<meta property="og:description" content="DES简介1975年IBM公司颁布的算法，在当时被美国选为国家标准并沿用至今天 DES多用于加密商业部门的非机密的敏感数据 特点： 分组密码：明文、密文、密钥的分组长度都是64位 能够加密任何形式的计算机数据 对合运算，加密和解密共用一套算法 基本结构输入Feistel结构 理论基础DES算法可分为密钥生成和加&#x2F;解密过程两个阶段，整体工作流程如下图：  密钥生成DES算法共有16轮加&amp;#">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2023/01/10/DES/image-20211205170307869.png">
+<meta property="og:image" content="http://example.com/2023/01/10/DES/image-20211205170456114.png">
+<meta property="og:image" content="http://example.com/2023/01/10/DES/image-20211205174408085.png">
+<meta property="article:published_time" content="2023-01-10T04:09:21.857Z">
+<meta property="article:modified_time" content="2023-01-10T04:09:21.857Z">
+<meta property="article:author" content="Chen Shuwen">
+<meta property="article:tag" content="DES">
+<meta property="article:tag" content="分组密码">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://example.com/2023/01/10/DES/image-20211205170307869.png">
+  
+  
+  
+  <title>DES - Chen Shuwen&#39;s Tech Site</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Chen Shuwen&#39;s Tech Site</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="DES"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-01-10 12:09" pubdate>
+          2023年1月10日 中午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          9.1k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          77 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">DES</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="DES"><a href="#DES" class="headerlink" title="DES"></a>DES</h1><h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>1975年IBM公司颁布的算法，在当时被美国选为国家标准并沿用至今天</p>
+<p>DES多用于加密商业部门的非机密的敏感数据</p>
+<p>特点：</p>
+<p>分组密码：明文、密文、密钥的分组长度都是64位</p>
+<p>能够加密任何形式的计算机数据</p>
+<p>对合运算，加密和解密共用一套算法</p>
+<p>基本结构输入Feistel结构</p>
+<h2 id="理论基础"><a href="#理论基础" class="headerlink" title="理论基础"></a>理论基础</h2><p>DES算法可分为密钥生成和加&#x2F;解密过程两个阶段，整体工作流程如下图：</p>
+<p><img src="/2023/01/10/DES/image-20211205170307869.png" srcset="/img/loading.gif" lazyload alt="image-20211205170307869"></p>
+<h3 id="密钥生成"><a href="#密钥生成" class="headerlink" title="密钥生成"></a>密钥生成</h3><p>DES算法共有16轮加&#x2F;解密迭代，每一轮都需要单独的子密钥，因此需要生成16个子密钥：</p>
+<p><img src="/2023/01/10/DES/image-20211205170456114.png" srcset="/img/loading.gif" lazyload alt="image-20211205170456114"></p>
+<h4 id="置换选择1"><a href="#置换选择1" class="headerlink" title="置换选择1"></a>置换选择1</h4><p>输入：64bit密钥</p>
+<p>输出：28位C0, 28位D0</p>
+<p>过程：从64位密钥中去掉每个字节的第8位，奇偶校验位，把剩下的56位按照规则打乱重排，将前28位作为C0，后28位作为D0</p>
+<h4 id="循环左移"><a href="#循环左移" class="headerlink" title="循环左移"></a>循环左移</h4><p>每一轮根据表格循环不同的位数，注意，如果数据摆放的方式不同，这里的循环左移可能变成循环右移，需要参考具体示例来决定</p>
+<h4 id="置换选择2"><a href="#置换选择2" class="headerlink" title="置换选择2"></a>置换选择2</h4><p>输入：28位Ci, 28位Di</p>
+<p>输出：48位子密钥</p>
+<p>过程：将Ci和Di合并成56位中间数据，从中选择48位的子密钥Ki</p>
+<h3 id="加密算法"><a href="#加密算法" class="headerlink" title="加密算法"></a>加密算法</h3><h4 id="初始置换IP"><a href="#初始置换IP" class="headerlink" title="初始置换IP"></a>初始置换IP</h4><p>输入：64位明文</p>
+<p>输出：32位L0，32位R0</p>
+<p>过程：按照规则将明文转化为L0，R0</p>
+<h4 id="加密函数F"><a href="#加密函数F" class="headerlink" title="加密函数F"></a>加密函数F</h4><p>输入：32为R和48位子密钥</p>
+<p>输出：32位f</p>
+<p>具体过程如下图：</p>
+<p><img src="/2023/01/10/DES/image-20211205174408085.png" srcset="/img/loading.gif" lazyload alt="image-20211205174408085"></p>
+<h5 id="选择运算"><a href="#选择运算" class="headerlink" title="选择运算"></a>选择运算</h5><p>输入：32位A</p>
+<p>输出：48位中间结果</p>
+<p>过程：根据规则扩展</p>
+<h5 id="模2相加"><a href="#模2相加" class="headerlink" title="模2相加"></a>模2相加</h5><p>输入：48位中间结果，48位子密钥</p>
+<p>输出：48位</p>
+<p>过程：异或</p>
+<h5 id="S盒变换"><a href="#S盒变换" class="headerlink" title="S盒变换"></a>S盒变换</h5><p>输入：48位</p>
+<p>输出：32位</p>
+<p>过程：将48位输入分成8份，每份6bit，设为b1b2b3b4b5b6，其中b1b6组成行号，b2b3b4b5组成列号，使用行列到Si盒中查找相应的值作为4bit输出。注意，输出的结果很可能是逆序存放的，即4bit的高位放到最终输出的低位</p>
+<h5 id="置换运算P"><a href="#置换运算P" class="headerlink" title="置换运算P"></a>置换运算P</h5><p>输入：32位</p>
+<p>输出：32位</p>
+<p>过程：按照规则取数</p>
+<h3 id="解密算法"><a href="#解密算法" class="headerlink" title="解密算法"></a>解密算法</h3><p>整体流程和加密相同，但是子密钥是反过来使用的，即最先使用K16，最后使用K1</p>
+<h2 id="具体实现"><a href="#具体实现" class="headerlink" title="具体实现"></a>具体实现</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">// main.c</span><br><br><span class="hljs-meta">#<span class="hljs-keyword">include</span><span class="hljs-string">&lt;stdio.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span><span class="hljs-string">&quot;des.h&quot;</span></span><br><br><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span><br>&#123;<br>    <span class="hljs-type">char</span>* key_str = <span class="hljs-string">&quot;0011000100110010001100110011010000110101001101100011011100111000&quot;</span>;<br>    <span class="hljs-type">char</span>* M_str   = <span class="hljs-string">&quot;0011000000110001001100100011001100110100001101010011011000110111&quot;</span>;<br><br>    <span class="hljs-type">uint64_t</span> key = get_key(key_str);<br>    <span class="hljs-type">uint64_t</span> M = get_M(M_str);<br><br>    <span class="hljs-type">uint64_t</span> C = des_encode(M, key);<br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;C:\n&quot;</span>);<br>    output_bin(C, <span class="hljs-number">64</span>);<br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;\n&quot;</span>);<br><br>    <span class="hljs-type">uint64_t</span> plain = des_decode(C, key);<br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;M:\n&quot;</span>);<br>    output_bin(plain, <span class="hljs-number">64</span>);<br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;\n&quot;</span>);<br><br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;M == M ? %d\n&quot;</span>, M == plain);<br><br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">// des.h</span><br><span class="hljs-meta">#<span class="hljs-keyword">ifndef</span> DES_H</span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> DES_H</span><br><br><span class="hljs-keyword">typedef</span> <span class="hljs-type">unsigned</span> <span class="hljs-type">long</span> <span class="hljs-type">long</span> <span class="hljs-type">uint64_t</span>;<br><span class="hljs-keyword">typedef</span> <span class="hljs-type">unsigned</span> <span class="hljs-type">int</span>       <span class="hljs-type">uint32_t</span>;<br><span class="hljs-keyword">typedef</span> <span class="hljs-type">unsigned</span> <span class="hljs-type">char</span>      <span class="hljs-type">uint8_t</span>;<br><br><span class="hljs-comment">// des加密</span><br><span class="hljs-type">uint64_t</span> <span class="hljs-title function_">des_encode</span><span class="hljs-params">(<span class="hljs-type">uint64_t</span> M, <span class="hljs-type">uint64_t</span> key)</span>;<br><br><span class="hljs-comment">// des解密</span><br><span class="hljs-type">uint64_t</span> <span class="hljs-title function_">des_decode</span><span class="hljs-params">(<span class="hljs-type">uint64_t</span> C, <span class="hljs-type">uint64_t</span> key)</span>;<br><br><span class="hljs-comment">// 获取密钥</span><br><span class="hljs-type">uint64_t</span> <span class="hljs-title function_">get_key</span><span class="hljs-params">(<span class="hljs-type">char</span>* str)</span>;<br><br><span class="hljs-comment">// 获取明文</span><br><span class="hljs-type">uint64_t</span> <span class="hljs-title function_">get_M</span><span class="hljs-params">(<span class="hljs-type">char</span>* str)</span>;<br><br><span class="hljs-comment">// 输出10进制数的二进制表示</span><br><span class="hljs-comment">// k: 二进制的位数</span><br><span class="hljs-type">void</span> <span class="hljs-title function_">output_bin</span><span class="hljs-params">(<span class="hljs-type">uint64_t</span> dec, <span class="hljs-type">uint8_t</span> k)</span>;<br><br><span class="hljs-meta">#<span class="hljs-keyword">endif</span></span><br></code></pre></td></tr></table></figure>
+
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br><span class="line">236</span><br><span class="line">237</span><br><span class="line">238</span><br><span class="line">239</span><br><span class="line">240</span><br><span class="line">241</span><br><span class="line">242</span><br><span class="line">243</span><br><span class="line">244</span><br><span class="line">245</span><br><span class="line">246</span><br><span class="line">247</span><br><span class="line">248</span><br><span class="line">249</span><br><span class="line">250</span><br><span class="line">251</span><br><span class="line">252</span><br><span class="line">253</span><br><span class="line">254</span><br><span class="line">255</span><br><span class="line">256</span><br><span class="line">257</span><br><span class="line">258</span><br><span class="line">259</span><br><span class="line">260</span><br><span class="line">261</span><br><span class="line">262</span><br><span class="line">263</span><br><span class="line">264</span><br><span class="line">265</span><br><span class="line">266</span><br><span class="line">267</span><br><span class="line">268</span><br><span class="line">269</span><br><span class="line">270</span><br><span class="line">271</span><br><span class="line">272</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">// des.c</span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span><span class="hljs-string">&lt;stdio.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span><span class="hljs-string">&quot;des.h&quot;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span><span class="hljs-string">&quot;table.h&quot;</span></span><br><br><span class="hljs-comment">// 获得byte8第p位的bit</span><br><span class="hljs-comment">// eg: byte=0100 0010, p=1, bit=1; p=2, bit=0</span><br><span class="hljs-type">uint8_t</span> <span class="hljs-title function_">get_bit</span><span class="hljs-params">(<span class="hljs-type">uint64_t</span> byte8, <span class="hljs-type">uint8_t</span> p)</span><br>&#123;<br>    <span class="hljs-keyword">return</span> (byte8 &gt;&gt; p) &amp; <span class="hljs-number">0x1</span>;<br>&#125;<br><br><span class="hljs-comment">// 设置byte8第p位为 bit</span><br><span class="hljs-type">void</span> <span class="hljs-title function_">set_bit</span><span class="hljs-params">(<span class="hljs-type">uint64_t</span>* byte8, <span class="hljs-type">uint8_t</span> p, <span class="hljs-type">uint8_t</span> bit)</span><br>&#123;<br>    <span class="hljs-type">uint64_t</span> bit_p = get_bit(*byte8, p);<br>    *byte8 ^= bit_p &lt;&lt; p;<br>    *byte8 |= (<span class="hljs-type">uint64_t</span>)bit &lt;&lt; p;<br>&#125;<br><br><span class="hljs-comment">// 输出k位64bit十进制数的二进制表示</span><br><span class="hljs-comment">// output: 0bit-&gt;(k-1)bit</span><br><span class="hljs-type">void</span> <span class="hljs-title function_">output_bin</span><span class="hljs-params">(<span class="hljs-type">uint64_t</span> dec, <span class="hljs-type">uint8_t</span> k)</span><br>&#123;<br>    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i = <span class="hljs-number">0</span>; i &lt; k; ++i)<br>    &#123;<br>        <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%d&quot;</span>, (<span class="hljs-type">int</span>)get_bit(dec, i));<br>        <span class="hljs-keyword">if</span>((i + <span class="hljs-number">1</span>) % <span class="hljs-number">8</span> == <span class="hljs-number">0</span>)<span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot; &quot;</span>);<br>    &#125;<br>&#125;<br><br><span class="hljs-comment">// len(str) == 64</span><br><span class="hljs-comment">// str: 0bit-&gt;63bit</span><br><span class="hljs-type">uint64_t</span> <span class="hljs-title function_">get_key</span><span class="hljs-params">(<span class="hljs-type">char</span>* str)</span><br>&#123;<br>    <span class="hljs-type">uint64_t</span> key = <span class="hljs-number">0</span>;<br>    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">64</span>; ++i)<br>    &#123;<br>        <span class="hljs-type">uint8_t</span> ch = str[i];<br>        set_bit(&amp;key, i, ch);<br>    &#125;<br>    <span class="hljs-keyword">return</span> key;<br>&#125;<br><br><span class="hljs-comment">// 获取明文</span><br><span class="hljs-type">uint64_t</span> <span class="hljs-title function_">get_M</span><span class="hljs-params">(<span class="hljs-type">char</span>* str)</span><br>&#123;<br>    <span class="hljs-type">uint64_t</span> M = <span class="hljs-number">0</span>;<br>    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">64</span>; ++i)<br>    &#123;<br>        <span class="hljs-type">uint8_t</span> ch = str[i];<br>        set_bit(&amp;M, i, ch);<br>    &#125;<br>    <span class="hljs-keyword">return</span> M;<br>&#125;<br><br><span class="hljs-comment">// 置换选择1</span><br><span class="hljs-type">void</span> <span class="hljs-title function_">swap_sel1</span><span class="hljs-params">(<span class="hljs-type">uint64_t</span> key, <span class="hljs-type">uint64_t</span>* C0, <span class="hljs-type">uint64_t</span>* D0)</span><br>&#123;<br>    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">28</span>; ++i)<br>    &#123;<br>        set_bit(C0, i, get_bit(key, MatC0[i] - <span class="hljs-number">1</span>));<br>        set_bit(D0, i, get_bit(key, MatD0[i] - <span class="hljs-number">1</span>));<br>    &#125;<br>&#125;<br><br><span class="hljs-comment">// 循环左移 011(1) -&gt; 110, 在算法中体现为右移</span><br><span class="hljs-comment">// d: 要移动的数字</span><br><span class="hljs-comment">// k: 该数字的长度</span><br><span class="hljs-comment">// l: 移动的长度</span><br><span class="hljs-type">uint64_t</span> <span class="hljs-title function_">rol_shift_l</span><span class="hljs-params">(<span class="hljs-type">uint64_t</span> d, <span class="hljs-type">uint8_t</span> k, <span class="hljs-type">uint8_t</span> l)</span><br>&#123;<br>    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i = <span class="hljs-number">0</span>; i &lt; l; ++i)<br>    &#123;<br>        <span class="hljs-type">uint8_t</span> bit = get_bit(d, <span class="hljs-number">0</span>);<br>        d &gt;&gt;= <span class="hljs-number">1</span>;<br>        set_bit(&amp;d, k - <span class="hljs-number">1</span>, bit);<br>    &#125;<br>    <span class="hljs-keyword">return</span> d;<br>&#125;<br><br><span class="hljs-comment">// 生成下一轮子密钥</span><br><span class="hljs-type">uint64_t</span> <span class="hljs-title function_">cal_K</span><span class="hljs-params">(<span class="hljs-type">uint64_t</span>* Ci, <span class="hljs-type">uint64_t</span>* Di, <span class="hljs-type">uint32_t</span> it)</span><br>&#123;<br>    <span class="hljs-type">uint64_t</span> K = <span class="hljs-number">0</span>;<br><br>    *Ci = rol_shift_l(*Ci, <span class="hljs-number">28</span>, Rol[it]);  <span class="hljs-comment">// 0~23</span><br>    *Di = rol_shift_l(*Di, <span class="hljs-number">28</span>, Rol[it]);  <span class="hljs-comment">//24~47</span><br><br>    <span class="hljs-comment">// 置换选择2</span><br>    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">48</span>; ++i)<br>    &#123;<br>        <span class="hljs-type">uint32_t</span> idx = MatPC2[i] - <span class="hljs-number">1</span>;<br>        <span class="hljs-type">uint8_t</span> bit;<br>        <span class="hljs-keyword">if</span>(idx &lt; <span class="hljs-number">28</span>)<br>        &#123;<br>            bit = get_bit(*Ci, idx);<br>        &#125;<br>        <span class="hljs-keyword">else</span><br>        &#123;<br>            idx -= <span class="hljs-number">28</span>;<br>            bit = get_bit(*Di, idx);<br>        &#125;<br><br>        set_bit(&amp;K, i, bit);<br>    &#125;<br><br>    <span class="hljs-keyword">return</span> K;<br>&#125;<br><br><span class="hljs-comment">// 初始置换IP</span><br><span class="hljs-type">void</span> <span class="hljs-title function_">IP_swap</span><span class="hljs-params">(<span class="hljs-type">uint64_t</span> M, <span class="hljs-type">uint32_t</span>* L, <span class="hljs-type">uint32_t</span>* R)</span><br>&#123;<br>    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">64</span>; ++i)<br>    &#123;<br>        <span class="hljs-keyword">if</span>(i &lt; <span class="hljs-number">32</span>)<br>        &#123;<br>            set_bit((<span class="hljs-type">uint64_t</span>*)L, i, get_bit(M, IP[i] - <span class="hljs-number">1</span>));<br>        &#125;<br>        <span class="hljs-keyword">else</span><br>        &#123;<br>            set_bit((<span class="hljs-type">uint64_t</span>*)R, i - <span class="hljs-number">32</span>, get_bit(M, IP[i] - <span class="hljs-number">1</span>));<br>        &#125;<br>    &#125;<br>&#125;<br><br><span class="hljs-comment">// IP逆置换</span><br><span class="hljs-type">uint64_t</span> <span class="hljs-title function_">IPinv_swap</span><span class="hljs-params">(<span class="hljs-type">uint32_t</span> R, <span class="hljs-type">uint32_t</span> L)</span><br>&#123;<br>    <span class="hljs-type">uint64_t</span> C = <span class="hljs-number">0</span>;<br>    <br>    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">64</span>; ++i)<br>    &#123;<br>        <span class="hljs-type">int</span> idx = IP_inv[i] - <span class="hljs-number">1</span>;<br>        <span class="hljs-keyword">if</span>(idx &lt; <span class="hljs-number">32</span>)<br>        &#123;<br>            set_bit(&amp;C, i, get_bit(R, idx));<br>        &#125;<br>        <span class="hljs-keyword">else</span><br>        &#123;<br>            idx -= <span class="hljs-number">32</span>;<br>            set_bit(&amp;C, i, get_bit(L, idx));<br>        &#125;<br>    &#125;<br>    <span class="hljs-keyword">return</span> C;<br>&#125;<br><br><span class="hljs-comment">// 选择运算E</span><br><span class="hljs-type">uint64_t</span> <span class="hljs-title function_">E</span><span class="hljs-params">(<span class="hljs-type">uint32_t</span> R)</span><br>&#123;<br>    <span class="hljs-type">uint64_t</span> mid;<br><br>    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">48</span>; ++i)<br>    &#123;<br>        set_bit(&amp;mid, i, get_bit(R, ET[i] - <span class="hljs-number">1</span>));<br>    &#125;<br><br>    <span class="hljs-keyword">return</span> mid;<br>&#125;<br><br><span class="hljs-comment">// S盒变换</span><br><span class="hljs-type">uint32_t</span> <span class="hljs-title function_">S</span><span class="hljs-params">(<span class="hljs-type">uint64_t</span> in48)</span><br>&#123;<br>    <span class="hljs-type">uint32_t</span> out32 = <span class="hljs-number">0</span>;<br>    <span class="hljs-type">uint64_t</span> row = <span class="hljs-number">0</span>, col = <span class="hljs-number">0</span>;<br><br>    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">8</span>; ++i)<br>    &#123;<br>        <span class="hljs-comment">// 取出6*i-&gt; 6*i+5位</span><br>        <span class="hljs-comment">// row: b1b6</span><br>        set_bit(&amp;row, <span class="hljs-number">1</span>, get_bit(in48, <span class="hljs-number">6</span>*i  ));<br>        set_bit(&amp;row, <span class="hljs-number">0</span>, get_bit(in48, <span class="hljs-number">6</span>*i+<span class="hljs-number">5</span>));<br><br>        <span class="hljs-comment">// col: b2b3b4b5</span><br>        set_bit(&amp;col, <span class="hljs-number">3</span>, get_bit(in48, <span class="hljs-number">6</span>*i+<span class="hljs-number">1</span>));<br>        set_bit(&amp;col, <span class="hljs-number">2</span>, get_bit(in48, <span class="hljs-number">6</span>*i+<span class="hljs-number">2</span>));<br>        set_bit(&amp;col, <span class="hljs-number">1</span>, get_bit(in48, <span class="hljs-number">6</span>*i+<span class="hljs-number">3</span>));<br>        set_bit(&amp;col, <span class="hljs-number">0</span>, get_bit(in48, <span class="hljs-number">6</span>*i+<span class="hljs-number">4</span>));<br><br>        <span class="hljs-type">uint32_t</span> si = S_Box[i][row][col];<br>        <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> j = <span class="hljs-number">0</span>; j &lt; <span class="hljs-number">4</span>; ++j)<br>        &#123;<br>            set_bit((<span class="hljs-type">uint64_t</span>*)&amp;out32, <span class="hljs-number">4</span>*i+j, get_bit((<span class="hljs-type">uint64_t</span>)si, <span class="hljs-number">3</span> - j));<br>        &#125;<br>    &#125;<br><br>    <span class="hljs-keyword">return</span> out32;<br>&#125;<br><br><span class="hljs-type">uint32_t</span> <span class="hljs-title function_">P</span><span class="hljs-params">(<span class="hljs-type">uint32_t</span> s)</span><br>&#123;<br>    <span class="hljs-type">uint32_t</span> p = <span class="hljs-number">0</span>;<br>    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">32</span>; ++i)<br>    &#123;<br>        set_bit((<span class="hljs-type">uint64_t</span>*)&amp;p, i, get_bit((<span class="hljs-type">uint64_t</span>)s, PT[i] - <span class="hljs-number">1</span>));<br>    &#125;<br>    <span class="hljs-keyword">return</span> p;<br>&#125;<br><br><span class="hljs-comment">// F函数</span><br><span class="hljs-type">uint32_t</span> <span class="hljs-title function_">F</span><span class="hljs-params">(<span class="hljs-type">uint32_t</span> R, <span class="hljs-type">uint64_t</span> key48)</span><br>&#123;<br>    <span class="hljs-comment">// 选择运算</span><br>    <span class="hljs-type">uint64_t</span> mid = E(R);<br>    <span class="hljs-comment">// 模2相加</span><br>    <span class="hljs-type">uint64_t</span> xor = mid ^ key48;<br>    <span class="hljs-comment">// S盒</span><br>    <span class="hljs-type">uint32_t</span> s = S(xor);<br>    <span class="hljs-comment">// 置换运算P</span><br>    <span class="hljs-type">uint32_t</span> p = P(s);<br><br>    <span class="hljs-keyword">return</span> p;<br>&#125;<br><br><br><br><span class="hljs-type">uint64_t</span> <span class="hljs-title function_">des_encode</span><span class="hljs-params">(<span class="hljs-type">uint64_t</span> M, <span class="hljs-type">uint64_t</span> key)</span><br>&#123;<br>    <span class="hljs-comment">// IP置换</span><br>    <span class="hljs-type">uint32_t</span> L = <span class="hljs-number">0</span>, R = <span class="hljs-number">0</span>;<br>    IP_swap(M, &amp;L, &amp;R);<br><br>    <span class="hljs-comment">// 置换选择1</span><br>    <span class="hljs-type">uint64_t</span> C = <span class="hljs-number">0</span>, D = <span class="hljs-number">0</span>;<br>    swap_sel1(key, &amp;C, &amp;D);<br>    <span class="hljs-comment">// 轮函数</span><br>    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> it = <span class="hljs-number">0</span>; it &lt; <span class="hljs-number">16</span>; ++it)<br>    &#123;<br>        <span class="hljs-type">uint64_t</span> key48 = cal_K(&amp;C, &amp;D, it);<br>        <span class="hljs-type">uint32_t</span> f = F(R, key48);<br><br>        <span class="hljs-type">uint32_t</span> lastL = L;<br>        L = R;<br>        R = lastL ^ f;<br>    &#125;<br><br>    <span class="hljs-comment">// IP逆置换</span><br>    <span class="hljs-type">uint64_t</span> cipher = IPinv_swap(R, L);<br>    <span class="hljs-keyword">return</span> cipher;<br>&#125;<br><br><span class="hljs-comment">// des解密</span><br><span class="hljs-type">uint64_t</span> <span class="hljs-title function_">des_decode</span><span class="hljs-params">(<span class="hljs-type">uint64_t</span> cipher, <span class="hljs-type">uint64_t</span> key)</span><br>&#123;<br>    <span class="hljs-comment">// IP置换</span><br>    <span class="hljs-type">uint32_t</span> L = <span class="hljs-number">0</span>, R = <span class="hljs-number">0</span>;<br>    IP_swap(cipher, &amp;L, &amp;R);<br><br>    <span class="hljs-comment">// 置换选择1</span><br>    <span class="hljs-type">uint64_t</span> C = <span class="hljs-number">0</span>, D = <span class="hljs-number">0</span>;<br>    <span class="hljs-type">uint64_t</span> keys[<span class="hljs-number">16</span>] = &#123;<span class="hljs-number">0</span>&#125;;<br>    swap_sel1(key, &amp;C, &amp;D);<br>    <span class="hljs-comment">// 轮密钥</span><br>    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> it = <span class="hljs-number">0</span>; it &lt; <span class="hljs-number">16</span>; ++it)<br>    &#123;<br>        keys[it] = cal_K(&amp;C, &amp;D, it);<br>    &#125;<br><br>    <span class="hljs-comment">// 轮函数</span><br>    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> it = <span class="hljs-number">15</span>; it &gt;= <span class="hljs-number">0</span>; --it)<br>    &#123;<br>        <span class="hljs-type">uint32_t</span> f = F(R, keys[it]);<br><br>        <span class="hljs-type">uint32_t</span> lastL = L;<br>        L = R;<br>        R = lastL ^ f;<br>    &#125;<br><br>    <span class="hljs-comment">// IP逆置换</span><br>    <span class="hljs-type">uint64_t</span> M = IPinv_swap(R, L);<br>    <span class="hljs-keyword">return</span> M;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">// table.h</span><br><br><span class="hljs-meta">#<span class="hljs-keyword">ifndef</span> TABLE_H</span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> TABLE_H</span><br><br><span class="hljs-meta">#<span class="hljs-keyword">include</span><span class="hljs-string">&quot;des.h&quot;</span></span><br><br><span class="hljs-type">uint32_t</span> MatC0[<span class="hljs-number">7</span> * <span class="hljs-number">4</span>] = <br>&#123;<br><span class="hljs-number">57</span>, <span class="hljs-number">49</span>, <span class="hljs-number">31</span>, <span class="hljs-number">33</span>, <span class="hljs-number">25</span>, <span class="hljs-number">17</span>,  <span class="hljs-number">9</span>,<br> <span class="hljs-number">1</span>, <span class="hljs-number">58</span>, <span class="hljs-number">50</span>, <span class="hljs-number">42</span>, <span class="hljs-number">34</span>, <span class="hljs-number">26</span>, <span class="hljs-number">18</span>,<br><span class="hljs-number">10</span>,  <span class="hljs-number">2</span>, <span class="hljs-number">59</span>, <span class="hljs-number">51</span>, <span class="hljs-number">43</span>, <span class="hljs-number">35</span>, <span class="hljs-number">27</span>,<br><span class="hljs-number">19</span>, <span class="hljs-number">11</span>,  <span class="hljs-number">3</span>, <span class="hljs-number">60</span>, <span class="hljs-number">52</span>, <span class="hljs-number">44</span>, <span class="hljs-number">36</span>,<br>&#125;;<br><br><span class="hljs-type">uint32_t</span> MatD0[<span class="hljs-number">7</span> * <span class="hljs-number">4</span>] = <br>&#123;<br><span class="hljs-number">63</span>, <span class="hljs-number">55</span>, <span class="hljs-number">47</span>, <span class="hljs-number">39</span>, <span class="hljs-number">31</span>, <span class="hljs-number">23</span>, <span class="hljs-number">15</span>,<br> <span class="hljs-number">7</span>, <span class="hljs-number">62</span>, <span class="hljs-number">54</span>, <span class="hljs-number">46</span>, <span class="hljs-number">38</span>, <span class="hljs-number">30</span>, <span class="hljs-number">22</span>,<br><span class="hljs-number">14</span>,  <span class="hljs-number">6</span>, <span class="hljs-number">61</span>, <span class="hljs-number">53</span>, <span class="hljs-number">45</span>, <span class="hljs-number">37</span>, <span class="hljs-number">29</span>,<br><span class="hljs-number">21</span>, <span class="hljs-number">13</span>,  <span class="hljs-number">5</span>, <span class="hljs-number">28</span>, <span class="hljs-number">20</span>, <span class="hljs-number">12</span>,  <span class="hljs-number">4</span>,<br>&#125;;<br><br><span class="hljs-comment">// 置换选择2表格</span><br><span class="hljs-type">uint32_t</span> MatPC2[<span class="hljs-number">6</span> * <span class="hljs-number">8</span>] =<br>&#123;<br><span class="hljs-number">14</span>,<span class="hljs-number">17</span>,<span class="hljs-number">11</span>,<span class="hljs-number">24</span>, <span class="hljs-number">1</span>, <span class="hljs-number">5</span>,<br> <span class="hljs-number">3</span>,<span class="hljs-number">28</span>,<span class="hljs-number">15</span>, <span class="hljs-number">6</span>,<span class="hljs-number">21</span>,<span class="hljs-number">10</span>,<br><span class="hljs-number">23</span>,<span class="hljs-number">19</span>,<span class="hljs-number">12</span>, <span class="hljs-number">4</span>,<span class="hljs-number">26</span>, <span class="hljs-number">8</span>,<br><span class="hljs-number">16</span>, <span class="hljs-number">7</span>,<span class="hljs-number">27</span>,<span class="hljs-number">20</span>,<span class="hljs-number">13</span>, <span class="hljs-number">2</span>,<br><span class="hljs-number">41</span>,<span class="hljs-number">52</span>,<span class="hljs-number">31</span>,<span class="hljs-number">37</span>,<span class="hljs-number">47</span>,<span class="hljs-number">55</span>,<br><span class="hljs-number">30</span>,<span class="hljs-number">40</span>,<span class="hljs-number">51</span>,<span class="hljs-number">45</span>,<span class="hljs-number">33</span>,<span class="hljs-number">48</span>,<br><span class="hljs-number">44</span>,<span class="hljs-number">49</span>,<span class="hljs-number">39</span>,<span class="hljs-number">56</span>,<span class="hljs-number">34</span>,<span class="hljs-number">53</span>,<br><span class="hljs-number">46</span>,<span class="hljs-number">42</span>,<span class="hljs-number">50</span>,<span class="hljs-number">36</span>,<span class="hljs-number">29</span>,<span class="hljs-number">32</span> <br>&#125;;<br><br><span class="hljs-comment">//  移位表</span><br><span class="hljs-type">uint32_t</span> Rol[<span class="hljs-number">16</span>] =<br>&#123;<br><span class="hljs-number">1</span>, <span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">2</span>, <span class="hljs-number">2</span>, <span class="hljs-number">2</span>, <span class="hljs-number">2</span>, <span class="hljs-number">2</span>, <span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">2</span>, <span class="hljs-number">2</span>, <span class="hljs-number">2</span>, <span class="hljs-number">2</span>, <span class="hljs-number">2</span>, <span class="hljs-number">1</span><br>&#125;;<br><br><span class="hljs-comment">// IP置换表</span><br><span class="hljs-type">uint32_t</span> IP[<span class="hljs-number">64</span>] =<br>&#123;             <br><span class="hljs-number">58</span>,<span class="hljs-number">50</span>,<span class="hljs-number">42</span>,<span class="hljs-number">34</span>,<span class="hljs-number">26</span>,<span class="hljs-number">18</span>,<span class="hljs-number">10</span>, <span class="hljs-number">2</span>,<span class="hljs-number">60</span>,<span class="hljs-number">52</span>,<span class="hljs-number">44</span>,<span class="hljs-number">36</span>,<span class="hljs-number">28</span>,<span class="hljs-number">20</span>,<span class="hljs-number">12</span>, <span class="hljs-number">4</span>,<br><span class="hljs-number">62</span>,<span class="hljs-number">54</span>,<span class="hljs-number">46</span>,<span class="hljs-number">38</span>,<span class="hljs-number">30</span>,<span class="hljs-number">22</span>,<span class="hljs-number">14</span>, <span class="hljs-number">6</span>,<span class="hljs-number">64</span>,<span class="hljs-number">56</span>,<span class="hljs-number">48</span>,<span class="hljs-number">40</span>,<span class="hljs-number">32</span>,<span class="hljs-number">24</span>,<span class="hljs-number">16</span>, <span class="hljs-number">8</span>,<br><span class="hljs-number">57</span>,<span class="hljs-number">49</span>,<span class="hljs-number">41</span>,<span class="hljs-number">33</span>,<span class="hljs-number">25</span>,<span class="hljs-number">17</span>, <span class="hljs-number">9</span>, <span class="hljs-number">1</span>,<span class="hljs-number">59</span>,<span class="hljs-number">51</span>,<span class="hljs-number">43</span>,<span class="hljs-number">35</span>,<span class="hljs-number">27</span>,<span class="hljs-number">19</span>,<span class="hljs-number">11</span>, <span class="hljs-number">3</span>,<br><span class="hljs-number">61</span>,<span class="hljs-number">53</span>,<span class="hljs-number">45</span>,<span class="hljs-number">37</span>,<span class="hljs-number">29</span>,<span class="hljs-number">21</span>,<span class="hljs-number">13</span>, <span class="hljs-number">5</span>,<span class="hljs-number">63</span>,<span class="hljs-number">55</span>,<span class="hljs-number">47</span>,<span class="hljs-number">39</span>,<span class="hljs-number">31</span>,<span class="hljs-number">23</span>,<span class="hljs-number">15</span>, <span class="hljs-number">7</span> <br>&#125;;<br><span class="hljs-comment">// IP-1置换表</span><br><span class="hljs-type">uint32_t</span> IP_inv[<span class="hljs-number">64</span>] =<br>&#123;              <br><span class="hljs-number">40</span>, <span class="hljs-number">8</span>,<span class="hljs-number">48</span>,<span class="hljs-number">16</span>,<span class="hljs-number">56</span>,<span class="hljs-number">24</span>,<span class="hljs-number">64</span>,<span class="hljs-number">32</span>,<br><span class="hljs-number">39</span>, <span class="hljs-number">7</span>,<span class="hljs-number">47</span>,<span class="hljs-number">15</span>,<span class="hljs-number">55</span>,<span class="hljs-number">23</span>,<span class="hljs-number">63</span>,<span class="hljs-number">31</span>,<br><span class="hljs-number">38</span>, <span class="hljs-number">6</span>,<span class="hljs-number">46</span>,<span class="hljs-number">14</span>,<span class="hljs-number">54</span>,<span class="hljs-number">22</span>,<span class="hljs-number">62</span>,<span class="hljs-number">30</span>,<br><span class="hljs-number">37</span>, <span class="hljs-number">5</span>,<span class="hljs-number">45</span>,<span class="hljs-number">13</span>,<span class="hljs-number">53</span>,<span class="hljs-number">21</span>,<span class="hljs-number">61</span>,<span class="hljs-number">29</span>,<br><span class="hljs-number">36</span>, <span class="hljs-number">4</span>,<span class="hljs-number">44</span>,<span class="hljs-number">12</span>,<span class="hljs-number">52</span>,<span class="hljs-number">20</span>,<span class="hljs-number">60</span>,<span class="hljs-number">28</span>,<br><span class="hljs-number">35</span>, <span class="hljs-number">3</span>,<span class="hljs-number">43</span>,<span class="hljs-number">11</span>,<span class="hljs-number">51</span>,<span class="hljs-number">19</span>,<span class="hljs-number">59</span>,<span class="hljs-number">27</span>,<br><span class="hljs-number">34</span>, <span class="hljs-number">2</span>,<span class="hljs-number">42</span>,<span class="hljs-number">10</span>,<span class="hljs-number">50</span>,<span class="hljs-number">18</span>,<span class="hljs-number">58</span>,<span class="hljs-number">26</span>,<br><span class="hljs-number">33</span>, <span class="hljs-number">1</span>,<span class="hljs-number">41</span>, <span class="hljs-number">9</span>,<span class="hljs-number">49</span>,<span class="hljs-number">17</span>,<span class="hljs-number">57</span>,<span class="hljs-number">25</span> <br>&#125;;<br><br><span class="hljs-comment">// E扩展表</span><br><span class="hljs-type">uint32_t</span> ET[<span class="hljs-number">48</span>] = <br>&#123;<br><span class="hljs-number">32</span>, <span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>, <span class="hljs-number">4</span>, <span class="hljs-number">5</span>, <span class="hljs-number">4</span>, <span class="hljs-number">5</span>, <span class="hljs-number">6</span>, <span class="hljs-number">7</span>, <span class="hljs-number">8</span>, <span class="hljs-number">9</span>,<br> <span class="hljs-number">8</span>, <span class="hljs-number">9</span>,<span class="hljs-number">10</span>,<span class="hljs-number">11</span>,<span class="hljs-number">12</span>,<span class="hljs-number">13</span>,<span class="hljs-number">12</span>,<span class="hljs-number">13</span>,<span class="hljs-number">14</span>,<span class="hljs-number">15</span>,<span class="hljs-number">16</span>,<span class="hljs-number">17</span>,<br><span class="hljs-number">16</span>,<span class="hljs-number">17</span>,<span class="hljs-number">18</span>,<span class="hljs-number">19</span>,<span class="hljs-number">20</span>,<span class="hljs-number">21</span>,<span class="hljs-number">20</span>,<span class="hljs-number">21</span>,<span class="hljs-number">22</span>,<span class="hljs-number">23</span>,<span class="hljs-number">24</span>,<span class="hljs-number">25</span>,<br><span class="hljs-number">24</span>,<span class="hljs-number">25</span>,<span class="hljs-number">26</span>,<span class="hljs-number">27</span>,<span class="hljs-number">28</span>,<span class="hljs-number">29</span>,<span class="hljs-number">28</span>,<span class="hljs-number">29</span>,<span class="hljs-number">30</span>,<span class="hljs-number">31</span>,<span class="hljs-number">32</span>, <span class="hljs-number">1</span><br>&#125;;<br><br> <span class="hljs-comment">// S盒</span><br><span class="hljs-type">uint32_t</span> S_Box[<span class="hljs-number">8</span>][<span class="hljs-number">4</span>][<span class="hljs-number">16</span>] = <br>&#123;<br> <span class="hljs-comment">//S1</span><br> <span class="hljs-number">14</span>, <span class="hljs-number">4</span>,<span class="hljs-number">13</span>, <span class="hljs-number">1</span>, <span class="hljs-number">2</span>,<span class="hljs-number">15</span>,<span class="hljs-number">11</span>, <span class="hljs-number">8</span>, <span class="hljs-number">3</span>,<span class="hljs-number">10</span>, <span class="hljs-number">6</span>,<span class="hljs-number">12</span>, <span class="hljs-number">5</span>, <span class="hljs-number">9</span>, <span class="hljs-number">0</span>, <span class="hljs-number">7</span>,<br>  <span class="hljs-number">0</span>,<span class="hljs-number">15</span>, <span class="hljs-number">7</span>, <span class="hljs-number">4</span>,<span class="hljs-number">14</span>, <span class="hljs-number">2</span>,<span class="hljs-number">13</span>, <span class="hljs-number">1</span>,<span class="hljs-number">10</span>, <span class="hljs-number">6</span>,<span class="hljs-number">12</span>,<span class="hljs-number">11</span>, <span class="hljs-number">9</span>, <span class="hljs-number">5</span>, <span class="hljs-number">3</span>, <span class="hljs-number">8</span>,<br>  <span class="hljs-number">4</span>, <span class="hljs-number">1</span>,<span class="hljs-number">14</span>, <span class="hljs-number">8</span>,<span class="hljs-number">13</span>, <span class="hljs-number">6</span>, <span class="hljs-number">2</span>,<span class="hljs-number">11</span>,<span class="hljs-number">15</span>,<span class="hljs-number">12</span>, <span class="hljs-number">9</span>, <span class="hljs-number">7</span>, <span class="hljs-number">3</span>,<span class="hljs-number">10</span>, <span class="hljs-number">5</span>, <span class="hljs-number">0</span>,<br> <span class="hljs-number">15</span>,<span class="hljs-number">12</span>, <span class="hljs-number">8</span>, <span class="hljs-number">2</span>, <span class="hljs-number">4</span>, <span class="hljs-number">9</span>, <span class="hljs-number">1</span>, <span class="hljs-number">7</span>, <span class="hljs-number">5</span>,<span class="hljs-number">11</span>, <span class="hljs-number">3</span>,<span class="hljs-number">14</span>,<span class="hljs-number">10</span>, <span class="hljs-number">0</span>, <span class="hljs-number">6</span>,<span class="hljs-number">13</span>,<br> <span class="hljs-comment">//S2</span><br> <span class="hljs-number">15</span>, <span class="hljs-number">1</span>, <span class="hljs-number">8</span>,<span class="hljs-number">14</span>, <span class="hljs-number">6</span>,<span class="hljs-number">11</span>, <span class="hljs-number">3</span>, <span class="hljs-number">4</span>, <span class="hljs-number">9</span>, <span class="hljs-number">7</span>, <span class="hljs-number">2</span>,<span class="hljs-number">13</span>,<span class="hljs-number">12</span>, <span class="hljs-number">0</span>, <span class="hljs-number">5</span>,<span class="hljs-number">10</span>,<br>  <span class="hljs-number">3</span>,<span class="hljs-number">13</span>, <span class="hljs-number">4</span>, <span class="hljs-number">7</span>,<span class="hljs-number">15</span>, <span class="hljs-number">2</span>, <span class="hljs-number">8</span>,<span class="hljs-number">14</span>,<span class="hljs-number">12</span>, <span class="hljs-number">0</span>, <span class="hljs-number">1</span>,<span class="hljs-number">10</span>, <span class="hljs-number">6</span>, <span class="hljs-number">9</span>,<span class="hljs-number">11</span>, <span class="hljs-number">5</span>,<br>  <span class="hljs-number">0</span>,<span class="hljs-number">14</span>, <span class="hljs-number">7</span>,<span class="hljs-number">11</span>,<span class="hljs-number">10</span>, <span class="hljs-number">4</span>,<span class="hljs-number">13</span>, <span class="hljs-number">1</span>, <span class="hljs-number">5</span>, <span class="hljs-number">8</span>,<span class="hljs-number">12</span>, <span class="hljs-number">6</span>, <span class="hljs-number">9</span>, <span class="hljs-number">3</span>, <span class="hljs-number">2</span>,<span class="hljs-number">15</span>,<br> <span class="hljs-number">13</span>, <span class="hljs-number">8</span>,<span class="hljs-number">10</span>, <span class="hljs-number">1</span>, <span class="hljs-number">3</span>,<span class="hljs-number">15</span>, <span class="hljs-number">4</span>, <span class="hljs-number">2</span>,<span class="hljs-number">11</span>, <span class="hljs-number">6</span>, <span class="hljs-number">7</span>,<span class="hljs-number">12</span>, <span class="hljs-number">0</span>, <span class="hljs-number">5</span>,<span class="hljs-number">14</span>, <span class="hljs-number">9</span>,<br> <span class="hljs-comment">//S3</span><br> <span class="hljs-number">10</span>, <span class="hljs-number">0</span>, <span class="hljs-number">9</span>,<span class="hljs-number">14</span>, <span class="hljs-number">6</span>, <span class="hljs-number">3</span>,<span class="hljs-number">15</span>, <span class="hljs-number">5</span>, <span class="hljs-number">1</span>,<span class="hljs-number">13</span>,<span class="hljs-number">12</span>, <span class="hljs-number">7</span>,<span class="hljs-number">11</span>, <span class="hljs-number">4</span>, <span class="hljs-number">2</span>, <span class="hljs-number">8</span>,<br> <span class="hljs-number">13</span>, <span class="hljs-number">7</span>, <span class="hljs-number">0</span>, <span class="hljs-number">9</span>, <span class="hljs-number">3</span>, <span class="hljs-number">4</span>, <span class="hljs-number">6</span>,<span class="hljs-number">10</span>, <span class="hljs-number">2</span>, <span class="hljs-number">8</span>, <span class="hljs-number">5</span>,<span class="hljs-number">14</span>,<span class="hljs-number">12</span>,<span class="hljs-number">11</span>,<span class="hljs-number">15</span>, <span class="hljs-number">1</span>,<br> <span class="hljs-number">13</span>, <span class="hljs-number">6</span>, <span class="hljs-number">4</span>, <span class="hljs-number">9</span>, <span class="hljs-number">8</span>,<span class="hljs-number">15</span>, <span class="hljs-number">3</span>, <span class="hljs-number">0</span>,<span class="hljs-number">11</span>, <span class="hljs-number">1</span>, <span class="hljs-number">2</span>,<span class="hljs-number">12</span>, <span class="hljs-number">5</span>,<span class="hljs-number">10</span>,<span class="hljs-number">14</span>, <span class="hljs-number">7</span>,<br>  <span class="hljs-number">1</span>,<span class="hljs-number">10</span>,<span class="hljs-number">13</span>, <span class="hljs-number">0</span>, <span class="hljs-number">6</span>, <span class="hljs-number">9</span>, <span class="hljs-number">8</span>, <span class="hljs-number">7</span>, <span class="hljs-number">4</span>,<span class="hljs-number">15</span>,<span class="hljs-number">14</span>, <span class="hljs-number">3</span>,<span class="hljs-number">11</span>, <span class="hljs-number">5</span>, <span class="hljs-number">2</span>,<span class="hljs-number">12</span>,<br> <span class="hljs-comment">//S4</span><br>  <span class="hljs-number">7</span>,<span class="hljs-number">13</span>,<span class="hljs-number">14</span>, <span class="hljs-number">3</span>, <span class="hljs-number">0</span>, <span class="hljs-number">6</span>, <span class="hljs-number">9</span>,<span class="hljs-number">10</span>, <span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">8</span>, <span class="hljs-number">5</span>,<span class="hljs-number">11</span>,<span class="hljs-number">12</span>, <span class="hljs-number">4</span>,<span class="hljs-number">15</span>,<br> <span class="hljs-number">13</span>, <span class="hljs-number">8</span>,<span class="hljs-number">11</span>, <span class="hljs-number">5</span>, <span class="hljs-number">6</span>,<span class="hljs-number">15</span>, <span class="hljs-number">0</span>, <span class="hljs-number">3</span>, <span class="hljs-number">4</span>, <span class="hljs-number">7</span>, <span class="hljs-number">2</span>,<span class="hljs-number">12</span>, <span class="hljs-number">1</span>,<span class="hljs-number">10</span>,<span class="hljs-number">14</span>, <span class="hljs-number">9</span>,<br> <span class="hljs-number">10</span>, <span class="hljs-number">6</span>, <span class="hljs-number">9</span>, <span class="hljs-number">0</span>,<span class="hljs-number">12</span>,<span class="hljs-number">11</span>, <span class="hljs-number">7</span>,<span class="hljs-number">13</span>,<span class="hljs-number">15</span>, <span class="hljs-number">1</span>, <span class="hljs-number">3</span>,<span class="hljs-number">14</span>, <span class="hljs-number">5</span>, <span class="hljs-number">2</span>, <span class="hljs-number">8</span>, <span class="hljs-number">4</span>,<br>  <span class="hljs-number">3</span>,<span class="hljs-number">15</span>, <span class="hljs-number">0</span>, <span class="hljs-number">6</span>,<span class="hljs-number">10</span>, <span class="hljs-number">1</span>,<span class="hljs-number">13</span>, <span class="hljs-number">8</span>, <span class="hljs-number">9</span>, <span class="hljs-number">4</span>, <span class="hljs-number">5</span>,<span class="hljs-number">11</span>,<span class="hljs-number">12</span>, <span class="hljs-number">7</span>, <span class="hljs-number">2</span>,<span class="hljs-number">14</span>,<br> <span class="hljs-comment">//S5</span><br>  <span class="hljs-number">2</span>,<span class="hljs-number">12</span>, <span class="hljs-number">4</span>, <span class="hljs-number">1</span>, <span class="hljs-number">7</span>,<span class="hljs-number">10</span>,<span class="hljs-number">11</span>, <span class="hljs-number">6</span>, <span class="hljs-number">8</span>, <span class="hljs-number">5</span>, <span class="hljs-number">3</span>,<span class="hljs-number">15</span>,<span class="hljs-number">13</span>, <span class="hljs-number">0</span>,<span class="hljs-number">14</span>, <span class="hljs-number">9</span>,<br> <span class="hljs-number">14</span>,<span class="hljs-number">11</span>, <span class="hljs-number">2</span>,<span class="hljs-number">12</span>, <span class="hljs-number">4</span>, <span class="hljs-number">7</span>,<span class="hljs-number">13</span>, <span class="hljs-number">1</span>, <span class="hljs-number">5</span>, <span class="hljs-number">0</span>,<span class="hljs-number">15</span>,<span class="hljs-number">10</span>, <span class="hljs-number">3</span>, <span class="hljs-number">9</span>, <span class="hljs-number">8</span>, <span class="hljs-number">6</span>,<br>  <span class="hljs-number">4</span>, <span class="hljs-number">2</span>, <span class="hljs-number">1</span>,<span class="hljs-number">11</span>,<span class="hljs-number">10</span>,<span class="hljs-number">13</span>, <span class="hljs-number">7</span>, <span class="hljs-number">8</span>,<span class="hljs-number">15</span>, <span class="hljs-number">9</span>,<span class="hljs-number">12</span>, <span class="hljs-number">5</span>, <span class="hljs-number">6</span>, <span class="hljs-number">3</span>, <span class="hljs-number">0</span>,<span class="hljs-number">14</span>,<br> <span class="hljs-number">11</span>, <span class="hljs-number">8</span>,<span class="hljs-number">12</span>, <span class="hljs-number">7</span>, <span class="hljs-number">1</span>,<span class="hljs-number">14</span>, <span class="hljs-number">2</span>,<span class="hljs-number">13</span>, <span class="hljs-number">6</span>,<span class="hljs-number">15</span>, <span class="hljs-number">0</span>, <span class="hljs-number">9</span>,<span class="hljs-number">10</span>, <span class="hljs-number">4</span>, <span class="hljs-number">5</span>, <span class="hljs-number">3</span>,<br> <span class="hljs-comment">//S6</span><br> <span class="hljs-number">12</span>, <span class="hljs-number">1</span>,<span class="hljs-number">10</span>,<span class="hljs-number">15</span>, <span class="hljs-number">9</span>, <span class="hljs-number">2</span>, <span class="hljs-number">6</span>, <span class="hljs-number">8</span>, <span class="hljs-number">0</span>,<span class="hljs-number">13</span>, <span class="hljs-number">3</span>, <span class="hljs-number">4</span>,<span class="hljs-number">14</span>, <span class="hljs-number">7</span>, <span class="hljs-number">5</span>,<span class="hljs-number">11</span>,<br> <span class="hljs-number">10</span>,<span class="hljs-number">15</span>, <span class="hljs-number">4</span>, <span class="hljs-number">2</span>, <span class="hljs-number">7</span>,<span class="hljs-number">12</span>, <span class="hljs-number">9</span>, <span class="hljs-number">5</span>, <span class="hljs-number">6</span>, <span class="hljs-number">1</span>,<span class="hljs-number">13</span>,<span class="hljs-number">14</span>, <span class="hljs-number">0</span>,<span class="hljs-number">11</span>, <span class="hljs-number">3</span>, <span class="hljs-number">8</span>,<br>  <span class="hljs-number">9</span>,<span class="hljs-number">14</span>,<span class="hljs-number">15</span>, <span class="hljs-number">5</span>, <span class="hljs-number">2</span>, <span class="hljs-number">8</span>,<span class="hljs-number">12</span>, <span class="hljs-number">3</span>, <span class="hljs-number">7</span>, <span class="hljs-number">0</span>, <span class="hljs-number">4</span>,<span class="hljs-number">10</span>, <span class="hljs-number">1</span>,<span class="hljs-number">13</span>,<span class="hljs-number">11</span>, <span class="hljs-number">6</span>,<br>  <span class="hljs-number">4</span>, <span class="hljs-number">3</span>, <span class="hljs-number">2</span>,<span class="hljs-number">12</span>, <span class="hljs-number">9</span>, <span class="hljs-number">5</span>,<span class="hljs-number">15</span>,<span class="hljs-number">10</span>,<span class="hljs-number">11</span>,<span class="hljs-number">14</span>, <span class="hljs-number">1</span>, <span class="hljs-number">7</span>, <span class="hljs-number">6</span>, <span class="hljs-number">0</span>, <span class="hljs-number">8</span>,<span class="hljs-number">13</span>,<br> <span class="hljs-comment">//S7</span><br>  <span class="hljs-number">4</span>,<span class="hljs-number">11</span>, <span class="hljs-number">2</span>,<span class="hljs-number">14</span>,<span class="hljs-number">15</span>, <span class="hljs-number">0</span>, <span class="hljs-number">8</span>,<span class="hljs-number">13</span>, <span class="hljs-number">3</span>,<span class="hljs-number">12</span>, <span class="hljs-number">9</span>, <span class="hljs-number">7</span>, <span class="hljs-number">5</span>,<span class="hljs-number">10</span>, <span class="hljs-number">6</span>, <span class="hljs-number">1</span>,<br> <span class="hljs-number">13</span>, <span class="hljs-number">0</span>,<span class="hljs-number">11</span>, <span class="hljs-number">7</span>, <span class="hljs-number">4</span>, <span class="hljs-number">9</span>, <span class="hljs-number">1</span>,<span class="hljs-number">10</span>,<span class="hljs-number">14</span>, <span class="hljs-number">3</span>, <span class="hljs-number">5</span>,<span class="hljs-number">12</span>, <span class="hljs-number">2</span>,<span class="hljs-number">15</span>, <span class="hljs-number">8</span>, <span class="hljs-number">6</span>,<br>  <span class="hljs-number">1</span>, <span class="hljs-number">4</span>,<span class="hljs-number">11</span>,<span class="hljs-number">13</span>,<span class="hljs-number">12</span>, <span class="hljs-number">3</span>, <span class="hljs-number">7</span>,<span class="hljs-number">14</span>,<span class="hljs-number">10</span>,<span class="hljs-number">15</span>, <span class="hljs-number">6</span>, <span class="hljs-number">8</span>, <span class="hljs-number">0</span>, <span class="hljs-number">5</span>, <span class="hljs-number">9</span>, <span class="hljs-number">2</span>,<br>  <span class="hljs-number">6</span>,<span class="hljs-number">11</span>,<span class="hljs-number">13</span>, <span class="hljs-number">8</span>, <span class="hljs-number">1</span>, <span class="hljs-number">4</span>,<span class="hljs-number">10</span>, <span class="hljs-number">7</span>, <span class="hljs-number">9</span>, <span class="hljs-number">5</span>, <span class="hljs-number">0</span>,<span class="hljs-number">15</span>,<span class="hljs-number">14</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>,<span class="hljs-number">12</span>,<br> <span class="hljs-comment">//S8</span><br> <span class="hljs-number">13</span>, <span class="hljs-number">2</span>, <span class="hljs-number">8</span>, <span class="hljs-number">4</span>, <span class="hljs-number">6</span>,<span class="hljs-number">15</span>,<span class="hljs-number">11</span>, <span class="hljs-number">1</span>,<span class="hljs-number">10</span>, <span class="hljs-number">9</span>, <span class="hljs-number">3</span>,<span class="hljs-number">14</span>, <span class="hljs-number">5</span>, <span class="hljs-number">0</span>,<span class="hljs-number">12</span>, <span class="hljs-number">7</span>,<br>  <span class="hljs-number">1</span>,<span class="hljs-number">15</span>,<span class="hljs-number">13</span>, <span class="hljs-number">8</span>,<span class="hljs-number">10</span>, <span class="hljs-number">3</span>, <span class="hljs-number">7</span>, <span class="hljs-number">4</span>,<span class="hljs-number">12</span>, <span class="hljs-number">5</span>, <span class="hljs-number">6</span>,<span class="hljs-number">11</span>, <span class="hljs-number">0</span>,<span class="hljs-number">14</span>, <span class="hljs-number">9</span>, <span class="hljs-number">2</span>,<br>  <span class="hljs-number">7</span>,<span class="hljs-number">11</span>, <span class="hljs-number">4</span>, <span class="hljs-number">1</span>, <span class="hljs-number">9</span>,<span class="hljs-number">12</span>,<span class="hljs-number">14</span>, <span class="hljs-number">2</span>, <span class="hljs-number">0</span>, <span class="hljs-number">6</span>,<span class="hljs-number">10</span>,<span class="hljs-number">13</span>,<span class="hljs-number">15</span>, <span class="hljs-number">3</span>, <span class="hljs-number">5</span>, <span class="hljs-number">8</span>,<br>  <span class="hljs-number">2</span>, <span class="hljs-number">1</span>,<span class="hljs-number">14</span>, <span class="hljs-number">7</span>, <span class="hljs-number">4</span>,<span class="hljs-number">10</span>, <span class="hljs-number">8</span>,<span class="hljs-number">13</span>,<span class="hljs-number">15</span>,<span class="hljs-number">12</span>, <span class="hljs-number">9</span>, <span class="hljs-number">0</span>, <span class="hljs-number">3</span>, <span class="hljs-number">5</span>, <span class="hljs-number">6</span>,<span class="hljs-number">11</span><br>&#125;;<br><br> <span class="hljs-comment">//P置换表</span><br><span class="hljs-type">uint32_t</span> PT[<span class="hljs-number">32</span>] = <br>&#123;<br><span class="hljs-number">16</span>, <span class="hljs-number">7</span>,<span class="hljs-number">20</span>,<span class="hljs-number">21</span>,<br><span class="hljs-number">29</span>,<span class="hljs-number">12</span>,<span class="hljs-number">28</span>,<span class="hljs-number">17</span>,<br> <span class="hljs-number">1</span>,<span class="hljs-number">15</span>,<span class="hljs-number">23</span>,<span class="hljs-number">26</span>,<br> <span class="hljs-number">5</span>,<span class="hljs-number">18</span>,<span class="hljs-number">31</span>,<span class="hljs-number">10</span>,<br> <span class="hljs-number">2</span>, <span class="hljs-number">8</span>,<span class="hljs-number">24</span>,<span class="hljs-number">14</span>,<br><span class="hljs-number">32</span>,<span class="hljs-number">27</span>, <span class="hljs-number">3</span>, <span class="hljs-number">9</span>,<br><span class="hljs-number">19</span>,<span class="hljs-number">13</span>,<span class="hljs-number">30</span>, <span class="hljs-number">6</span>,<br><span class="hljs-number">22</span>,<span class="hljs-number">11</span>, <span class="hljs-number">4</span>,<span class="hljs-number">25</span><br>&#125;;<br><br><span class="hljs-meta">#<span class="hljs-keyword">endif</span></span><br></code></pre></td></tr></table></figure>
+
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E5%AF%86%E7%A0%81%E5%AD%A6/" class="category-chain-item">密码学</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/DES/">#DES</a>
+      
+        <a href="/tags/%E5%88%86%E7%BB%84%E5%AF%86%E7%A0%81/">#分组密码</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>DES</div>
+      <div>http://example.com/2023/01/10/DES/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Chen Shuwen</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年1月10日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2023/01/10/Java_Arrays/" title="Arrays and ArrayLists">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Arrays and ArrayLists</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/01/10/CPU%E4%B8%8E%E7%A8%8B%E5%BA%8F%E6%89%A7%E8%A1%8C/" title="CPU与程序执行">
+                        <span class="hidden-mobile">CPU与程序执行</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

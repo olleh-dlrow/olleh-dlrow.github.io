@@ -1,0 +1,1371 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Chen Shuwen">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="计算机系统基础第一章 计算机系统概述1. 计算机基本执行过程1.1 冯·诺依曼机基本结构绝大部分通用计算机的硬件基本组成仍然就有冯·诺依曼结构特征  图解：  主存储器（主存，内存）：存放指令和数据 算术逻辑部件（ALU）：进行算术逻辑运算的核心部件，可以对输入端A和B进行不同的运算，得到结果F 控制部件（CU，控制器）：自动逐条取出指令并进行译码（将二进制的操作码翻译成对应的操作） 通用寄存器（">
+<meta property="og:type" content="article">
+<meta property="og:title" content="计算机系统基础">
+<meta property="og:url" content="http://example.com/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/index.html">
+<meta property="og:site_name" content="Chen Shuwen&#39;s Tech Site">
+<meta property="og:description" content="计算机系统基础第一章 计算机系统概述1. 计算机基本执行过程1.1 冯·诺依曼机基本结构绝大部分通用计算机的硬件基本组成仍然就有冯·诺依曼结构特征  图解：  主存储器（主存，内存）：存放指令和数据 算术逻辑部件（ALU）：进行算术逻辑运算的核心部件，可以对输入端A和B进行不同的运算，得到结果F 控制部件（CU，控制器）：自动逐条取出指令并进行译码（将二进制的操作码翻译成对应的操作） 通用寄存器（">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20200915183606178.png">
+<meta property="og:image" content="http://example.com/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20200915182038345.png">
+<meta property="og:image" content="http://example.com/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20200915182818825.png">
+<meta property="og:image" content="http://example.com/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20200915183903180.png">
+<meta property="og:image" content="http://example.com/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20200915184007449.png">
+<meta property="og:image" content="http://example.com/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20200915184700179.png">
+<meta property="og:image" content="http://example.com/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20200915184807690.png">
+<meta property="og:image" content="http://example.com/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20200915185150735.png">
+<meta property="og:image" content="http://example.com/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20200915190310257.png">
+<meta property="og:image" content="http://example.com/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20200915192155617.png">
+<meta property="og:image" content="http://example.com/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20200915194024533.png">
+<meta property="og:image" content="http://example.com/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20200922200609296.png">
+<meta property="og:image" content="http://example.com/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20200922200749034.png">
+<meta property="og:image" content="http://example.com/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20200922202152498.png">
+<meta property="og:image" content="http://example.com/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20201003153252707.png">
+<meta property="og:image" content="http://example.com/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20201003154205880.png">
+<meta property="og:image" content="http://example.com/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20201003155925133.png">
+<meta property="og:image" content="http://example.com/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20201003160107226.png">
+<meta property="og:image" content="http://example.com/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20201003160356453.png">
+<meta property="og:image" content="http://example.com/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20201003160416124.png">
+<meta property="og:image" content="http://example.com/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20201013231713394.png">
+<meta property="og:image" content="http://example.com/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20201013233853594.png">
+<meta property="og:image" content="http://example.com/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20201013234831279.png">
+<meta property="og:image" content="http://example.com/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20201028000222620.png">
+<meta property="og:image" content="http://example.com/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20201028163025532.png">
+<meta property="og:image" content="http://example.com/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20201028164024259.png">
+<meta property="og:image" content="http://example.com/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20201028163347300.png">
+<meta property="og:image" content="http://example.com/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20201028164056724.png">
+<meta property="og:image" content="http://example.com/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20201028164325127.png">
+<meta property="og:image" content="http://example.com/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20201028164134080.png">
+<meta property="og:image" content="http://example.com/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20201028164422271.png">
+<meta property="og:image" content="http://example.com/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20201028165255577.png">
+<meta property="og:image" content="http://example.com/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20201028172009852.png">
+<meta property="og:image" content="http://example.com/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20201101093210811.png">
+<meta property="og:image" content="http://example.com/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20201214101423371.png">
+<meta property="og:image" content="http://example.com/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20201214101757827.png">
+<meta property="og:image" content="http://example.com/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20201214103228355.png">
+<meta property="og:image" content="http://example.com/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20201214103333816.png">
+<meta property="og:image" content="http://example.com/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20201214103947127.png">
+<meta property="og:image" content="http://example.com/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20201214104510925.png">
+<meta property="og:image" content="http://example.com/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20201214110055734.png">
+<meta property="og:image" content="http://example.com/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20201218101927030.png">
+<meta property="og:image" content="http://example.com/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20201218102020375.png">
+<meta property="og:image" content="http://example.com/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20201218103529440.png">
+<meta property="og:image" content="http://example.com/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20201218111213016.png">
+<meta property="og:image" content="http://example.com/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20201218112102346.png">
+<meta property="og:image" content="http://example.com/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20201218222521056.png">
+<meta property="og:image" content="http://example.com/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20201218223240634.png">
+<meta property="og:image" content="http://example.com/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20201219103828989.png">
+<meta property="og:image" content="http://example.com/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20201219104013139.png">
+<meta property="og:image" content="http://example.com/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20201219104926204.png">
+<meta property="og:image" content="http://example.com/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20210204165601527.png">
+<meta property="og:image" content="http://example.com/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20210204165933629.png">
+<meta property="og:image" content="http://example.com/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20210204170744122.png">
+<meta property="og:image" content="http://example.com/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20210204172245845.png">
+<meta property="og:image" content="http://example.com/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20210204172636470.png">
+<meta property="og:image" content="http://example.com/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20210204173732706.png">
+<meta property="og:image" content="http://example.com/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20210204174548970.png">
+<meta property="og:image" content="http://example.com/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20210204183433618.png">
+<meta property="og:image" content="http://example.com/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20210204183941910.png">
+<meta property="article:published_time" content="2023-01-10T04:09:49.701Z">
+<meta property="article:modified_time" content="2023-01-10T13:09:13.896Z">
+<meta property="article:author" content="Chen Shuwen">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://example.com/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20200915183606178.png">
+  
+  
+  
+  <title>计算机系统基础 - Chen Shuwen&#39;s Tech Site</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Chen Shuwen&#39;s Tech Site</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="计算机系统基础"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-01-10 12:09" pubdate>
+          2023年1月10日 中午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          14k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          120 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">计算机系统基础</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="计算机系统基础"><a href="#计算机系统基础" class="headerlink" title="计算机系统基础"></a>计算机系统基础</h1><h2 id="第一章-计算机系统概述"><a href="#第一章-计算机系统概述" class="headerlink" title="第一章 计算机系统概述"></a>第一章 计算机系统概述</h2><h3 id="1-计算机基本执行过程"><a href="#1-计算机基本执行过程" class="headerlink" title="1. 计算机基本执行过程"></a>1. 计算机基本执行过程</h3><h4 id="1-1-冯·诺依曼机基本结构"><a href="#1-1-冯·诺依曼机基本结构" class="headerlink" title="1.1 冯·诺依曼机基本结构"></a>1.1 冯·诺依曼机基本结构</h4><p>绝大部分通用计算机的硬件基本组成仍然就有冯·诺依曼结构特征</p>
+<p><img src="/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20200915183606178.png" srcset="/img/loading.gif" lazyload alt="image-20200915183606178"></p>
+<p>图解：</p>
+<ul>
+<li>主存储器（主存，内存）：存放指令和数据</li>
+<li>算术逻辑部件（ALU）：进行算术逻辑运算的核心部件，可以对输入端A和B进行不同的运算，得到结果F</li>
+<li>控制部件（CU，控制器）：自动逐条取出指令并进行译码（将二进制的操作码翻译成对应的操作）</li>
+<li>通用寄存器（GPRs）：临时存放从主存取来的数据或者运算结果</li>
+<li>标志寄存器（SF）：存储ALU运算产生的标志信息</li>
+<li>指令寄存器（IR）：临时保存从主存取出的指令</li>
+<li>程序计数器（PC）：自动按序读取主存中的指令，并且在执行指令的过程当中计算出下一条指令的地址并保存</li>
+<li>中央处理器（CPU）：通常把控制部件、运算部件和各类寄存器互连组成的电路</li>
+<li>主存单元地址：主存中每个单元的编号（地址）</li>
+<li>总线：连接不同部件进行信息传输的介质</li>
+<li>主存地址寄存器（MAR）：CPU送到地址线的主存地址先存放在这里 （MAR只会从CPU内部取地址，而不会从内存中取）</li>
+<li>主存数据寄存器（MDR）：发送到或者从数据线取来的信息放在这里（包括指令和数据，双向过程，分别对应load 和 store）</li>
+</ul>
+<h4 id="1-2-程序和指令的执行过程"><a href="#1-2-程序和指令的执行过程" class="headerlink" title="1.2 程序和指令的执行过程"></a>1.2 程序和指令的执行过程</h4><p>指令的概念：用0&#x2F;1表示的序列，指示CPU完成一个特定操作。</p>
+<p>常见指令：</p>
+<ul>
+<li>load</li>
+<li>store</li>
+<li>add</li>
+<li>mov</li>
+</ul>
+<p>指令通常被分为若干字段，一般为<strong>操作码字段</strong>和<strong>地址码字段</strong></p>
+<p><img src="/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20200915182038345.png" srcset="/img/loading.gif" lazyload alt="image-20200915182038345"></p>
+<p>在模型机上执行 $z &#x3D; x + y$ 过程:</p>
+<p><img src="/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20200915182818825.png" srcset="/img/loading.gif" lazyload alt="image-20200915182818825"></p>
+<p><strong>程序执行过程：</strong></p>
+<ol>
+<li><p>根据PC取指令</p>
+</li>
+<li><p>指令译码，PC&lt;-PC + 1 </p>
+</li>
+<li><p>取操作数并执行</p>
+</li>
+<li><p>送结果</p>
+</li>
+<li><p>循环1-4</p>
+</li>
+</ol>
+<p>图示：</p>
+<p><img src="/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20200915183903180.png" srcset="/img/loading.gif" lazyload alt="image-20200915183903180"></p>
+<p>指令各执行阶段还包含<strong>微操作</strong>，需要相应的<strong>控制信号</strong>：</p>
+<p><img src="/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20200915184007449.png" srcset="/img/loading.gif" lazyload alt="image-20200915184007449"></p>
+<p><strong>时钟信号</strong>：在每条指令的执行过程中，所包含的微操作具有先后顺序关系，需要定时信号进行定时。</p>
+<p><strong>时钟周期</strong>：时钟信号的一个宽度</p>
+<h3 id="2-程序的开发和运行"><a href="#2-程序的开发和运行" class="headerlink" title="2. 程序的开发和运行"></a>2. 程序的开发和运行</h3><h4 id="2-1-程序设计语言和翻译程序"><a href="#2-1-程序设计语言和翻译程序" class="headerlink" title="2.1 程序设计语言和翻译程序"></a>2.1 程序设计语言和翻译程序</h4><ul>
+<li><p>机器语言，机器指令：0&#x2F;1</p>
+</li>
+<li><p>汇编语言，汇编指令：方便阅读和编写，需要汇编成机器语言</p>
+</li>
+<li><p>高级语言：阅读性和编写性更好，需要翻译</p>
+</li>
+<li><p>翻译程序：</p>
+<ul>
+<li>汇编器（assembler）：汇编语言-》机器语言</li>
+<li>解释器（interpreter）：逐条翻译成机器语言</li>
+<li>编译器（compiler）：源程序-》汇编语言或机器语言目标程序</li>
+</ul>
+<p>  <img src="/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20200915184700179.png" srcset="/img/loading.gif" lazyload alt="image-20200915184700179"></p>
+</li>
+</ul>
+<h4 id="2-2-从源程序到可执行文件"><a href="#2-2-从源程序到可执行文件" class="headerlink" title="2.2 从源程序到可执行文件"></a>2.2 从源程序到可执行文件</h4><p><img src="/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20200915184807690.png" srcset="/img/loading.gif" lazyload alt="image-20200915184807690"></p>
+<ul>
+<li><p>预处理阶段：嵌入include文件，宏展开</p>
+</li>
+<li><p>编译阶段</p>
+</li>
+<li><p>汇编阶段</p>
+</li>
+<li><p>链接阶段：将多个<strong>可重定位目标文件</strong>(.o .obj) 和<strong>标准函数库</strong>中的可重定位目标文件合并成为一个可执行文件.</p>
+<p>  如hello.o + printf.o -&gt; hello.exe</p>
+</li>
+</ul>
+<p>可执行文件的启动和执行：</p>
+<p><img src="/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20200915185150735.png" srcset="/img/loading.gif" lazyload alt="image-20200915185150735"></p>
+<p>概括：</p>
+<ol>
+<li>shell程序会将.&#x2F;hello的每一个字符逐一读取到CPU寄存器中，再通过存数操作存储到主存的缓存中</li>
+<li>shell调用操作系统内核中的服务例程，加载磁盘中的hello.exe到存储器</li>
+<li>逐一执行程序指令</li>
+<li>将结果打印到显示器上</li>
+</ol>
+<h3 id="3-计算机系统的层次结构"><a href="#3-计算机系统的层次结构" class="headerlink" title="3. 计算机系统的层次结构"></a>3. 计算机系统的层次结构</h3><h4 id="3-1-计算机系统抽象层次的转换"><a href="#3-1-计算机系统抽象层次的转换" class="headerlink" title="3.1 计算机系统抽象层次的转换"></a>3.1 计算机系统抽象层次的转换</h4><p><img src="/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20200915190310257.png" srcset="/img/loading.gif" lazyload alt="image-20200915190310257"></p>
+<p>上层结构是下层结构的抽象，下层是上层的环境。</p>
+<p><strong>指令体系结构（ISA）：</strong></p>
+<ul>
+<li>定义了一台计算机可以执行的<strong>所有指令</strong>的集合</li>
+<li>每条指令规定了计算机<strong>执行什么操作</strong>（如不同ISA规定的乘法指令所消耗的时钟周期数不同）</li>
+<li>所处理的操作数<strong>存放的地址空间</strong>和<strong>操作数类型</strong></li>
+</ul>
+<p>更详细的规定如下：</p>
+<ul>
+<li><p>可执行的指令的集合，包括<strong>指令格式</strong>、<strong>操作种类</strong>以及每种操作对应的操作数的相应规定；</p>
+</li>
+<li><p>指令可以接受的<strong>操作数的类型</strong>；</p>
+</li>
+<li><p>操作数所能存放的寄存器组的结构，包括每个<strong>寄存器的名称、编号、长度和用途</strong>；</p>
+</li>
+<li><p>操作数所能存放的<strong>存储空间的大小和编址方式</strong>；</p>
+</li>
+<li><p>操作数在存储空间存放时按照<strong>大端还是小端方式存放</strong>；</p>
+</li>
+<li><p>指令获取操作数的方式，即<strong>寻址方式</strong>；</p>
+</li>
+<li><p>指令执行过程的控制方式，包括<strong>程序计数器</strong>、<strong>条件码定义</strong>等。</p>
+</li>
+</ul>
+<h4 id="3-2-计算机系统的不同用户"><a href="#3-2-计算机系统的不同用户" class="headerlink" title="3.2 计算机系统的不同用户"></a>3.2 计算机系统的不同用户</h4><p><img src="/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20200915192155617.png" srcset="/img/loading.gif" lazyload alt="image-20200915192155617"></p>
+<h3 id="4-计算机系统性能评价（重点）"><a href="#4-计算机系统性能评价（重点）" class="headerlink" title="4. 计算机系统性能评价（重点）"></a>4. 计算机系统性能评价（重点）</h3><h4 id="4-1-计算机性能的定义"><a href="#4-1-计算机性能的定义" class="headerlink" title="4.1 计算机性能的定义"></a>4.1 计算机性能的定义</h4><ul>
+<li>吞吐率：单位时间完成工作量，相当于带宽</li>
+<li>响应时间：从作业提交到作业完成所用的时间，类似执行时间，包含CPU时间和其他时间（如IO操作，磁盘读取）</li>
+<li>CPU时间：CPU用于本程序执行的时间</li>
+<li>系统性能：包括CPU性能和其他性能</li>
+<li>CPU性能：只包含CPU执行时间</li>
+<li>时钟周期：时钟信号的宽度(clock cycle)，一条指令可能需要多个时钟周期来完成</li>
+<li>时钟频率：CPU的主频（clock rate），时钟周期的倒数</li>
+<li><strong>CPI</strong>（Cycles Per Instruction）执行一条指令所需的周期数</li>
+</ul>
+<p>$$<br>程序总时钟周期数&#x3D;\sum\limits_{j&#x3D;1}^{n}(CPI_{i}\times C_{i})<br>$$</p>
+<p>CPI可用$F_{i}$（第i种指令在程序中所占比例）表示：<br>$$<br>CPI &#x3D; \sum\limits_{j&#x3D;1}^{n}(CPI_{i}\times F_{i}) &#x3D; 程序总时钟周期数\div 程序总指令条数<br>$$<br>但是CPI并不是衡量CPU性能的唯一标准，因为不同CPU的时钟周期也可能不相同。</p>
+<p><img src="/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20200915194024533.png" srcset="/img/loading.gif" lazyload alt="image-20200915194024533"></p>
+<h2 id="第二章-数据的机器级表示和处理"><a href="#第二章-数据的机器级表示和处理" class="headerlink" title="第二章 数据的机器级表示和处理"></a>第二章 数据的机器级表示和处理</h2><h3 id="1-数制和编码"><a href="#1-数制和编码" class="headerlink" title="1. 数制和编码"></a>1. 数制和编码</h3><h4 id="1-1-进制数之间的转换"><a href="#1-1-进制数之间的转换" class="headerlink" title="1.1 进制数之间的转换"></a>1.1 进制数之间的转换</h4><p>常见的二进制长度：</p>
+<ul>
+<li><p>1byte：8位二进制，可表示的无符号数范围:</p>
+<p>  0000 0000 ~ 1111 1111 即 0 ~ $2^{8} - 1$。</p>
+</li>
+<li><p>unsigned int: 4个字节，表示范围：</p>
+<p>  0000 0000H ~ FFFF FFFFH 即 0 ~ 4294967295</p>
+</li>
+</ul>
+<h4 id="1-2-整数的表示"><a href="#1-2-整数的表示" class="headerlink" title="1.2 整数的表示"></a>1.2 整数的表示</h4><p>无符号整数和有符号整数的区别：</p>
+<ul>
+<li>无符号整数，默认使用所有二进制位来存储实际数据。对于32整型，其长度为0~$2^{32}-1$。</li>
+<li>有符号整数，最高位（MSB）或者最低位（LSB）作为符号位，因此表示范围比无符号少，对于32位整型，其长度为$-2^{31}$~$2^{31}-1$。</li>
+</ul>
+<p>不同的编译器对于数据类型的判断是不一样的。</p>
+<p><img src="/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20200922200609296.png" srcset="/img/loading.gif" lazyload alt="image-20200922200609296"></p>
+<h4 id="1-3-浮点数的表示"><a href="#1-3-浮点数的表示" class="headerlink" title="1.3 浮点数的表示"></a>1.3 浮点数的表示</h4><p>浮点数的IEEE 754 标准：</p>
+<p><img src="/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20200922200749034.png" srcset="/img/loading.gif" lazyload alt="image-20200922200749034"></p>
+<p>对于32位单精度格式：</p>
+<p>尾数为23位，其中有一个隐藏位1在小数点之前。</p>
+<p>eg：一个浮点数的尾数为1011 1100 1110 0000 … , 则其实际的尾数为1.1011 1100 1110 0000…</p>
+<p>阶码为8位，采用移码的形式，其中偏置常数为127，可表示的阶数的范围为（1~254）- 127（0和全1有特殊意义）。</p>
+<p>符号位1位，判断符号。</p>
+<p><strong>浮点数的解释：</strong></p>
+<p><img src="/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20200922202152498.png" srcset="/img/loading.gif" lazyload alt="image-20200922202152498"></p>
+<p>记忆：</p>
+<p>在尾数为全0的情况下，阶码的两个极限（0和255）分别表示0和无穷大，正负看符号位</p>
+<p>当尾数不为0时：</p>
+<ul>
+<li>阶数为255，则为无定义数</li>
+<li>阶数为0，则尾数失去隐藏位1，然后向0过渡。</li>
+</ul>
+<p>当浮点数和整数的长度相同时，他们表示的数的个数没有改变（每一个二进制数唯一对应一个真值），但是浮点数的范围扩大了，所以浮点数越大，两个相邻二进制数的真值的差值越大，即尾数后面的数字被计算机忽略掉了。</p>
+<h3 id="2-数据的基本运算"><a href="#2-数据的基本运算" class="headerlink" title="2. 数据的基本运算"></a>2. 数据的基本运算</h3><h4 id="2-1-二进制位的计算"><a href="#2-1-二进制位的计算" class="headerlink" title="2.1 二进制位的计算"></a>2.1 二进制位的计算</h4><p><strong>按位运算和逻辑运算</strong></p>
+<ul>
+<li><p>按位运算 :</p>
+<p>   二进制的每一位数字逐个进行运算。常见的有: I , &amp;, ~, ^(异或)。</p>
+<p>  按位运算常用于进行<strong>掩码</strong>操作，可以提取重要的位，然后对这些位进行置1，清0，或者测试该位是否为1或0.</p>
+</li>
+<li><p>逻辑运算：</p>
+<p>  非数值运算，其操作数只有两种逻辑：True 和 False。常见的有：||, &amp;&amp;, !。</p>
+</li>
+</ul>
+<p><strong>左移运算和右移运算</strong></p>
+<ul>
+<li><p>逻辑移位：</p>
+<p>  移位后缺失的位直接补0。</p>
+</li>
+<li><p>算术移位：</p>
+<p>  右移时，最高位会根据符号位进行补充，以保证带符号数的符号不会变化，其他情况移位后缺失的位直接补0。</p>
+</li>
+</ul>
+<p><strong>位扩展运算和位截断运算</strong></p>
+<p><strong>0扩展和符号扩展</strong>：分别对于有符号数和无符号数而言</p>
+<p><strong>位截断</strong>：直接舍去多出来的位数，截断具有一定的风险，因为可能导致数据精度或者符号发生变化，也可能彻底改变数值。</p>
+<h4 id="2-2-数据的存储"><a href="#2-2-数据的存储" class="headerlink" title="2.2 数据的存储"></a>2.2 数据的存储</h4><p>最低有效位（LSB）：数字的最低位</p>
+<p>最高有效位（MSB）：数字的最高位</p>
+<p>大端方式：数据的最高有效位存储在小地址单元中，IBM采用这种方式</p>
+<p>小端方式：数据的最低有效位存储在小地址单元中，Intel使用，“低对低，高对高”，低字节对应低地址。</p>
+<h4 id="2-3-整数加减运算"><a href="#2-3-整数加减运算" class="headerlink" title="2.3 整数加减运算"></a>2.3 整数加减运算</h4><p><img src="/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20201003153252707.png" srcset="/img/loading.gif" lazyload alt="image-20201003153252707"></p>
+<p>无符号整数和带符号整数的加减运算电路是完全一样的，都在整数加减运算器中实现。</p>
+<p>MUX是一个二路选择器，Sub控制信号会告诉MUX此时所做的是减法运算，那么MUX会选择把Y按位取反后进行输出，同时，控制端Sub作为低位进位送到加法器。当Sub为1时做减法，实现x-y &#x3D; X + $\overline{Y}$ + 1, 当Sub为1时做加法，实现x + y &#x3D; X + Y。</p>
+<p><img src="/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20201003154205880.png" srcset="/img/loading.gif" lazyload alt="image-20201003154205880"></p>
+<p>加法器本身无法判断数据是否溢出，所以需要通过输出得到的标志寄存器来判断。</p>
+<ul>
+<li><p>OF: </p>
+<p>  用在有符号数的加减法中，为1则表示溢出</p>
+<p>  常见溢出情形：</p>
+<p>  两个正数相加（一个正数减一个负数）变成负数，此时$C_n&#x3D;0,C_{n-1}&#x3D;1$，OF&#x3D;1，发生溢出</p>
+<p>  两个负数相加（一个负数减一个正数）变成正数，此时$C_n&#x3D;1,C_{n-1}&#x3D;0$，OF&#x3D;1，发生溢出</p>
+</li>
+<li><p>SF：</p>
+<p>  直接取最高位的数字，1表示负数</p>
+</li>
+<li><p>ZF：</p>
+<p>0表示该数不为0,1表示该数为0</p>
+</li>
+<li><p>CF：</p>
+<p>  用在无符号的加减法中，做加法时，为1表示需要进位，做减法时，为1表示需要借位</p>
+<p>  判断的标准是输入位（减法为1，加法为0） 异或 输出位（第n + 1位）</p>
+</li>
+</ul>
+<p>无符号数加法公式：</p>
+<p><img src="/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20201003155925133.png" srcset="/img/loading.gif" lazyload alt="image-20201003155925133"></p>
+<p>无符号数减法公式：$[-y]_补&#x3D;2^n-y$</p>
+<p><img src="/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20201003160107226.png" srcset="/img/loading.gif" lazyload alt="image-20201003160107226"></p>
+<p>带符号数加法公式：</p>
+<p><img src="/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20201003160356453.png" srcset="/img/loading.gif" lazyload alt="image-20201003160356453"></p>
+<p>带符号数减法公式：</p>
+<p><img src="/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20201003160416124.png" srcset="/img/loading.gif" lazyload alt="image-20201003160416124"></p>
+<p>可以类比于小时的运算规则。</p>
+<p><strong>总结</strong></p>
+<p>在机器级层次上，<strong>并不区分操作数是什么类型</strong>，只是编译器根据高级语言程序中的类型定义对机器数进行不同的解释而已。</p>
+<p>有些语言为了避免无符号和有符号的麻烦就不支持无符号类型，比如Java</p>
+<h4 id="2-4-整数的乘除运算"><a href="#2-4-整数的乘除运算" class="headerlink" title="2.4 整数的乘除运算"></a>2.4 整数的乘除运算</h4><p><strong>整数乘法</strong></p>
+<p>尽管两个n位整数相乘会得到一个2n位 的整数，但是在许多高级语言中高n位的数据会被截断，因此整数的乘法可能产生溢出问题。</p>
+<p><strong>溢出判断</strong></p>
+<ul>
+<li>对于<strong>n位无符号整数</strong>而言，如果高n为全为0，则没有发生溢出；</li>
+<li>对于<strong>n位带符号整数</strong>而言，如果高n位全部等于低n位的最高位，则没有发生溢出；</li>
+</ul>
+<p>另一种人为的判断方式是，假设x * y &#x3D; p, 只要验证p &#x2F; y 是否等于 x 即可确认是否发生了溢出 。</p>
+<p><strong>整数除法</strong></p>
+<p>只有在<strong>最小数除以-1</strong>时才会发生溢出，除法由于需要试商的缘故，所以耗费的时钟周期会很多。</p>
+<h4 id="2-5-常量的乘除运算"><a href="#2-5-常量的乘除运算" class="headerlink" title="2.5 常量的乘除运算"></a>2.5 常量的乘除运算</h4><p><strong>乘法运算</strong></p>
+<p>由于一次乘法运算需要10个左右的时钟周期，因此编译器在处理常量的乘除运算时，会用移位，加法和减法来代替乘法运算，这样可以 大大缩短时钟周期，例如x * 20 &#x3D;&gt; (x &lt;&lt; 4) + (x &lt;&lt; 2)。</p>
+<p><strong>除法运算</strong></p>
+<ul>
+<li>无符号整数：直接逻辑右移，高位补0，商朝0方向舍入。</li>
+<li>有符号整数：如果为正数，则处理方法同无符号整数；如果是负数，如果直接移位的话，商会朝着远离0的方向舍入，此时需要加上偏移量$2^k - 1$（k是移位数），这样，当舍去的二进制位全零时不会受到影响；当舍去的二进制位不为全零时，被除数偏移后一定会发生进位，此时再向右移位得到的结果就是朝0方向舍入的商了。</li>
+</ul>
+<h4 id="2-6-浮点数运算"><a href="#2-6-浮点数运算" class="headerlink" title="2.6 浮点数运算"></a>2.6 浮点数运算</h4><h5 id="2-6-1-加减运算"><a href="#2-6-1-加减运算" class="headerlink" title="2.6.1 加减运算"></a>2.6.1 加减运算</h5><ol>
+<li><p><strong>对阶</strong></p>
+<p> 对阶的目的是使两个数的阶相等，以便位数可以相加相减。</p>
+<p> <strong>对阶的原则</strong>：小阶向大阶看齐，阶小的尾数右移，右移的位数等于两个阶的差的绝对值</p>
+<p> 注意：在采用IEEE754标准时，需要将隐含的1右移到小数部分</p>
+<p> <strong>阶差的计算公式</strong><br> $$<br> [E_x - E_y]_补 &#x3D; [E_x]_移 + [-[E_y]_移]_补<br> $$<br> 例：</p>
+<p> <img src="/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20201013231713394.png" srcset="/img/loading.gif" lazyload alt="image-20201013231713394"></p>
+</li>
+<li><p><strong>尾数加减和规格化</strong></p>
+<p> 对阶之后需要对尾数进行加减，得到的结果如果不符合标准需要进行左规和右规。</p>
+<p> <strong>左规</strong>：遇到结果为0.0…01bbb的情况，让阶码逐次减1，直到整数部分为1。如果数据本身是0，则不需要处理</p>
+<p> <strong>右规</strong>：尾数右移一位，阶码加一</p>
+</li>
+<li><p><strong>尾数的舍入处理</strong></p>
+<p> 为了保证计算具有更高的精度，IEEE754标准规定所有浮点数运算的中间结果右边都必须至少保留两位<strong>附加位</strong>，即保护位和舍入位。</p>
+<p> 附加位的作用：用以保护对阶时右移的位或运算的中间结果</p>
+<p> 就近舍入的默认方式：如果附加位小于1&#x2F;2，截断；如果大于1&#x2F;2，进位；等于1&#x2F;2，取最近的偶数。</p>
+<p> <img src="/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20201013233853594.png" srcset="/img/loading.gif" lazyload alt="image-20201013233853594"></p>
+</li>
+<li><p><strong>阶码溢出判断</strong></p>
+<p> <strong>阶码上溢</strong>：阶码为全1，此时产生异常或者把结果置为无穷大。</p>
+<p> <strong>阶码下溢</strong>：阶码全为0，此时结果为非规格化形式，如果也不能表示则近似为0。</p>
+</li>
+</ol>
+<p>可以总结如下：</p>
+<p><img src="/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20201013234831279.png" srcset="/img/loading.gif" lazyload alt="image-20201013234831279"></p>
+<p>​    </p>
+<p>​    </p>
+<p>​    </p>
+<h2 id="第三章-程序的转换及机器级表示"><a href="#第三章-程序的转换及机器级表示" class="headerlink" title="第三章 程序的转换及机器级表示"></a>第三章 程序的转换及机器级表示</h2><p>计算机的指令有微指令，机器指令和伪（宏）指令之分。</p>
+<p>微指令：微程序级指令，属于微体系结构，硬件范畴</p>
+<p>宏指令：由若干机器指令组成的序列，软件范畴</p>
+<p>机器指令：位于两者之间，可由汇编语言来表示，属于指令集体系结构（ISA）</p>
+<p>他们分别对应着计算机系统的层次结构中的中间三个结构。</p>
+<h3 id="1-程序转换概述"><a href="#1-程序转换概述" class="headerlink" title="1. 程序转换概述"></a>1. 程序转换概述</h3><h4 id="1-1-机器指令及汇编指令"><a href="#1-1-机器指令及汇编指令" class="headerlink" title="1.1 机器指令及汇编指令"></a>1.1 机器指令及汇编指令</h4><p>机器语言程序是一个由若干条机器指令组成的序列。</p>
+<p>汇编语言程序将机器语言中的操作码或者操作数转换为汇编助记符。</p>
+<p>操作码字段：指出指令的操作性质</p>
+<p>立即数字段：指出操作数或者偏移量</p>
+<p>寄存器编号字段：给出操作数或操作数地址所在的寄存器编号。</p>
+<h4 id="1-2-指令集体系结构"><a href="#1-2-指令集体系结构" class="headerlink" title="1.2 指令集体系结构"></a>1.2 指令集体系结构</h4><p>Instruction Set Architecture，ISA，对使用硬件的软件屏蔽底层硬件的实现细节，将物理上的计算机硬件抽象成一个逻辑上的虚拟计算机，成为<strong>机器语言级虚拟机</strong>。</p>
+<blockquote>
+<p>正因为不同的硬件其指令集体系可能不同，因此同一个程序在不同的系统中运行时不一定能够兼容。可理解为在虚拟机A上运行的程序不能再虚拟机B上运行，但是Java程序不同，Java天生就运行在自己的虚拟机中，它不需要依赖于每个计算机的指令集体系，因此可以一次编译，到处运行。</p>
+</blockquote>
+<p><img src="/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20201028000222620.png" srcset="/img/loading.gif" lazyload alt="image-20201028000222620"></p>
+<h4 id="1-3-生成机器代码的过程"><a href="#1-3-生成机器代码的过程" class="headerlink" title="1.3 生成机器代码的过程"></a>1.3 生成机器代码的过程</h4><ol>
+<li>预处理：展开include和宏</li>
+<li>编译：将c文件编译成汇编语言程序，使用的是AT&amp;T格式，目的操作数在右而源操作数在左。</li>
+<li>汇编：将汇编程序转变成机器语言程序，一般是.o文件，可通过objdump -d filename进行反汇编</li>
+<li>链接：将多个可重定位目标文件以及库函数链接起来，形成可执行文件</li>
+</ol>
+<p><strong>AT&amp;T格式：</strong></p>
+<p><img src="/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20201028163025532.png" srcset="/img/loading.gif" lazyload alt="image-20201028163025532"></p>
+<p><strong>可执行文件的存储器映像</strong></p>
+<p><img src="/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20201028164024259.png" srcset="/img/loading.gif" lazyload alt="image-20201028164024259"></p>
+<h3 id="2-IA-32指令系统概述"><a href="#2-IA-32指令系统概述" class="headerlink" title="2. IA-32指令系统概述"></a>2. IA-32指令系统概述</h3><h4 id="2-1-数据类型及其格式"><a href="#2-1-数据类型及其格式" class="headerlink" title="2.1 数据类型及其格式"></a>2.1 数据类型及其格式</h4><p>IBA规范中C语言基本数据类型和IA-32操作数长度之间的对应关系。</p>
+<p><img src="/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20201028163347300.png" srcset="/img/loading.gif" lazyload alt="image-20201028163347300"></p>
+<h4 id="2-2-寄存器组织和寻址方式"><a href="#2-2-寄存器组织和寻址方式" class="headerlink" title="2.2 寄存器组织和寻址方式"></a>2.2 寄存器组织和寻址方式</h4><p>IA-32指令的操作数有三类：立即数，寄存器操作数，存储器操作数</p>
+<p><strong>定点寄存器</strong>：没有专门用途的可以存放各类定点操作数的寄存器。</p>
+<p><img src="/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20201028164056724.png" srcset="/img/loading.gif" lazyload alt="image-20201028164056724"></p>
+<p><strong>通用寄存器编号</strong></p>
+<p><img src="/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20201028164325127.png" srcset="/img/loading.gif" lazyload alt="image-20201028164325127"></p>
+<p><strong>寻址方式</strong></p>
+<p><img src="/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20201028164134080.png" srcset="/img/loading.gif" lazyload alt="image-20201028164134080"></p>
+<p>对于数组元素的访问一般采用“基址加比例变址”的寻址方式。</p>
+<h4 id="2-3-机器指令格式"><a href="#2-3-机器指令格式" class="headerlink" title="2.3 机器指令格式"></a>2.3 机器指令格式</h4><p><img src="/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20201028164422271.png" srcset="/img/loading.gif" lazyload alt="image-20201028164422271"></p>
+<h3 id="3-常用指令类型及其操作（重点）"><a href="#3-常用指令类型及其操作（重点）" class="headerlink" title="3. 常用指令类型及其操作（重点）"></a>3. 常用指令类型及其操作（重点）</h3><h4 id="3-1-传送指令"><a href="#3-1-传送指令" class="headerlink" title="3.1 传送指令"></a>3.1 传送指令</h4><ul>
+<li>通用数据传送指令：<ul>
+<li>MOV</li>
+<li>MOVS：符号扩展</li>
+<li>MOVZ：0扩展</li>
+<li>XCHG</li>
+<li>PUSH</li>
+<li>POP</li>
+</ul>
+</li>
+<li>地址传送指令：<ul>
+<li>LEA（Load Effect Address）：将源操作数的存储地址送到目的寄存器中</li>
+</ul>
+</li>
+<li>标志传送指令：<ul>
+<li>pushf：将标志寄存器的内容压栈</li>
+<li>popf：将栈顶内容送到标志寄存器</li>
+</ul>
+</li>
+</ul>
+<h4 id="3-2-定点算术运算指令"><a href="#3-2-定点算术运算指令" class="headerlink" title="3.2 定点算术运算指令"></a>3.2 定点算术运算指令</h4><p><img src="/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20201028165255577.png" srcset="/img/loading.gif" lazyload alt="image-20201028165255577"></p>
+<ul>
+<li><p>减法指令：后一个数减前一个数</p>
+</li>
+<li><p>比较指令</p>
+<p>  类似使用SUB指令，置标志位后再接条件转移指令或者条件设置指令。</p>
+</li>
+<li><p>乘法指令</p>
+<ol>
+<li>只给出SRC，则另一个源操作数隐含在累加器AL&#x2F;AX&#x2F;EAX中，结果存放在<strong>2n位</strong>。</li>
+<li>给出DST和SRC，结果放在<strong>n位</strong>DST中。</li>
+<li>给出REG，SRC，IMM，则将SRC和立即数IMM相乘，结果存放在<strong>n位</strong>REG中。</li>
+</ol>
+<p>  关于乘法指令<strong>标志位</strong>的设置：</p>
+<ul>
+<li><p>对于MUL指令：</p>
+<p>  若高位全为0，则OF和CF皆为0，否则皆为1</p>
+</li>
+<li><p>对于IMUL指令：</p>
+<p>  若高位全为0或者1，并且等于低位中的最高位，则OF和CF全为0，否则全为1</p>
+</li>
+</ul>
+</li>
+<li><p>除法指令</p>
+<p>  指令中只会明显指出除数，用累加器AL&#x2F;AX&#x2F;EAX指出被除数</p>
+<p>  以8位除数为例，被除数被储存在AX寄存器中，商送回AL，余数在AH中（商在低位余在高）。</p>
+</li>
+</ul>
+<h4 id="3-3-按位运算指令"><a href="#3-3-按位运算指令" class="headerlink" title="3.3 按位运算指令"></a>3.3 按位运算指令</h4><ul>
+<li><p>逻辑运算指令</p>
+<p>  仅NOT指令不影响标志位，其他指令执行后，OF&#x3D;CF&#x3D;0，ZF和SF根据结果判断</p>
+<ul>
+<li>NOT</li>
+<li>AND</li>
+<li>OR</li>
+<li>XOR</li>
+<li>TEST：根据两个操作数相与的结果来设置条件标志，<strong>常用于需检测某种条件但是不能改变原操作数的场合</strong>。</li>
+</ul>
+</li>
+<li><p>移位指令</p>
+<ul>
+<li>SHL</li>
+<li>SHR</li>
+<li>SAL</li>
+<li>SAR</li>
+<li>ROL</li>
+<li>ROR</li>
+<li>RCL：带进位循环左移，将CF作为操作数的一部分循环左移</li>
+<li>RCR</li>
+</ul>
+</li>
+</ul>
+<h4 id="3-4-控制转移指令"><a href="#3-4-控制转移指令" class="headerlink" title="3.4 控制转移指令"></a>3.4 控制转移指令</h4><p><strong>直接转移</strong>：转移的目标地址作为立即数直接出现在指令的机器码中</p>
+<p><strong>间接转移</strong>：转移的目标地址间接存储在某一寄存器或存储单元中</p>
+<p>在IA-32指令系统中，所有<strong>段内直接转移</strong>都是<strong>相对转移</strong>，所有<strong>段内间接转移或者段间转移</strong>都是<strong>绝对转移</strong>。</p>
+<p><strong>条件转移指令</strong></p>
+<p><img src="/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20201028172009852.png" srcset="/img/loading.gif" lazyload alt="image-20201028172009852"></p>
+<p>对于带符号数可以这样判断：根据SF直接得出结果符号，在根据OF判断结果是否正确，若结果不正确则实际的大小判断要反过来</p>
+<p>例如，SF&#x3D;1表示a-b结果是负的，本来应该是a&lt;b，但是OF&#x3D;1表示结果是错的，所以实际a&gt;b。</p>
+<p><strong>条件设置指令</strong></p>
+<p>将条件标志组合得到的条件值设置到一个8位通用寄存器中，其设置的条件值与上表中的转移条件值完全一样。</p>
+<p><strong>调用和返回指令</strong></p>
+<ul>
+<li>CALL DST：返回地址RA入栈，转到DST处执行</li>
+<li>RET：从栈中取出返回地址RA，转到RA处执行</li>
+</ul>
+<h4 id="3-5-x87浮点处理指令"><a href="#3-5-x87浮点处理指令" class="headerlink" title="3.5 x87浮点处理指令"></a>3.5 x87浮点处理指令</h4><p>IA-32有两种浮点处理架构：浮点协处理器架构、MMX发展而来的SSE指令集架构</p>
+<p>x87FPU有一个浮点寄存器栈，深度为8，每个浮点寄存器有80位。</p>
+<p>浮点数装入指令（FLD）float load：将存储单元中的浮点数装入到浮点寄存器的栈顶ST(0)，无论是flds(float装入)还是fldl(double装入)都要先转换为80位扩展精度格式后再装入栈顶ST(0)。</p>
+<p>FST(float store)：浮点数存储指令，将浮点数装入到浮点寄存器栈的栈顶ST(0)。</p>
+<p>FSTP：同上，但是会将该数据弹出栈</p>
+<p>由于浮点寄存器的宽度为80位，因此需要先将80位扩展精度格式转换为32位或64位后，再存储到指定存储单元中，这可能会造成<strong>精度丢失</strong>。</p>
+<h4 id="3-6-MMX-x2F-SSE指令集"><a href="#3-6-MMX-x2F-SSE指令集" class="headerlink" title="3.6 MMX&#x2F;SSE指令集"></a>3.6 MMX&#x2F;SSE指令集</h4><p>一个处理浮点数的指令集，提高了多媒体、图形图像等方面的处理能力。</p>
+<h3 id="4-C语言的机器级表示"><a href="#4-C语言的机器级表示" class="headerlink" title="4. C语言的机器级表示"></a>4. C语言的机器级表示</h3><h4 id="4-1-过程调用的机器级表示"><a href="#4-1-过程调用的机器级表示" class="headerlink" title="4.1 过程调用的机器级表示"></a>4.1 过程调用的机器级表示</h4><p>IA-32中用于过程调用的指令：CALL和RET</p>
+<p>为了支持嵌套和递归调用，通常利用栈来保存返回地址，入口参数和过程内部定义的非静态局部变量。</p>
+<p>CALL在跳转之前会将返回地址压栈，RET在返回之前会从栈中取出返回地址。</p>
+<p><span style="color:blue; font-weight:bold; font-size:20px">过程调用执行步骤</span></p>
+<p>令P为调用者（caller），Q为被调用者（callee）。</p>
+<ol>
+<li>P将入口参数（实参）放到Q能访问到的地方。</li>
+<li>P将返回地址存到特定地方，然后将控制转移到Q。</li>
+<li>Q保存P的现场，并为自己的非静态局部变量分配空间。（准备阶段）</li>
+<li>执行Q的过程体（函数体）。</li>
+<li>Q恢复P的现场，并释放局部变量所占用的空间。（结束阶段）</li>
+<li>Q取出返回地址，将控制转移到P。</li>
+</ol>
+<p>原因：调用者和被调用者公用一套通用寄存器，因此被调用者不能破坏原有寄存器的内容，需要先保存到栈中。</p>
+<p><strong>现场</strong>：通用寄存器中原先的值</p>
+<p><span style="color:blue;font-weight:bold">IA-32的寄存器使用规定</span></p>
+<p><strong>调用者保存寄存器</strong>：EAX，EDX，ECX（ADC），P在<strong>转到Q之前</strong>先保存他们的值，并在Q返回后先回复他们的值再使用。Q能够直接使用他们。</p>
+<p><strong>被调用者保存寄存器</strong>：EBX，ESI，EDI，Q必须在使用他们之前先将他们的值保存到栈中，并在返回P之前恢复它们的值。</p>
+<p><span style="color:blue;font-weight:bold">IA-32的栈，栈帧及其结构</span></p>
+<p><strong>需要压入栈中的内容</strong>：过程的入口参数，返回地址，被保存寄存器的值，被调用过程中的非静态局部变量。</p>
+<p><strong>栈帧</strong>：为每个过程分配的栈区，一个栈由若干个栈帧组成。<strong>每个栈帧从EBP的旧值开始，到返回地址结束</strong></p>
+<p><strong>帧指针寄存器</strong>：存放每个栈帧的起始位置，当前栈帧的范围在EBP和ESP指向的内存地址之间。在过程执行时，<strong>栈指针</strong>会不断移动，而<strong>帧指针</strong>可以固定不变。</p>
+<p><img src="/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20201101093210811.png" srcset="/img/loading.gif" lazyload alt="image-20201101093210811"></p>
+<p><span style="color:red;font-weight:bold">注意</span>：参数是倒着放的！</p>
+<p>ESP+8总是指向第一个参数，之后的参数在此基础上每个+4。</p>
+<p><span style="color:blue;font-weight:bold">变量的作用域和生存周期</span></p>
+<p>非静态局部变量只在Q执行过程中有效，当Q返回P后，这些变量的内存都会被释放。它们的生存周期也只在该栈帧被分配的时间内。</p>
+<p>C语言的<strong>外部参照型变量</strong>和<strong>静态变量</strong>被分配在静态数据区，具有“全局生存期”。</p>
+<p>例：</p>
+<p><img src="/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20201214101423371.png" srcset="/img/loading.gif" lazyload alt="image-20201214101423371"></p>
+<p>该函数在执行过程中栈帧的使用情况如下：</p>
+<p><img src="/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20201214101757827.png" srcset="/img/loading.gif" lazyload alt="image-20201214101757827"></p>
+<p><strong>leave指令功能</strong>：</p>
+<p><code>movl %ebp, %esp</code></p>
+<p><code>popl %ebp</code></p>
+<p>将esp指向ebp的旧值，弹出ebp，即栈帧回到上一个函数，此时esp指向返回地址，通过ret返回到上一个函数的代码段。</p>
+<hr>
+
+<p><span style="color:blue;font-weight:bold">递归过程调用</span></p>
+<p>求自然数之和的递归函数例子：</p>
+<p><img src="/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20201214103228355.png" srcset="/img/loading.gif" lazyload alt="image-20201214103228355"></p>
+<p><img src="/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20201214103333816.png" srcset="/img/loading.gif" lazyload alt="image-20201214103333816"></p>
+<p><img src="/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20201214103947127.png" srcset="/img/loading.gif" lazyload alt="image-20201214103947127"></p>
+<p>递归的过程如图所示：</p>
+<p><img src="/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20201214104510925.png" srcset="/img/loading.gif" lazyload alt="image-20201214104510925"></p>
+<p>递归调用的缺点：</p>
+<p>对于栈的开销很大，容易发生栈溢出。</p>
+<p><span style="color:blue;font-weight:bold">非静态局部变量的存储分配</span></p>
+<p>对于非静态局部变量的分配顺序，C标准规范中没有规定必须是按顺序从大地址到小地址还是反过来，因此属于<strong>未定义行为</strong>。</p>
+<p>对不同变量的地址进行除&#x3D;&#x3D;和!&#x3D;之外的关系运算属于未定义行为，如<code>if(&amp;var1 &lt; &amp;var2)</code>会报错。</p>
+<h4 id="4-2-选择语句的机器级表示"><a href="#4-2-选择语句的机器级表示" class="headerlink" title="4.2 选择语句的机器级表示"></a>4.2 选择语句的机器级表示</h4><p><span style="color:blue;font-weight:bold">if-else语句的机器级表示</span></p>
+<p>大多结合<code>cmp, jmp</code>和标号来实现</p>
+<p><span style="color:blue;font-weight:bold">switch语句的机器级表示</span></p>
+<p>switch可以直接跳转到某个条件处的语句执行，而不需要一一测试条件。</p>
+<p><img src="/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20201214110055734.png" srcset="/img/loading.gif" lazyload alt="image-20201214110055734"></p>
+<p>但是，当case的条件值相差较大时，编译器依然会生成分段跳转代码</p>
+<p><span style="color:blue;font-weight:bold">循环结构的机器级表示</span></p>
+<p>略</p>
+<h3 id="5-复杂数据类型的分配和访问"><a href="#5-复杂数据类型的分配和访问" class="headerlink" title="5. 复杂数据类型的分配和访问"></a>5. 复杂数据类型的分配和访问</h3><h4 id="5-1-数组的分配和访问"><a href="#5-1-数组的分配和访问" class="headerlink" title="5.1 数组的分配和访问"></a>5.1 数组的分配和访问</h4><p>数组是数据集合，因而一定被放置在存储器中。</p>
+<p><img src="/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20201218101927030.png" srcset="/img/loading.gif" lazyload alt="image-20201218101927030"></p>
+<p><strong>注意：</strong>指针类型的大小与操作系统的位数有关</p>
+<p>数组元素和指针变量的表达式计算示例</p>
+<p><img src="/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20201218102020375.png" srcset="/img/loading.gif" lazyload alt="image-20201218102020375"></p>
+<h4 id="5-2-结构体数据的分配和访问"><a href="#5-2-结构体数据的分配和访问" class="headerlink" title="5.2 结构体数据的分配和访问"></a>5.2 结构体数据的分配和访问</h4><p>指向结构体的指针就是其第一个字节的地址</p>
+<p>结构体变量通常采用<strong>按地址传递</strong>的方式</p>
+<h4 id="5-3-联合体数据的分配和访问"><a href="#5-3-联合体数据的分配和访问" class="headerlink" title="5.3 联合体数据的分配和访问"></a>5.3 联合体数据的分配和访问</h4><p>联合体各个成员共享储存空间，分配给它的存储空间总是按照最大数据长度成员所需的空间大小为目标</p>
+<p>利用联合体数据结构，可以实现对相同序列进行不同数据类型的解释</p>
+<h4 id="5-4-数据的对齐"><a href="#5-4-数据的对齐" class="headerlink" title="5.4 数据的对齐"></a>5.4 数据的对齐</h4><p>在8字节宽的存储器机制下，访问数据的效率较高，因此需要进行数据的对齐。</p>
+<p>i386 System V ABI 中对齐策略规定：</p>
+<p>short地址是2的倍数</p>
+<p>int, float, double和指针类型地址都是4的倍数</p>
+<br>
+
+<p>ABI规范只定义了变量的对齐方式，而没有定义变量的分配顺序，编译器可以自由决定使用何种顺序来分配变量。</p>
+<p>i386 System V ABI对结构体有如下对齐方式要求：</p>
+<ol>
+<li>整个结构体的对齐方式与最严格的成员相同</li>
+<li>每个成员<strong>在满足其对齐方式的前提下</strong>，取最小的可用位置作为在结构体中的偏移量，可能<strong>内部插空</strong></li>
+<li>结构体大小为对齐边界长度的整数倍，可能<strong>尾部插空</strong></li>
+</ol>
+<p><img src="/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20201218103529440.png" srcset="/img/loading.gif" lazyload alt="image-20201218103529440"></p>
+<h3 id="6-越界访问和缓冲区溢出"><a href="#6-越界访问和缓冲区溢出" class="headerlink" title="6. 越界访问和缓冲区溢出"></a>6. 越界访问和缓冲区溢出</h3><h4 id="6-1-缓冲区溢出"><a href="#6-1-缓冲区溢出" class="headerlink" title="6.1 缓冲区溢出"></a>6.1 缓冲区溢出</h4><p>在访问数组时发生超越数组存储区的越界访问，通常把这种存储区看成是一个缓冲区，这种超越数组存储区范围的访问称为<strong>缓冲区溢出</strong>。</p>
+<h4 id="6-2-缓冲区溢出攻击"><a href="#6-2-缓冲区溢出攻击" class="headerlink" title="6.2 缓冲区溢出攻击"></a>6.2 缓冲区溢出攻击</h4><p>将恶意代码段的首地址作为返回地址覆盖地写到原先正确的返回地址处，在ret指令执行后就会转到该段代码执行</p>
+<p>防范方法：</p>
+<ol>
+<li><p>用辅助攻击帮助查漏，如使用grep来搜索源代码中容易产生漏洞的库函数，或用fault injection差错</p>
+</li>
+<li><p>地址空间随机化ASLR：将加载程序时生成的代码段、静态数据段、堆区、动态库和栈区各部分的首地址进行随机化处理，使每次启动时，程序各段被加载到不同地址起始处</p>
+</li>
+<li><p>栈破坏检测：<strong>在函数准备阶段</strong>，在其栈帧中缓冲区底部与保存寄存器之间（如<strong>buffer[15]<strong>与保留的</strong>EBP</strong>之间）加入一个随机生成的特定值；<strong>在函数恢复阶段</strong>，在恢复寄存器并返回到调用函数前，先检查该值是否被改变。若改变则程序异常中止。<strong>因为插入在栈帧中的特定值是随机生成的，所以攻击者很难猜测出它是什么</strong></p>
+</li>
+<li><p>可执行代码区域的限制：通过将程序栈区和堆区设置为不可执行，从而使得攻击者不可能执行被植入在输入缓冲区的代码，这种技术也被称为<strong>非执行的缓冲区技术</strong></p>
+</li>
+</ol>
+<h3 id="7-兼容IA-32的64位系统"><a href="#7-兼容IA-32的64位系统" class="headerlink" title="7. 兼容IA-32的64位系统"></a>7. 兼容IA-32的64位系统</h3><h4 id="7-1-x86-64的基本特点"><a href="#7-1-x86-64的基本特点" class="headerlink" title="7.1 x86-64的基本特点"></a>7.1 x86-64的基本特点</h4><ol>
+<li><p><span style="color:blue">更多的通用寄存器个数</span></p>
+<p> 增加了8个64位寄存器R8~R15，可以作为8位寄存器(R8B ~ R15B)，16位寄存器(R8W ~ R15W)，32位寄存器(R8D ~ R15D)。</p>
+</li>
+<li><p><span style="color:blue">比IA-32具有更长的通用寄存器位数</span></p>
+<p> 所有通用寄存器被扩展到了64位，RAX,RBX,RCX,RDX, RBP,RSP,RSI,RDI，并且EBP,ESP,ESI,EDI的低8位可以使用，分别为BPL,SPL,SIL,DIL（注意是3个字母，区别AL,BL等）</p>
+</li>
+<li><p><span style="color:blue">字长从32位变成64位，逻辑地址相应变化</span></p>
+</li>
+<li><p><span style="color:blue">对于long double型数据</span>，虽然还是采用IA-32相同的80为扩展精度格式，但分配的存储空间从12字节扩展为16字节，从4B对齐改为16B对齐，但使用时都只会用到低10字节</p>
+</li>
+<li><p><span style="color:blue">过程调用时</span>，如果入口参数只有6个以内的整型变量和指针型变量，通常采用通用寄存器而不是栈来传递。</p>
+</li>
+<li><p><span style="color:blue">128位的XMM寄存器</span>从8个增加到16个，浮点操作采用基于SSE的面向XMM的指令集</p>
+</li>
+</ol>
+<h4 id="7-2-x86-64的基本指令和对齐"><a href="#7-2-x86-64的基本指令和对齐" class="headerlink" title="7.2 x86-64的基本指令和对齐"></a>7.2 x86-64的基本指令和对齐</h4><p>当指令中的操作数为存储器操作数时，其基址寄存器或者变址寄存器必须是64位寄存器。（因为地址是64位的）</p>
+<p><strong>数据传送指令</strong></p>
+<p><code>movabsq</code>：将64位立即数(abs)送到64位通用寄存器中</p>
+<p><code>movq</code>：传送一个64位的四字</p>
+<p><code>movsbq, movswq, movslq</code>：符号扩展</p>
+<p><code>movzbq, movzwq, movzlq</code>：零扩展</p>
+<p><code>leaq</code>：将有效地址加载到64位寄存器</p>
+<p><code>pushq, popq</code>：压栈，出栈</p>
+<p><code>movl</code>：在传送32位寄存器内容的同时，<strong>将目的寄存器的高32位自动清零</strong>，也因此<code>movl</code>相当于<code>movzlq</code>指令</p>
+<p><img src="/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20201218111213016.png" srcset="/img/loading.gif" lazyload alt="image-20201218111213016"></p>
+<p><strong>算术逻辑运算指令</strong></p>
+<p><code>addq, subq, imulq(带符号整数相乘), mulq, orq, incq, decq, negq, notq, salq </code></p>
+<p><strong>数据对齐</strong></p>
+<p>任何K字节宽的基本类型数据和指针类型数据的起始地址<strong>一定是K的倍数</strong></p>
+<p>long, double型数据和指针变量都必须按8字节对齐；long double型数据必须按16字节边界对齐</p>
+<h4 id="7-3-x86-64的过程调用"><a href="#7-3-x86-64的过程调用" class="headerlink" title="7.3 x86-64的过程调用"></a>7.3 x86-64的过程调用</h4><p>可以不用栈指针寄存器RBP作为栈帧底部，而是使用RSP作为基址寄存器来访问栈帧中的信息</p>
+<p>传送入口参数的寄存器依次为RDI,RSI,RDX,RCX,R8,R9（6个），返回参数放在RAX中</p>
+<p>调用者保存寄存器为R10，R11，被调用者保存寄存器为RBX，RBPR12，R13，R14，R15</p>
+<p>RSP用于指向栈顶元素</p>
+<p>RIP用于指向正在执行或者即将执行的命令</p>
+<p><img src="/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20201218112102346.png" srcset="/img/loading.gif" lazyload alt="image-20201218112102346"></p>
+<h4 id="7-4-x86-64的浮点数操作与SIMD指令"><a href="#7-4-x86-64的浮点数操作与SIMD指令" class="headerlink" title="7.4 x86-64的浮点数操作与SIMD指令"></a>7.4 x86-64的浮点数操作与SIMD指令</h4><p>浮点运算采用基于SSE的面向XMM寄存器的SIMD指令，浮点数放在128位的XMM寄存器中，不再放在寄存器栈中。</p>
+<h2 id="第四章-程序的链接"><a href="#第四章-程序的链接" class="headerlink" title="第四章 程序的链接"></a>第四章 程序的链接</h2><h3 id="1-编译、汇编和链接"><a href="#1-编译、汇编和链接" class="headerlink" title="1. 编译、汇编和链接"></a>1. 编译、汇编和链接</h3><h4 id="1-1-编译和汇编"><a href="#1-1-编译和汇编" class="headerlink" title="1.1 编译和汇编"></a>1.1 编译和汇编</h4><p>预处理：对头文件的包含，宏定义的扩展，条件编译的选择，“gcc -E main.c -o main.i”或“cpp main.c -o main.i”</p>
+<p>编译：对源程序进行词法分析、语法分析和语义分析，并进行优化和存储分配，最终把C语言源程序翻译成汇编语言程序。对应指令为“gcc -S main.i -o main.s”</p>
+<p>汇编：将编译生成的汇编语言代码转换为机器语言代码，不能确定每条指令或者每个数据最终的地址，需要进行重定位。对应指令为“gcc -c main.c -o main.o”</p>
+<h4 id="1-2-可执行目标文件的生成"><a href="#1-2-可执行目标文件的生成" class="headerlink" title="1.2 可执行目标文件的生成"></a>1.2 可执行目标文件的生成</h4><p>将所有关联的可重定位目标文件组合起来，以生成一个可执行文件。”ld -o test main.o test.o”，ld是静态链接指令</p>
+<p>可重定位目标文件的代码总是从0开始，而可执行文件的代码在虚拟地址空间产生</p>
+<p><span style="color:blue">可重定位目标文件合成可执行目标文件</span>需要以下两步：</p>
+<ol>
+<li><p>符号解析</p>
+<p> 将每个<strong>符号的引用</strong>与一个确定的<strong>符号定义</strong>相关联。符号包括<strong>全局静态变量名</strong>和<strong>函数名</strong>。<span style="color:red">非静态局部变量不是符号。</span></p>
+<p> 编译器会将所有符号存放在可重定位目标文件的符号表中。</p>
+</li>
+<li><p>重定位</p>
+<p>代码区和数据区都是从0地址开始的。链接器需要将不同模块中相同的节合并起来生成一个单独的节，并进行虚拟地址空间划分来重新确定位置。重新确定代码和数据的地址并更新指令中被引用符地址号叫做<strong>重定位</strong>。</p>
+</li>
+</ol>
+<p>链接的好处：实现“模块化”，方便编写，建立函数库；每个模块分开编译，提高开发效率。</p>
+<h3 id="2-目标文件格式"><a href="#2-目标文件格式" class="headerlink" title="2. 目标文件格式"></a>2. 目标文件格式</h3><p>目标代码：将编译器或汇编器处理源代码后生成的机器语言目标代码</p>
+<p>目标文件：存放目标代码的文件</p>
+<h4 id="2-1-ELF目标文件格式"><a href="#2-1-ELF目标文件格式" class="headerlink" title="2.1 ELF目标文件格式"></a>2.1 ELF目标文件格式</h4><p>目标文件包含<strong>机器代码</strong>、<strong>数据</strong>、<strong>重定位信息</strong>和<strong>调试信息</strong>。</p>
+<p>ELF（Executable and Linkable Format）：可执行可链接格式，由UNIX操作系统使用</p>
+<p><img src="/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20201218222521056.png" srcset="/img/loading.gif" lazyload alt="image-20201218222521056"></p>
+<p>节：ELF文件中具有相同特征的最小可处理信息单位</p>
+<p>代码节(.text)、只读数据节(.rodata)、已初始化全局数据节(.data)、未初始化全局数据节(.bss)。</p>
+<p>段：描述目标文件中的节如何映射到存储空间的段中，可以将多个节合并后映射到同一个段，如.data和.bss映射到可读可写数据段中。</p>
+<p><strong>节头表</strong>：包含文件中各个节的说明信息。有每个节的名字和大小之类的信息。<span style="color:red">可重定位目标文件一定要有节头表。</span></p>
+<p><strong>程序头表</strong>：指示系统如何创建进程的存储器映像。<span style="color:red">可执行文件和共享库文件必须要有程序头表。</span></p>
+<h4 id="2-2-可重定位目标文件格式"><a href="#2-2-可重定位目标文件格式" class="headerlink" title="2.2 可重定位目标文件格式"></a>2.2 可重定位目标文件格式</h4><p>总体结构如下：</p>
+<p><img src="/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20201218223240634.png" srcset="/img/loading.gif" lazyload alt="image-20201218223240634"></p>
+<ol>
+<li><p>ELF头</p>
+<p> 位于目标文件的起始位置，包含文件结构的说明信息。共52个字节，仅ELF头在文件中具有固定的位置，其他部分由ELF头和节头表指出。</p>
+<p> e_shoff指出节头表在文件中的偏移量</p>
+<p> 使用”readelf -h main.o”对文件进行解析</p>
+</li>
+<li><p>节</p>
+<p> ELF文件中的主体信息，包含了链接过程中所使用的目标代码信息，包括指令，数据，符号表和重定位信息等。</p>
+<p> <strong>.text</strong>:目标代码</p>
+<p> <strong>.rodata</strong>:只读数据，如printf中的格式串，开关语句(switch-case)的跳转表</p>
+<p> <strong>.data</strong>:已初始化全局变量</p>
+<p> <strong>.bss</strong>:未初始化全局变量。无须在目标文件中分配用于保存值的空间，仅仅是一个占位符</p>
+<p> <strong>.symlab</strong>:符号表，程序中定义的函数和全局静态变量名都是符号</p>
+<p> <strong>.rel.text</strong>:.text节相关的可重定位信息。当目标文件组合时，指令中的引用操作数地址信息或者跳转目标指令位置信息都要被修改。一般调用外部函数或者引用全局变量的指令中的地址字段需要被修改。</p>
+<p> <strong>.rel.data</strong>:.data节相关可重定位信息。</p>
+<p> .debug:调试用符号表。</p>
+<p> .line:行号和.text节之间的映射。</p>
+<p> .strlab:字符串表，包括.symlab节和.debug节中的符号以及节头表中的节名</p>
+</li>
+<li><p>节头表</p>
+<p> 由若干个表项组成，每个表描述相应的一个节的节名，在文件中的偏移，大小，访问属性，对齐方式等。</p>
+<p> 使用<code>readelf -S test.o</code>来解析文件得到如下结果</p>
+<p> <img src="/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20201219103828989.png" srcset="/img/loading.gif" lazyload alt="image-20201219103828989"></p>
+<p> 将该信息映射到文件结构中：</p>
+<p> <img src="/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20201219104013139.png" srcset="/img/loading.gif" lazyload alt="image-20201219104013139"></p>
+</li>
+</ol>
+<h4 id="2-3-可执行目标文件格式"><a href="#2-3-可执行目标文件格式" class="headerlink" title="2.3 可执行目标文件格式"></a>2.3 可执行目标文件格式</h4><p>ELF可执行目标文件由ELF头、程序头表、节头表和不同的节组成。</p>
+<p><img src="/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20201219104926204.png" srcset="/img/loading.gif" lazyload alt="image-20201219104926204"></p>
+<p>程序头表：将可执行文件中连续的、具有相同访问属性的代码和数据段映射到存储空间（通常是虚拟地址空间）中，程序头表用于描述这种映射关系。</p>
+<p>32位程序头表具有以下数据结构：</p>
+<p><img src="/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20210204165601527.png" srcset="/img/loading.gif" lazyload alt="image-20210204165601527"></p>
+<p>使用<code>readelf -l filename</code>指令显示可执行文件的程序头表信息：</p>
+<p><img src="/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20210204165933629.png" srcset="/img/loading.gif" lazyload alt="image-20210204165933629"></p>
+<h4 id="2-4-可执行文件的存储映像"><a href="#2-4-可执行文件的存储映像" class="headerlink" title="2.4 可执行文件的存储映像"></a>2.4 可执行文件的存储映像</h4><p>可执行文件到虚拟地址空间的映射是建立存储映像的过程。</p>
+<p>i386 System V ABI规定，<strong>只读代码段</strong>总是映射到从虚拟地址0x8048000开始的一段区域，<strong>可读写数据段</strong>映射到只读代码段后面按4KB对齐的高地址上，<strong>运行时堆</strong>则在可读写数据段后面4KB对齐的高地址处，<strong>运行时用户栈</strong>则是从用户空间的最大地址往低地址方向生长。</p>
+<p><img src="/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20210204170744122.png" srcset="/img/loading.gif" lazyload alt="image-20210204170744122"></p>
+<h3 id="3-符号表和符号解析"><a href="#3-符号表和符号解析" class="headerlink" title="3. 符号表和符号解析"></a>3. 符号表和符号解析</h3><h4 id="3-1-符号和符号表"><a href="#3-1-符号和符号表" class="headerlink" title="3.1 符号和符号表"></a>3.1 符号和符号表</h4><p>全局符号：非静态函数名和被定义为不带static属性的全局变量名</p>
+<p>外部符号：在其他模块定义的外部函数名和外部变量名</p>
+<p>本地符号：带static属性的函数名和全局变量名</p>
+<p>ELF文件中包含的符号表中每个表项具有以下数据结构：</p>
+<p><img src="/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20210204172245845.png" srcset="/img/loading.gif" lazyload alt="image-20210204172245845"></p>
+<p>另外，st_other显示符号可见性，st_shndx指出符号所在节在节头表中的索引。</p>
+<p>可通过<code>readelf -s main.o</code>查看符号表：</p>
+<p><img src="/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20210204172636470.png" srcset="/img/loading.gif" lazyload alt="image-20210204172636470"></p>
+<h4 id="3-2-符号解析"><a href="#3-2-符号解析" class="headerlink" title="3.2 符号解析"></a>3.2 符号解析</h4><p>全局符号的强弱特性：</p>
+<p><strong>强符号</strong>：函数名和已初始化的全局变量名</p>
+<p><strong>弱符号</strong>：未初始化的全局变量名</p>
+<p>链接器处理符号的规则如下：</p>
+<ol>
+<li>强符号不能多次定义。</li>
+<li>强符号覆盖同名弱符号。</li>
+<li>多个弱符号任选一个。</li>
+</ol>
+<p><strong>符号解析过程：</strong></p>
+<p>链接器在进行符号解析时需要维护3个集合：</p>
+<p>集合E指被合并到一起的组成可执行文件的所有<strong>目标文件集合</strong></p>
+<p>集合U是<strong>未解析符号集合</strong></p>
+<p>集合D是当前为止已经加入到E的所有目标文件中<strong>定义符号的集合</strong></p>
+<ol>
+<li>对每个输入文件f，若为目标文件，将f加入到E，并修改U，D</li>
+<li>若为库文件，则匹配U中符号和f中各目标模块定义的符号</li>
+<li>若往D中加入一个已存在的符号，或者扫描完所有输入文件时U非空，则链接器报错</li>
+</ol>
+<h4 id="3-3-与静态库的链接"><a href="#3-3-与静态库的链接" class="headerlink" title="3.3 与静态库的链接"></a>3.3 与静态库的链接</h4><p><img src="/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20210204173732706.png" srcset="/img/loading.gif" lazyload alt="image-20210204173732706"></p>
+<h3 id="4-重定位"><a href="#4-重定位" class="headerlink" title="4. 重定位"></a>4. 重定位</h3><p>重定位的目的是<strong>在符号解析的基础上</strong>将所有关联的目标模块合并，并确定运行时<strong>每个定义符号</strong>在虚拟空间中的地址，<strong>重定位引用的地址</strong>。</p>
+<ol>
+<li>节和定义符号的重定位。合并所有节</li>
+<li>引用符号的重定位。其中重定位信息放在.rel.text和rel.data中，告知链接器目标文件中哪些引用符号需要重定位，所引用的是哪个定义符号等</li>
+</ol>
+<p><strong>重定位信息</strong></p>
+<p>表项数据结构如下：</p>
+<p><img src="/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20210204174548970.png" srcset="/img/loading.gif" lazyload alt="image-20210204174548970"></p>
+<p>r_offset指出需重定位的位置相对节起始位置偏移量。</p>
+<p>r_info包含符号索引和重定位类型，其中r_sym指出符号在符号表中的位置，r_type分为PC（下条指令地址）相对寻址和绝对地址。</p>
+<p>重定位表信息可通过<code>readelf -r main.o</code>来显示。</p>
+<p>IA-32 中转移目标地址（即有效地址）计算公式为：转移目标地址 &#x3D;PC+ 偏移地址</p>
+<p>PC相对地址方式下的重定位值计算公式为：ADDR(r_sym) - ((ADDR(.text) + r_offset) - init)</p>
+<p>绝对地址可直接加算</p>
+<p><img src="/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20210204183433618.png" srcset="/img/loading.gif" lazyload alt="image-20210204183433618"></p>
+<h3 id="5-动态链接"><a href="#5-动态链接" class="headerlink" title="5. 动态链接"></a>5. 动态链接</h3><p>特性：</p>
+<ol>
+<li>共享性：代码段在内存中只存在一份副本，不需要将代码合并到生成文件中去</li>
+<li>动态性：只在使用它的程序被加载或者执行时才加载到内存，因而在共享库更新后并不需要重新对程序进行链接</li>
+</ol>
+<p>生成指令：<code>gcc -shared -fPIC -o mylib.so myproc1.c myproc2.c</code></p>
+<p>-fPIC(Position-Independent Code): 位置无关代码，即共享库代码与位置无关。</p>
+<h4 id="5-1-程序加载时的动态链接"><a href="#5-1-程序加载时的动态链接" class="headerlink" title="5.1 程序加载时的动态链接"></a>5.1 程序加载时的动态链接</h4><p>生成可执行文件指令：<code>gcc -o myproc main.c ./mylib.so</code></p>
+<p><img src="/2023/01/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/image-20210204183941910.png" srcset="/img/loading.gif" lazyload alt="image-20210204183941910"></p>
+<h4 id="5-2-程序运行时的动态链接"><a href="#5-2-程序运行时的动态链接" class="headerlink" title="5.2 程序运行时的动态链接"></a>5.2 程序运行时的动态链接</h4><p>指令：<code>gcc -rdynamic -o myproc main.c -ldl</code></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">include</span><span class="hljs-string">&lt;stdio.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span><span class="hljs-string">&lt;dlfcn.h&gt;</span>  <span class="hljs-comment">/* 声明动态链接器接口 */</span></span><br><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span><br>&#123;<br>    <span class="hljs-type">void</span> *handle;<br>    <span class="hljs-type">void</span> (*myfunc1)();<br>    <span class="hljs-type">char</span> *error;<br>    <br>    <span class="hljs-comment">/* 动态装入包含函数myfunc1()的共享库文件 */</span><br>    handle = dlopen(<span class="hljs-string">&quot;./mylib.so&quot;</span>, RTLD_LAZY);   <span class="hljs-comment">//延迟绑定：外部符号引用不在加载时重定位，而是在第一次调用时重定位</span><br>    <span class="hljs-keyword">if</span>(!handle) &#123;<br>        <span class="hljs-built_in">fprintf</span>(<span class="hljs-built_in">stderr</span>, <span class="hljs-string">&quot;%s\n&quot;</span>, dlerror());<br>        <span class="hljs-built_in">exit</span>(<span class="hljs-number">1</span>);<br>    &#125;<br>    <br>    <span class="hljs-comment">/* 获得一个指向函数myfunc1()的指针 */</span><br>    myfunc1 =  dlsym(handle, <span class="hljs-string">&quot;myfunc1&quot;</span>);<br>    <span class="hljs-keyword">if</span>((error = dlerror()) != <span class="hljs-literal">NULL</span>) &#123;<br>        <span class="hljs-built_in">fprintf</span>(<span class="hljs-built_in">stderr</span>, <span class="hljs-string">&quot;%s\n&quot;</span>, error);<br>        <span class="hljs-built_in">exit</span>(<span class="hljs-number">1</span>);<br>    &#125;<br>    <br>    <span class="hljs-comment">/* 现在可以像调用其他函数一样调用函数myfunc1() */</span><br>    myfunc1();<br>    <br>    <span class="hljs-comment">/* 关闭（卸载）共享库文件 */</span><br>    <span class="hljs-keyword">if</span>(dlclose(handle) &lt; <span class="hljs-number">0</span>) &#123;<br>        <span class="hljs-built_in">fprintf</span>(<span class="hljs-built_in">stderr</span>, <span class="hljs-string">&quot;%s\n&quot;</span>, dlerror());<br>        <span class="hljs-built_in">exit</span>(<span class="hljs-number">1</span>);<br>    &#125;<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>计算机系统基础</div>
+      <div>http://example.com/2023/01/10/计算机系统基础/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Chen Shuwen</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年1月10日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2023/01/10/%E5%92%8C%E7%AD%89%E4%BA%8EK%E7%9A%84%E5%AD%90%E6%95%B0%E7%BB%84/" title="和等于K的子数组">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">和等于K的子数组</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/01/10/%E4%BA%8C%E5%8F%89%E6%90%9C%E7%B4%A2%E6%A0%91&amp;AVL%E6%A0%91&amp;%E7%BA%A2%E9%BB%91%E6%A0%91/" title="二叉搜索树&amp;AVL树&amp;红黑树">
+                        <span class="hidden-mobile">二叉搜索树&amp;AVL树&amp;红黑树</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

@@ -1,0 +1,858 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Chen Shuwen">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="Game Dev Log2021-4-23关键词：物理引擎，碰撞  y轴抖动问题现场还原：当Player落在cube平面上时，会出现y轴方向的速度不断波动的问题可能原因：cube的厚度过小(0.2)，两个物体的碰撞判断造成解决方法：增加cube的厚度  物体碰撞产生速度分量现场还原：当Player在方块的边缘下落时，它会产生一个水平方向的速度分量，并且会一直运动下去可能原因：Player在碰撞到方">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Game Dev Log">
+<meta property="og:url" content="http://example.com/2021/04/23/Game%20Dev%20Log/index.html">
+<meta property="og:site_name" content="Chen Shuwen&#39;s Tech Site">
+<meta property="og:description" content="Game Dev Log2021-4-23关键词：物理引擎，碰撞  y轴抖动问题现场还原：当Player落在cube平面上时，会出现y轴方向的速度不断波动的问题可能原因：cube的厚度过小(0.2)，两个物体的碰撞判断造成解决方法：增加cube的厚度  物体碰撞产生速度分量现场还原：当Player在方块的边缘下落时，它会产生一个水平方向的速度分量，并且会一直运动下去可能原因：Player在碰撞到方">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-04-23T11:20:33.000Z">
+<meta property="article:modified_time" content="2023-01-10T04:09:24.809Z">
+<meta property="article:author" content="Chen Shuwen">
+<meta property="article:tag" content="Unity">
+<meta property="article:tag" content="Dev Log">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>Game Dev Log - Chen Shuwen&#39;s Tech Site</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Chen Shuwen&#39;s Tech Site</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Game Dev Log"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2021-04-23 19:20" pubdate>
+          2021年4月23日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          9k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          76 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">Game Dev Log</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="Game-Dev-Log"><a href="#Game-Dev-Log" class="headerlink" title="Game Dev Log"></a>Game Dev Log</h1><h2 id="2021-4-23"><a href="#2021-4-23" class="headerlink" title="2021-4-23"></a>2021-4-23</h2><p>关键词：物理引擎，碰撞</p>
+<ol>
+<li><p>y轴抖动问题<br>现场还原：当Player落在cube平面上时，会出现y轴方向的速度不断波动的问题<br>可能原因：cube的厚度过小(0.2)，两个物体的碰撞判断造成<br>解决方法：增加cube的厚度</p>
+</li>
+<li><p>物体碰撞产生速度分量<br>现场还原：当Player在方块的边缘下落时，它会产生一个水平方向的速度分量，并且会一直运动下去<br>可能原因：Player在碰撞到方块的左（右）上角时，方块会因为牛顿第三定律而给Player施加一个水平方向的力，导致Player获得一个水平方向的速度<br>解决方法：1. 给Player的下表面和方块的上表面添加摩擦材质 2. 在碰撞后的帧中，获得瞬时的刚体速度(velocity &#x3D; rigidbody.velocity)，然后通过代码来控制该速度的水平分量，处理完后再将它重新赋值给刚体</p>
+</li>
+<li><p>Player运动颠簸<br>现场还原：当Player在多个连续的方块上移动时，如果速度比较大，可能会上下颠簸<br>可能原因：方块在接触点上并不平滑（相当于有个坎儿），Player撞到坎儿上导致颠簸<br>解决方法：暂时未知</p>
+</li>
+<li><p>物体卡在方块的侧面或者边角<br>现场还原：<br>可能原因：Player和方块表面不光滑<br>解决办法：设置光滑材质</p>
+</li>
+<li><p>物体穿模<br>现场还原：Player在前进时，如果速度过大，可能直接从方块上传过去<br>可能原因：Player的移动速度过快，前后两帧之间的距离过大，导致碰撞判定不及时，物体已经穿过模型<br>解决办法：1. 降低Player的速度 2. 将碰撞判定改成连续，但是会降低性能（不推荐对低速物体使用）</p>
+</li>
+</ol>
+<h2 id="2021-6-3"><a href="#2021-6-3" class="headerlink" title="2021-6-3"></a>2021-6-3</h2><ol>
+<li>角色和地面之间有间隔<br>现场还原：角色使用Character Controller后，和Plane之间有较大空隙<br>可能原因：Character Controller设置问题<br>解决办法：查文档</li>
+</ol>
+<h2 id="2021-6-17"><a href="#2021-6-17" class="headerlink" title="2021-6-17"></a>2021-6-17</h2><p>双人对战demo2D开发总结</p>
+<ol>
+<li><p>总体问题<br>1.1 玩法缺乏创意<br>1.2 代码整体结构不清晰，封装差，导致可读性不高，不容易扩展<br>1.3 变量访问控制混乱<br>1.4 类中成员变量的设置太多（虽然这样能够提高开发效率）</p>
+</li>
+<li><p>其他细节上的问题及总结<br>2.1 组件模式下组件之间的消息传递问题<br>解决办法：</p>
+</li>
+<li><p>组件之间任何需要共享的数据都放在容器中</p>
+</li>
+<li><p>直接互相应用（最常用）<br>例如：Unity中调用GetComponent<T>()获取游戏对象下某个类型的组件</T></p>
+</li>
+<li><p>通过传递信息的方式进行广播，这种方式一般要保留所有组件的引用</p>
+</li>
+</ol>
+<p>2.2 资源、素材、游戏对象、组件命名的问题<br>解决办法：<br>把每一种需要命名的对象看作一个实例，把这个实例中的属性按照重要性顺序组合起来构成名字<br>例如：<br>玩家腿部的预制件：Player_Leg_Prefab<br>炸弹爆炸的动画：Bomb_Explosion_Animation<br>冰面的砖块：Ice_Tile</p>
+<p>2.3 关于自动机的控制<br>描述：<br>自动机可以被使用在角色控制、敌人AI上，但是如果状态和转移条件控制的不合理，则会使得代码的结构变得十分复杂，<br>这种情况下反而不如使用if语句，逻辑上更加直观<br>问题：<br>如何设计好状态机的状态和转移条件<br>解决方法：暂无</p>
+<p>2.4 关于持续作用效果的问题<br>描述：<br>当某个条件触发时，物体的状态发生改变，并在一段时间后恢复原来的状态<br>例如：<br>当子弹和人物发生碰撞时，会刷新人物受到伤害的动画，直到动画播放完毕人物恢复到原来的状态<br>问题：<br>如果没有动画如何控制好时间？<br>例如：<br>当子弹与箱子发生碰撞的时候，箱子的颜色发生改变，直到一段时间后箱子的颜色恢复到原来的颜色<br>解决办法：<br>本质问题还是状态的改变，因此设置一个bool变量表示当前状态，当子弹与箱子发生碰撞时，改变箱子的颜色，然后记录下此时的时间，<br>在Update循环中检查当前时间距离上次记录的受击时间是否到达一定的间隔，如果到达设定的时间间隔，代表当前状态执行完成，<br>需要将状态还原为初始状态<br>伪代码如下：<br>&#x2F;&#x2F; Variables<br>bool isHit &#x3D; false;<br>float lastGetHitTime &#x3D; 0f;<br>float intervalTime &#x3D; 0.3f;</p>
+<p>&#x2F;&#x2F; OnTrigger<br>void OnTriggerCollider2D(Collider other):<br>    if other is bullet:<br>        isHit &#x3D; true;<br>        lastGetHitTime &#x3D; currentTime;<br>        color &#x3D; hitColor;</p>
+<p>&#x2F;&#x2F; Update<br>void Update():<br>    if isHit:<br>        if currentTime - lastGetHitTime &gt; intervalTime:<br>            isHit &#x3D; false;<br>            color &#x3D; originColor;</p>
+<p>2.5 Update函数中应该如何编写结构合理的代码<br>解决办法：</p>
+<ol>
+<li><p>如果采用bool变量代表状态：<br>代码结构采用<br>if()func1();<br>elif()func2();<br>elif()func3();<br>…<br>else funcn();</p>
+</li>
+<li><p>如果采用状态机：<br>代码结构：<br>state.Update();</p>
+</li>
+</ol>
+<h2 id="2021-6-17-1"><a href="#2021-6-17-1" class="headerlink" title="2021-6-17"></a>2021-6-17</h2><p>描述：<br>学习项目：Character Controller With Animations -Walk, Run, Jump &amp; Attack<br>地址：<a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=qc0xU2Ph86Q&list=WL&index=1">https://www.youtube.com/watch?v=qc0xU2Ph86Q&amp;list=WL&amp;index=1</a></p>
+<ol>
+<li><p>状态的保持与传递<br>描述：在进行跳跃时，有两种选择：</p>
+</li>
+<li><p>人物在空中依然能够操纵角色的速度大小和方向：直接添加跳跃动作即可</p>
+</li>
+<li><p>人物在空中的速度大小和方向由跳跃之前的状态决定<br>现场还原：当人物处于Idle状态下按跳跃，人物会竖直起跳；当人物移动时跳跃，人物的移动方向保持不变<br>解决办法：设置isGrounded状态下才接收状态量的改变</p>
+</li>
+<li><p>分层设计<br>描述：在Update函数中，数据分层进行处理，这样可以方便添加一些特殊效果</p>
+</li>
+<li><p>输入：接收来自键盘和鼠标的输入<br>如果屏蔽输入，那么角色将暂时不受玩家控制</p>
+</li>
+<li><p>设置速度：设置角色的速度<br>在角色位置移动之前，可以通过输入和环境来共同影响速度</p>
+</li>
+<li><p>设置位置： 设置角色的位置</p>
+</li>
+<li><p>动画操纵<br>描述：本质是通过变量的值来操纵动画<br>例如：混合树通过一个或者多个float类型变量的值来代表当前动画，我们在改变这些变量时就是在改变动画的状态</p>
+</li>
+</ol>
+<h2 id="2020-6-18"><a href="#2020-6-18" class="headerlink" title="2020-6-18"></a>2020-6-18</h2><p>关键词：状态机<br>描述：将昨天人物移动的代码以状态机的方式重写</p>
+<ol>
+<li><p>变量的访问控制<br>解决办法：将大部分变量设置为私有，然后通过访问器来访问相关变量</p>
+</li>
+<li><p>状态的复用<br>描述：将State基类和StateMachine类设置为泛型，以此来声明状态所属的物体</p>
+</li>
+<li><p>状态的转换问题<br>描述：相对于使用if-else句型，状态机的状态在转换时只关注到2个状态，因此有利于找出和修改bug，<br>但是构建状态机需要画出比较严谨的状态转换图，而且状态拆分过多也可能造成许多不必要的转换<br>解决办法：对于状态过多导致的重复转换问题，使用层次状态机（给每个状态设置父状态，可以使用继承或者链表的形式）</p>
+</li>
+<li><p>状态机的核心：只要控制了物体的一切状态，就可以控制物体的一切行为</p>
+</li>
+<li><p>如何区分不同的状态？<br>解决办法：根据标准而定</p>
+</li>
+<li><p>把状态量在某一个范围的集合作为一种状态，例如速度在某个区间，人物在某个平面内移动，<br>某些状态还具有持续时间，如果到达持续时间，则状态发生改变，例如喝水的状态，睡觉的状态</p>
+</li>
+<li><p>一个状态也可以划分为许多子状态，子状态是父状态集合下的一个新的划分<br>例如：把人物站在地面上作为一个状态，那么子状态可以是站立、移动、快跑等等</p>
+</li>
+<li><p>一般来说，状态所包含的状态量越少（例如在地面上的状态只包含一个状态量，而行走包含站在地面上和移动速度两个状态量），则状态处理起来越简单</p>
+</li>
+<li><p>自然界通过产生力来产生物体的运动，我们看到的只是物体位置的改变，而物体本质的状态是受力、加速度<br>启发：状态只需要控制一些父状态量（加速度，速度），就能够通过既定的规则来生成子状态量（位置）</p>
+</li>
+<li><p>状态改变的条件不一定包含在某一个状态中，需要在外部生成该条件</p>
+</li>
+<li><p>每个状态维护者一个状态量的范围，当超出界限时，状态量发生改变，这个临界值可以作为状态改变的条件<br>例如：<br>从地面到空中，状态isGrounded发生该改变<br>从站立到行走，输入发生改变<br>从行走到冲刺，输入发生改变<br>从冲刺到站立，冲刺时间、耐力值发生改变<br>从站立到攻击，输入发生改变<br>从攻击到站立，攻击持续时间发生改变</p>
+</li>
+<li><p>思考：游戏中的取消后摇是怎么回事？<br>运动状态的改变影响到了攻击状态的该变（停止）</p>
+</li>
+<li><p>状态的叠加：几个分状态合成物体的实际状态，例如物体作为质点的平移状态、物体作为轴的旋转状态和物体的攻击状态叠加形成实际看到的状态</p>
+</li>
+<li><p>实际开发中，不用思考以上问题，怎么简单、直观怎么来，最后都能够把问题补上的 :)</p>
+</li>
+</ol>
+<h2 id="2021-7-16"><a href="#2021-7-16" class="headerlink" title="2021-7-16"></a>2021-7-16</h2><p>UGDAP游戏开发实训经验总结</p>
+<ol>
+<li>一款成功的游戏需要好的玩法，每个游戏都要为自己设计核心系统<br>核心玩法（系统）的设计：<br>游戏目的-可操作行为-障碍<br>游戏目的：<br>玩家游玩游戏需要追寻怎样的引导，游戏策划需要仔细的规划好游戏中的每一个目标点，如解开谜题、敌人的难度、收集道具</li>
+</ol>
+<p>可操作行为：<br>玩家的行动能力，一般ACT游戏中，玩家能够行走、奔跑、跳跃，卡牌游戏中，玩家抽牌、出牌都是可操作行为<br>玩家的行为决定了他具有怎样的能力</p>
+<p>障碍：<br>基于玩家的行为进行设计，可以考虑以下几方面的因素：<br>反应速度、智力、耐力（一般不会）、记忆力、策略…</p>
+<ol start="2">
+<li>倾听：<br>团队-投资人-游戏-玩家-自己</li>
+</ol>
+<p>—- 开发方面 —-<br>3. 开发前需要思考的事情*<br>3.1 游戏需要实现怎样的功能？<br>最需要思考的事情，这决定了你的代码多大概率会写成屎山:)。<br>游戏系统：<br>背包系统、射击系统、玩家移动系统、敌人AI、卡牌系统、物理系统、场景交互系统…提前规划好系统后，可以把这些系统<br>作为游戏模块设计，降低代码之间的耦合<br>敌人、地形种类：<br>哪些敌人、地形具有相似的功能，这决定了你的代码是否使用继承，以及预制件是否使用继承<br>提供测试接口：<br>为了减少编译次数，你的游戏在测试阶段应尽可能提供多的测试接口，几乎所有能够通过调整数值进行测试的效果都可以<br>提供测试接口，以方便快速测试。<br>可以调整的数值有：<br>位移、速度、加速度、发力时长、收招时长、攻击范围、受击范围、硬直时间、击退距离、击倒、击飞、击飞轨迹、特效<br>位置、特效大小、特效持续时间、摄像机的震动幅度与时长、高亮持续时间、定帧时长…</p>
+<h2 id="2021-7-23"><a href="#2021-7-23" class="headerlink" title="2021-7-23"></a>2021-7-23</h2><p>静态类和单例模式的区别：<br>单例模式能够延迟加载<br>单例模式能够继承类、接口、重写方法<br>一般开发工具的时候使用静态类，因为静态类是提前编译好的（如Math类），其他情况一般使用单例</p>
+<h2 id="2021-7-31"><a href="#2021-7-31" class="headerlink" title="2021-7-31"></a>2021-7-31</h2><p>腾讯next idea高校游戏创意大赛总结：</p>
+<ul>
+<li>在思考某个设计的解决方案时，通常都会有多种办法，如果它们各有利弊，则可以先记录下来，当后续的需求不会对方法<br>产生较大影响时，任选其一即可，切忌选择恐惧</li>
+</ul>
+<ol>
+<li>项目组织和设计<br>设计得比较合适的地方：<br>@ 敌人的脚本使用状态机控制，将各种状态行为分离开来，即使后来需要改变部分敌人的初始状态也能够较快的进行设置<br>@ 运动体的移动方式都是通过控制 速度来得到位移，尽量不要直接对运动物体的位置进行修改<br>@</li>
+</ol>
+<p>设计得不太合理的地方：<br>@ 主角状态的设置不太合理，当主角获得buff之后，仅仅添加了一个bool值来代表当前状态发生改变，导致其他所有组件<br>都要拿到该状态后再添加相应动作，代码耦合度非常高<br>@ Notebook的GameObject设计不合理，使用了太多的非子物体引用，导致场景转换十分麻烦，比较合适的做法是，<br>为Notebook设计一个唯一的父物体，为该物体添加Notebook Manager单例，其他物体都挂载或者间接挂载在该物体<br>下方，这种方式在移动物体时不会造成引用丢失。根据这里的原理，我们可以将场景中的所有物体都归类到相应系统中，<br>当需要其他系统的引用时，直接通过对应系统的单例获得</p>
+<p>中规中矩的地方：</p>
+<ol start="2">
+<li>与他人合作<br>2.1 与其他程序合作<br>尽量不要修改同一个模块的功能，在场景中添加物体时，尽量做到整体添加</li>
+</ol>
+<p>2.2 与策划合作<br>文本：如何将txt格式的文字转化为对话框<br>各种数值：如何将excel表格中的数据转化成数据对象（结构体）？</p>
+<ol start="3">
+<li>遇到的小问题<br>3.1 对于大部分成员变量添加一层封装效果（C#为访问器），可以实现部分变量的延迟加载，特别是涉及到一些变量的<br>同步问题时，可以在缺少该变量时及时获取<br>3.2 对于持久化的数据，可以存储在Scriptable Object对象中，大大降低程序对内存的使用量<br>3.3 通常情况下，Debug的最好方式就是输出语句，在写完一段逻辑后，应该输出相应的信息来验证是否符合自己的预期<br>，可以在OnGUI函数中创建Button、Label来帮助Debug<br>3.4 动画、音乐播放时存在同步的问题，即当前Update中设置了动画播放后，需要等待至少一帧的时间，被设置的动画<br>才真正开始播放，此时获取的动画状态才是正确的，可以使用协程来进行同步<br>3.5 敌人死亡应该和死亡动画的播放分割开来，即死亡特效新建一个游戏对象来制作</li>
+</ol>
+<h2 id="2021-9-23"><a href="#2021-9-23" class="headerlink" title="2021-9-23"></a>2021-9-23</h2><p>腾讯next idea高校游戏创意大赛总结2:</p>
+<p>动画和游戏逻辑的同步：</p>
+<p>最初，我的设计理念是，能够在代码中设置好的逻辑尽量不放在编辑器中。比如，游戏对象的查找，敌人、道具的生成，组件的初始化等等，这样做的优点在于，不容易和场景中的其它对象产生耦合，同时有利于debug和做功能上的微调。</p>
+<p>但是，在动画播放和事件触发的逻辑层面，如果纯粹使用代码来控制流程，则会比较复杂。</p>
+<p>首先，事件的触发点难以调整。在编辑器中，能够直接在相应的帧处添加事件，开发者能够很方便地进行可视化调整。如果放在代码中添加，则难以将动画帧和事件对应起来</p>
+<p>另一个是代码逻辑的问题。如果不添加动画帧事件，即根据normalizedTime判断事件触发的时机，则会滥用Coroutine，同时，如果多个动画中间又掺杂了多个事件，则会造成协程的层层嵌套，极大地增加了代码编写难度。</p>
+<p>目前想到地较好解决办法是，对于小型项目，可以直接在编辑器中添加动画帧事件，但缺点是，难以找到这些动画帧事件的引用，增加了debug的难度</p>
+<p>另一种方式是，依然在代码中为动画帧添加事件，但是，对于具体触发的帧数，还是在编辑器中设置成可调节的，尽管动画效果调整时会麻烦一些，debug却轻松一些了</p>
+<p>游戏测试的问题：</p>
+<p>游戏测试需要今早做，因为模块和模块，功能和功能结合的时候也可能产生很多Bug，需要多个程序之间沟通交流，通过熟悉对方的逻辑和流程找出产生bug的原因和bug的位置</p>
+<p><strong>对于Unity来说，在编辑器中正常运行的功能，在build出的成品中依然可能出现很严重的bug</strong>。目前已知的有，部分视频在编辑器中能够正常播放，而在最终项目中完全无法播放。对于一些代码中的和编辑器有关的类、属性和函数，在最终项目中也可能被编译器忽略掉了。</p>
+<p>因此，build项目也需要一个测试版本，只有该版本也通过所有测试之后，才能够发布最终版本</p>
+<p>功能设计时模块化的重要性：</p>
+<p>在与其它程序合作的过程中，不同功能肯定是分开设计的，因此需要进行模块化设计，比如人物的行为控制模块化，地图资源加载模块化，Boss战的功能模块化等等。这就要求模块之间的耦合度尽可能低，不能或者尽量少地依赖于其它模块，这样才能在多个场景中独立地调试该游戏功能或内容。</p>
+<p>对于可能产生依赖的部分，要区分必要依赖和非必要依赖。例如，对于一个需要追踪的敌人，追踪目标是必要的，但我们在调试的时候，可以设置一个默认追踪目标，防止因为报错而无法测试该功能，但又需要给出警告，便于后续debug</p>
+<p>Boss战设计：</p>
+<p>设计该内容时，策划给出了许多基本需求，这也算是首次做一个比较复杂而且精炼的内容。设计要点如下：</p>
+<ul>
+<li>Boss基本状态控制</li>
+<li>Boss技能效果、释放动画、顺序等</li>
+<li>Boss对场景的控制</li>
+<li>Boss战各个阶段的表现和阶段之间的转换</li>
+</ul>
+<p>因此，在编写代码之前，必须先写出较为详细的设计文档，以确定整体的框架结构和各个功能实现过程中可能出现的交叉和难点。</p>
+<p>同时，如何存储Boss战每个阶段的数据也需要精心规划，既要让数据易修改、易保存，又要尽可能将数据可视化，方便策划进行效果调整和程序员debug工作。</p>
+<p>例如，在本次Boss战的设计中，我为每个技能、阶段设计一个类，而每个阶段又包含了该阶段Boss所拥有的技能；每个技能类、阶段类有对应的ScriptableObject，用于存储持久化数据，在进入相应阶段时，程序从这些SO中读取数据到类的成员变量中，实现Boss的阶段初始化。</p>
+<p>在实践中主要遇到以下难点：</p>
+<ul>
+<li>Boss战中有一个在地图指定位置生成小怪的功能，而由于小怪具有比较复杂的AI，因此为其专门设计了参数的保存和读取方式，可以通过在场景中设置好召唤生物的各个状态，再将状态按照相应规则保存到字符串中，这样，每次召唤生物时，就可以通过解析字符串将召唤物初始化</li>
+<li>Boss战不同的阶段还涉及到地形的变化，由于地形不便于序列化存储，且同一阶段中不会发生太大的改变，因此直接作为Boss战场景的子结点，通过设置激活状态实现阶段转移</li>
+</ul>
+<p>代码重构实践：</p>
+<p>需要根据实际情况具体应用，对于需要长期运营的项目或者需求经常改动的项目，代码重构是十分有必要的，这不仅能使得代码更加清晰易懂，而且好的重构能够缩小需要改动的代码范围</p>
+<p>但是，如果代码不用经常改动，则尽量在最初设计的时候就考虑到每个类的变量和函数分布，减少重构代码耗费的时间</p>
+<p>游戏数据的存储：</p>
+<p>便于序列化的数据尽量使用ScriptableObject、json等方式存储，便于与策划合作，调整效果</p>
+<p>对于难以序列化的数据，则采用AssetBundle或者预制件的方式存储，如果没有方便的工具，尽量还是由程序员自己调整效果</p>
+<h2 id="2021-10-10"><a href="#2021-10-10" class="headerlink" title="2021-10-10"></a>2021-10-10</h2><p>腾讯游戏比赛中遇到的一个寻路问题：</p>
+<p>一个处在悬浮平台上方的敌人，如何最终处于地面上的玩家？</p>
+<p>这个问题看似简单，对于策划来说，你让敌人从平台上掉下来不就行了吗，但是，如果仅仅这样设计，就会出现非常多的漏洞</p>
+<ol>
+<li>敌人不知道平台的几何信息。加入玩家处在一个类似于洞穴的地形内部，敌人如果一直朝着玩家目标的位置移动，则永远无法到达，因为洞穴的出口在反方向，敌人只有折回去才能找到玩家</li>
+<li>玩家处于平台下方时，敌人不知道选择从哪个方向掉下平台，如果随机选择一个方向，则会回到上一个问题</li>
+<li>一般的寻路算法在这里不好使。对于常见的AStar算法而言，其寻路时建立的图结点是没有考虑重力影响的，如果让敌人直接沿着结点寻路，则会出现敌人在空中漂移的情况，这是不行的</li>
+</ol>
+<p>我观察过一些游戏的敌人AI，在一般的3d游戏里，如果道路是连接在一起的，则敌人能够到达指定位置，但是，如果？？</p>
+<p>在造梦西游里出现过一样的情形，敌人同样也会在平台上方转悠而无法掉下来。</p>
+<p>关于Unity中人物骨骼控制的问题：</p>
+<p>最初，我对Unity中人物骨骼控制不太了解，因为我认为那是动画师的事情，所以我跟着油管上的一个TPS教程学习，它完全使用了Animation Rigging这个插件来进行人物动画制作，即仅仅控制武器的变换，然后通过IK来控制人物骨骼的变换</p>
+<p>但是这样会产生一个问题，即循环约束，例如，令玩家的骨骼被武器约束以模拟玩家握住武器的姿势，但是，我又希望武器被玩家身体的某个骨骼约束（例如肩膀），这样便形成了循环约束，这样最开始设置的约束就会产生偏移，同时，武器本身也不能自由移动了。除了这个，Animation Rigging也还有其它的问题，比如我希望通过动画来调整权重，这又不得不在Rig对象下建立一个动画机，但可能由于一些执行顺序的问题，上层的动画机会覆盖下层动画机的设置，导致IK权重无法发生变化。后来经过我观察发现，该博主最后也不再经常使用这个插件了。</p>
+<p>后来我是用Unity的Avatar+Humanoid来完成的骨骼动画控制，虽然最终达成了目标，但是依然受到了很多限制，调试了很长时间才做出一个比较合适的动作</p>
+<p>最主要的问题还是在于Humanoid模式，我主要是为了方便人物动画重定向才这么做的，但是使用之后，发现角色的骨骼旋转都被Avatar控制了，只有少部分的骨骼能够通过调用API的方式进行旋转（这个API我也是找了很久才找到，之前一直在测试为什么不能通过代码控制骨骼旋转的问题），如果我希望对人物的其它骨骼旋转进行微调，则没有相应的办法（不过也可能是我没有找到）</p>
+<p>最后调试出来的逻辑是这样的：</p>
+<p>非瞄准模式下：</p>
+<p>鼠标的xy输入控制人物身上的一个空对象进行旋转，让摄像机Follow这个空对象进行变换</p>
+<p>人物的旋转：受两个因素的影响，即move的输入加上相机当前的角度，当然，角色的旋转是平滑过渡的</p>
+<p>人物的移动：人物的旋转四元数乘上人物的前向向量得到旋转后的目标方向，之后角色朝着这个方向移动</p>
+<p>在瞄准模式下：</p>
+<p>人物的旋转分为两部分：</p>
+<p>在水平方向上，人物在y轴上的旋转保持和相机的旋转角度相同。这里会产生一个同步的问题，即如果人物的旋转是在Update中计算得到的，而虚拟相机的旋转是在LateUpdate中执行的（关于为什么要在Late Update中执行，可以参考这篇文章：<a target="_blank" rel="noopener" href="https://www.cnblogs.com/zhaoqingqing/p/3454091.html">Update和LateUpdate的区别 - 赵青青 - 博客园 (cnblogs.com)</a>，那么人物的旋转会慢相机旋转一帧，由于相机在每一帧中的旋转角度是不均匀的，从相对论的角度来说，人物相对于相机的角度在每帧也大概率是不同的，因此会出现人物旋转的延迟问题。解决办法是，提前计算好LateUpdate中相机跟随的空对象的角度，存储到一个变量中（不过得确保空对象只在这里被计算过了，否则相机旋转放在Late Update中执行也没有意义），然后利用这个角度更新人物的旋转，最后在LateUpdate中更新跟随空对象的旋转，经过测试，不再出现旋转延迟的问题。</p>
+<p>在垂直方向上，只有人物的胸腔部分随着摄像机的移动旋转，这里让胸腔的旋转跟随空对象沿x轴的旋转，同样需要进行差值过渡和范围裁剪</p>
+<p>之前尝试过几种其它的旋转方式，发现效果都不太理想。例如，让武器对准相机前方一定距离的目标，然后使用IK对右臂进行约束。但是调用Avatar的API后发现，使用SetIKRotation只能作用于手腕的旋转变换，不能很好地带动肘部和肩部的旋转；对于Avatar的LookAtTarget函数，使用后发现只能操纵头部的旋转，依然不能带动人物手臂还有武器的旋转</p>
+<p>总结：在遇到逻辑上的问题时，最好先参考别人的代码逻辑实现，然后再自己针对每一个细节进行调试，这样能避免踩到很多坑</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Unity/">#Unity</a>
+      
+        <a href="/tags/Dev-Log/">#Dev Log</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Game Dev Log</div>
+      <div>http://example.com/2021/04/23/Game Dev Log/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Chen Shuwen</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2021年4月23日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2021/07/10/UnityShader-%E6%B8%B2%E6%9F%93%E6%B5%81%E6%B0%B4%E7%BA%BF/" title="UnityShader-渲染流水线">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">UnityShader-渲染流水线</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2020/10/27/%E6%A3%8B%E7%9B%98%E8%A6%86%E7%9B%96%E9%97%AE%E9%A2%98/" title="棋盘覆盖问题">
+                        <span class="hidden-mobile">棋盘覆盖问题</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

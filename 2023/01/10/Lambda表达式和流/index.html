@@ -1,0 +1,745 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Chen Shuwen">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="Lambda表达式和流函数接口实现函数功能的接口  Lambda 表达式语法 1(parameterList)-&gt;&amp;#123;statements&amp;#125;  例如： 123456(x, y)-&gt;&amp;#123;return x+y;&amp;#125;&#x2F;&#x2F;or(x, y)-&gt; x + yvalue-&gt;System.out.println(value)()-&gt;System.ou">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Lambda表达式和流">
+<meta property="og:url" content="http://example.com/2023/01/10/Lambda%E8%A1%A8%E8%BE%BE%E5%BC%8F%E5%92%8C%E6%B5%81/index.html">
+<meta property="og:site_name" content="Chen Shuwen&#39;s Tech Site">
+<meta property="og:description" content="Lambda表达式和流函数接口实现函数功能的接口  Lambda 表达式语法 1(parameterList)-&gt;&amp;#123;statements&amp;#125;  例如： 123456(x, y)-&gt;&amp;#123;return x+y;&amp;#125;&#x2F;&#x2F;or(x, y)-&gt; x + yvalue-&gt;System.out.println(value)()-&gt;System.ou">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2023/01/10/Lambda%E8%A1%A8%E8%BE%BE%E5%BC%8F%E5%92%8C%E6%B5%81/image-20200927233555332.png">
+<meta property="og:image" content="http://example.com/2023/01/10/Lambda%E8%A1%A8%E8%BE%BE%E5%BC%8F%E5%92%8C%E6%B5%81/image-20200927235107596.png">
+<meta property="og:image" content="http://example.com/2023/01/10/Lambda%E8%A1%A8%E8%BE%BE%E5%BC%8F%E5%92%8C%E6%B5%81/image-20200927235525344.png">
+<meta property="og:image" content="http://example.com/2023/01/10/Lambda%E8%A1%A8%E8%BE%BE%E5%BC%8F%E5%92%8C%E6%B5%81/image-20200929162129817.png">
+<meta property="article:published_time" content="2023-01-10T04:09:26.909Z">
+<meta property="article:modified_time" content="2023-01-10T04:09:26.909Z">
+<meta property="article:author" content="Chen Shuwen">
+<meta property="article:tag" content="Lambda">
+<meta property="article:tag" content="流">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://example.com/2023/01/10/Lambda%E8%A1%A8%E8%BE%BE%E5%BC%8F%E5%92%8C%E6%B5%81/image-20200927233555332.png">
+  
+  
+  
+  <title>Lambda表达式和流 - Chen Shuwen&#39;s Tech Site</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Chen Shuwen&#39;s Tech Site</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Lambda表达式和流"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-01-10 12:09" pubdate>
+          2023年1月10日 中午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          7.5k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          63 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">Lambda表达式和流</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="Lambda表达式和流"><a href="#Lambda表达式和流" class="headerlink" title="Lambda表达式和流"></a>Lambda表达式和流</h1><h2 id="函数接口"><a href="#函数接口" class="headerlink" title="函数接口"></a>函数接口</h2><p>实现函数功能的接口</p>
+<p><img src="/2023/01/10/Lambda%E8%A1%A8%E8%BE%BE%E5%BC%8F%E5%92%8C%E6%B5%81/image-20200927233555332.png" srcset="/img/loading.gif" lazyload alt="image-20200927233555332"></p>
+<h2 id="Lambda-表达式"><a href="#Lambda-表达式" class="headerlink" title="Lambda 表达式"></a>Lambda 表达式</h2><p><strong>语法</strong></p>
+<figure class="highlight livescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs livescript"><span class="hljs-function"><span class="hljs-params">(parameterList)</span>-&gt;</span>&#123;statements&#125;<br></code></pre></td></tr></table></figure>
+
+<p>例如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs java">(x, y)-&gt;&#123;<span class="hljs-keyword">return</span> x+y;&#125;<br><span class="hljs-comment">//or</span><br>(x, y)-&gt; x + y<br><br>value-&gt;System.out.println(value)<br>()-&gt;System.out.println(<span class="hljs-string">&quot;hello world!&quot;</span>)<br></code></pre></td></tr></table></figure>
+
+<h2 id="Streams类"><a href="#Streams类" class="headerlink" title="Streams类"></a>Streams类</h2><p>在Java中，Streams类实现了Stream接口。流可以用来加工和传递数据。</p>
+<p><strong>使用流的好处：</strong></p>
+<ul>
+<li><p>Java 8 中的 Stream 是对集合（Collection）对象功能的增强。</p>
+</li>
+<li><p>它专注于对集合对象进行各种非常便利、高效的聚合操作（aggregate operation），或者大批量数据操作 (bulk data operation)。</p>
+</li>
+<li><p>Stream API 借助于同样新出现的 Lambda 表达式，极大的提高编程效率和程序可读性。</p>
+</li>
+<li><p>它提供串行和并行两种模式进行汇聚操作，并发模式能够充分利用多核处理器的优势，使用 fork&#x2F;join 并行方式来拆分任务和加速处理过程。</p>
+</li>
+<li><p>通常编写并行代码很难而且容易出错, 但使用 Stream API 无需编写一行多线程的代码，就可以很方便地写出高性能的并发程序。所以说，Java 8 中首次出现的 java.util.stream 是一个函数式语言+多核时代综合影响的产物。</p>
+</li>
+</ul>
+<h3 id="Stream-Pipelines"><a href="#Stream-Pipelines" class="headerlink" title="Stream Pipelines"></a>Stream Pipelines</h3><p>流在移动数据的时候加工里面的元素，称之为<strong>管线</strong>。它不像Collections可以保留数据，原始数据被加工后就无法重新使用了。</p>
+<h3 id="Intermediate-and-Terminal-Operations"><a href="#Intermediate-and-Terminal-Operations" class="headerlink" title="Intermediate and Terminal Operations"></a>Intermediate and Terminal Operations</h3><p>Intermediate operation是懒惰的，它直到Terminal Operation被调用后才会执行，即不会改变流的状态，可以继续被其他的Operation调用。</p>
+<p><img src="/2023/01/10/Lambda%E8%A1%A8%E8%BE%BE%E5%BC%8F%E5%92%8C%E6%B5%81/image-20200927235107596.png" srcset="/img/loading.gif" lazyload alt="image-20200927235107596"></p>
+<p>而Terminal Operation是饥渴的，它会加工中间操作然后产生一个结果，这时流已经被破坏而不能使用了。</p>
+<p>例如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-type">IntStream</span> <span class="hljs-variable">intStream</span> <span class="hljs-operator">=</span> IntStream.of(values);  <span class="hljs-comment">//values 是一个整型数组</span><br>intStream.reduce(<span class="hljs-number">0</span>, (x, y), x + y);          <span class="hljs-comment">//因为是Terminal Operation，流已经被破坏</span><br>intStream.reduce(<span class="hljs-number">0</span>, (x, y), x + y);          <span class="hljs-comment">//这时再执行会报错</span><br></code></pre></td></tr></table></figure>
+
+
+
+<p><img src="/2023/01/10/Lambda%E8%A1%A8%E8%BE%BE%E5%BC%8F%E5%92%8C%E6%B5%81/image-20200927235525344.png" srcset="/img/loading.gif" lazyload alt="image-20200927235525344"></p>
+<h3 id="实例1：使用IntStream-Operations来简化Arrays和ArrayList"><a href="#实例1：使用IntStream-Operations来简化Arrays和ArrayList" class="headerlink" title="实例1：使用IntStream Operations来简化Arrays和ArrayList"></a>实例1：使用IntStream Operations来简化Arrays和ArrayList</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">//定义数组values</span><br><span class="hljs-type">int</span>[] values = &#123;<span class="hljs-number">1</span>,<span class="hljs-number">2</span>,<span class="hljs-number">3</span>&#125;;<br><span class="hljs-comment">//</span><br><span class="hljs-comment">//输出每个值</span><br>IntStream.of(values).forEach(value-&gt;System.out.printf(<span class="hljs-string">&quot;%d &quot;</span>, value));<br><span class="hljs-comment">//其他方式</span><br>Arrays.toString(values);<br>fori;<br><span class="hljs-comment">//</span><br><span class="hljs-comment">//获取长度</span><br>IntStream.of(values).count();<br><span class="hljs-comment">//获取最值</span><br>IntStream.of(values).min().getAsInt();<br>IntStream.of(values).max().getAsInt();<br><span class="hljs-comment">//reduce方法</span><br>IntStream.of(values).reduce(<span class="hljs-number">0</span>, (x, y)-&gt; x+y);  <span class="hljs-comment">//对values求和</span><br><span class="hljs-comment">//其他方式</span><br>IntStream.of(values).sum();<br>fori;<br><span class="hljs-comment">//</span><br><span class="hljs-comment">//输出偶数的10倍，这时先使用Intermediate 再使用Terminal Operation</span><br>IntStream.of(values).filter(value-&gt;value % <span class="hljs-number">2</span> == <span class="hljs-number">0</span>).map(vakye-&gt;value * <span class="hljs-number">10</span>).sorted().forEach(value-&gt;sysout(value));<br><span class="hljs-comment">//求1~9的和</span><br>IntStream.range(<span class="hljs-number">1</span>,<span class="hljs-number">10</span>).sum();<br></code></pre></td></tr></table></figure>
+
+<h3 id="实例2：使用Stream-lt-Integer-gt-Manipulations来处理Integer"><a href="#实例2：使用Stream-lt-Integer-gt-Manipulations来处理Integer" class="headerlink" title="实例2：使用Stream&lt; Integer &gt;  Manipulations来处理Integer[]"></a>实例2：使用Stream&lt; Integer &gt;  Manipulations来处理Integer[]</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs java">Integer[] values = &#123;<span class="hljs-number">1</span>,<span class="hljs-number">2</span>,<span class="hljs-number">3</span>&#125;;<br>Arrays.stream(values).collect(Collectors.toList());   <span class="hljs-comment">//将数组转换成一个集合类，比如列表，映射</span><br><span class="hljs-comment">//另一种转换方式</span><br>Collections.addAll(arrayList, values);<br><span class="hljs-comment">//对元素进行筛选和排序</span><br>Arrays.stream(values).filter(value-&gt;value &gt; <span class="hljs-number">4</span>).sorted().collect(Collectors.toList());<br></code></pre></td></tr></table></figure>
+
+<h3 id="实例3：使用Stream-lt-String-gt-Manipulations简化Strings-Characters-和-Regular-Expressions"><a href="#实例3：使用Stream-lt-String-gt-Manipulations简化Strings-Characters-和-Regular-Expressions" class="headerlink" title="实例3：使用Stream&lt; String &gt; Manipulations简化Strings, Characters 和 Regular Expressions"></a>实例3：使用Stream&lt; String &gt; Manipulations简化Strings, Characters 和 Regular Expressions</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs java">String[] strings = &#123;<span class="hljs-string">&quot;red&quot;</span>, <span class="hljs-string">&quot;blue&quot;</span>, <span class="hljs-string">&quot;yellow&quot;</span>&#125;;<br><span class="hljs-comment">//将字符串转换成大写</span><br>Arrays.stream(strings).map(String::toUpperCase).collect(Collectors.toList());  <br><span class="hljs-comment">//等价于</span><br>System.out.println(Arrays.stream(strings).map(s-&gt;s.toUpperCase()).collect(Collectors.toList()));<br><br>Arrays.stream(strings).sorted(String.CASE_INSENSITIVE_ORDER).collect(Collectors.toList());<span class="hljs-comment">//根据字典序排序</span><br><br></code></pre></td></tr></table></figure>
+
+<p>String::toUppercase 是一个方法引用，相当于把参数的表达式省略了，但实际上依然是使用具体的实例来引用方法。</p>
+<p>其他的方式如下：</p>
+<p><img src="/2023/01/10/Lambda%E8%A1%A8%E8%BE%BE%E5%BC%8F%E5%92%8C%E6%B5%81/image-20200929162129817.png" srcset="/img/loading.gif" lazyload alt="image-20200929162129817"></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs java">Employee[] list;  <span class="hljs-comment">//一个对象数组</span><br>String <span class="hljs-title function_">toString</span><span class="hljs-params">()</span>;  <span class="hljs-comment">//有一个toString方法</span><br><br><span class="hljs-comment">//输出list</span><br>list.stream().forEach(System.out::println);  <br><span class="hljs-comment">//等价于</span><br>list.stream().forEach(obj-&gt;sysout(obj));<br><br><span class="hljs-comment">//使用谓词存储判断条件，然后根据条件筛选并按照薪水高低对员工进行排序</span><br>Predicate&lt;Employee&gt; fourToSixThousand = e -&gt; (e.getSalary() &gt;= <span class="hljs-number">4000</span> &amp;&amp; e.getSalary() &lt;= <span class="hljs-number">6000</span>);<br>list.stream().filter(forToSixThousand).sorted(Comparator.comparing(Employee::getSalary))<br>.forEach(System.out::println);<br><span class="hljs-comment">//找到第一个符合条件的值</span><br>list.stream().filter(fourToSixThousand).findFirst().get());<br></code></pre></td></tr></table></figure>
+
+<p><strong>函数变量和多领域比较</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">//接受单个参数，然后返回String类型</span><br>Function&lt;Employee, String&gt; byFirstName = Employee::getFirstName;<br>Function&lt;Employee, String&gt; byLastName = Employee::getLastName;<br><br><span class="hljs-comment">//先根据姓排序，再根据名排序</span><br>Comparator&lt;Employee&gt; lastThenFirst = Comparator.comparing(byLastName).thenComparing(byFirstName);<br><br><span class="hljs-comment">//进行排序</span><br>list.stream().sorted(lastThenFirst).forEach(System.out::println);<br><span class="hljs-comment">//倒序排</span><br>list.stream().sorted(lastThenFirst.reversed()).forEach(System.out::println);<br></code></pre></td></tr></table></figure>
+
+<p>使用map和distinct来产生唯一元素：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs java">list.stream().map(Employee::getLastName).distinct().sorted().forEach(System.out::println);<br></code></pre></td></tr></table></figure>
+
+<p><strong>groupingBy方法对对象进行分类</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">//这里使用的是一个比较常用的实例，根据某个数值范围来将数据分成许多个小段</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">Solution</span> &#123;<br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">Person</span>&#123;<br>        <span class="hljs-keyword">private</span> String name;<br>        <span class="hljs-keyword">private</span> <span class="hljs-type">int</span> age;<br><br>        <span class="hljs-keyword">public</span> <span class="hljs-title function_">Person</span><span class="hljs-params">(String name, <span class="hljs-type">int</span> age)</span> &#123;<br>            <span class="hljs-built_in">this</span>.name = name;<br>            <span class="hljs-built_in">this</span>.age = age;<br>        &#125;<br><br>        <span class="hljs-keyword">public</span> String <span class="hljs-title function_">getName</span><span class="hljs-params">()</span> &#123;<br>            <span class="hljs-keyword">return</span> name;<br>        &#125;<br><br>        <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">setName</span><span class="hljs-params">(String name)</span> &#123;<br>            <span class="hljs-built_in">this</span>.name = name;<br>        &#125;<br><br>        <span class="hljs-keyword">public</span> <span class="hljs-type">int</span> <span class="hljs-title function_">getAge</span><span class="hljs-params">()</span> &#123;<br>            <span class="hljs-keyword">return</span> age;<br>        &#125;<br><br>        <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">setAge</span><span class="hljs-params">(<span class="hljs-type">int</span> age)</span> &#123;<br>            <span class="hljs-built_in">this</span>.age = age;<br>        &#125;<br><br>        <span class="hljs-meta">@Override</span><br>        <span class="hljs-keyword">public</span> String <span class="hljs-title function_">toString</span><span class="hljs-params">()</span> &#123;<br>            <span class="hljs-keyword">return</span> <span class="hljs-string">&quot;Person&#123;&quot;</span> +<br>                    <span class="hljs-string">&quot;name=&#x27;&quot;</span> + name + <span class="hljs-string">&#x27;\&#x27;&#x27;</span> +<br>                    <span class="hljs-string">&quot;, age=&quot;</span> + age +<br>                    <span class="hljs-string">&#x27;&#125;&#x27;</span>;<br>        &#125;<br><br>        <span class="hljs-keyword">public</span> String <span class="hljs-title function_">byAgeRange</span><span class="hljs-params">()</span>&#123;<br>            <span class="hljs-comment">//设定最高年龄和最低年龄，然后按照&lt;=59 ... 90~99, 100的标准划分</span><br>            <span class="hljs-keyword">if</span>(getAge() &lt;= <span class="hljs-number">59</span>)&#123;<br>                <span class="hljs-keyword">return</span> <span class="hljs-string">&quot;&lt;=59&quot;</span>;<br>            &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span>(getAge() == <span class="hljs-number">100</span>)&#123;<br>                <span class="hljs-keyword">return</span> <span class="hljs-string">&quot;100&quot;</span>;<br>            &#125; <span class="hljs-keyword">else</span> &#123;<br>                <span class="hljs-type">int</span> <span class="hljs-variable">ten</span> <span class="hljs-operator">=</span> getAge() / <span class="hljs-number">10</span>;<br>                <span class="hljs-keyword">return</span> String.format(ten + <span class="hljs-string">&quot;0~&quot;</span> + ten + <span class="hljs-string">&quot;9&quot;</span>);<br>            &#125;<br>        &#125;<br>    &#125;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">main</span><span class="hljs-params">(String[] args)</span> &#123;<br>        Person[] perons = &#123;<br>                <span class="hljs-keyword">new</span> <span class="hljs-title class_">Person</span>(<span class="hljs-string">&quot;chen&quot;</span>, <span class="hljs-number">10</span>),<br>                <span class="hljs-keyword">new</span> <span class="hljs-title class_">Person</span>(<span class="hljs-string">&quot;wen&quot;</span>, <span class="hljs-number">78</span>),<br>                <span class="hljs-keyword">new</span> <span class="hljs-title class_">Person</span>(<span class="hljs-string">&quot;shu&quot;</span>, <span class="hljs-number">100</span>),<br>                <span class="hljs-keyword">new</span> <span class="hljs-title class_">Person</span>(<span class="hljs-string">&quot;guo&quot;</span>, <span class="hljs-number">31</span>)<br>        &#125;;<br>        List&lt;Person&gt; list = Arrays.stream(perons).collect(Collectors.toList());<br>        list.add(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Person</span>(<span class="hljs-string">&quot;fan&quot;</span>, <span class="hljs-number">65</span>));<br><br>        Map&lt;String, List&lt;Person&gt;&gt; groupByName = list.stream().collect(Collectors.groupingBy(Person::byAgeRange));<br>        System.out.println(groupByName);<br>    &#125;<br>    <br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>输出结果：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs java">&#123;<span class="hljs-number">100</span>=[Person&#123;name=<span class="hljs-string">&#x27;shu&#x27;</span>, age=<span class="hljs-number">100</span>&#125;], <span class="hljs-number">60</span>~<span class="hljs-number">69</span>=[Person&#123;name=<span class="hljs-string">&#x27;fan&#x27;</span>, age=<span class="hljs-number">65</span>&#125;], <span class="hljs-number">70</span>~<span class="hljs-number">79</span>=[Person&#123;name=<span class="hljs-string">&#x27;wen&#x27;</span>, age=<span class="hljs-number">78</span>&#125;], &lt;=<span class="hljs-number">59</span>=[Person&#123;name=<span class="hljs-string">&#x27;chen&#x27;</span>, age=<span class="hljs-number">10</span>&#125;, Person&#123;name=<span class="hljs-string">&#x27;guo&#x27;</span>, age=<span class="hljs-number">31</span>&#125;]&#125;<br></code></pre></td></tr></table></figure>
+
+<p><strong>将结果映射成double类型</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs java">list.stream().mapToDouble(Employee::getSalary).reduce(<span class="hljs-number">0</span>, (value1, value2)-&gt;value1 + value2);<br>list.stream().mapToDouble(Employee::getSalary).average().getAsDouble();<br></code></pre></td></tr></table></figure>
+
+<h3 id="实例4：从文件中创建字符流"><a href="#实例4：从文件中创建字符流" class="headerlink" title="实例4：从文件中创建字符流"></a>实例4：从文件中创建字符流</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">//将某个文件中的单词做成一个字典。</span><br><span class="hljs-keyword">import</span> java.io.IOException;<br><span class="hljs-keyword">import</span> java.nio.file.Files;<br><span class="hljs-keyword">import</span> java.nio.file.Paths;<br><span class="hljs-keyword">import</span> java.util.Map;<br><span class="hljs-keyword">import</span> java.util.TreeMap;<br><span class="hljs-keyword">import</span> java.util.regex.Pattern;<br><span class="hljs-keyword">import</span> java.util.stream.Collectors;<br><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">StreamOfLines</span> &#123;<br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">main</span><span class="hljs-params">(String[] args)</span> <span class="hljs-keyword">throws</span> IOException &#123;<br>        <span class="hljs-type">Pattern</span> <span class="hljs-variable">pattern</span> <span class="hljs-operator">=</span> Pattern.compile(<span class="hljs-string">&quot;\\s+&quot;</span>);<br><br>        Map&lt;String, Long&gt; wordCounts =<br>                Files.lines(Paths.get(<span class="hljs-string">&quot;src/main/resources/test.txt&quot;</span>))      <span class="hljs-comment">//将文件转换成一行行字符串组成的流</span><br>                        .map(line -&gt; line.replaceAll(<span class="hljs-string">&quot;(?!&#x27;)\\p&#123;P&#125;&quot;</span>, <span class="hljs-string">&quot;&quot;</span>))   <span class="hljs-comment">//取代所有标点符号(\\p&#123;P&#125;)</span><br>                        .filter(line -&gt; line.compareTo(<span class="hljs-string">&quot;&quot;</span>) != <span class="hljs-number">0</span>)           <span class="hljs-comment">//把空行筛选掉</span><br>                        .flatMap(line -&gt; pattern.splitAsStream(line))      <span class="hljs-comment">//将分解得到的多个流汇聚成一股流</span><br>                        .collect(Collectors.groupingBy(String::toLowerCase,<br>                                TreeMap::<span class="hljs-keyword">new</span>, Collectors.counting()));     <span class="hljs-comment">//将流转换成Map结构</span><br><br>        wordCounts.entrySet()        <span class="hljs-comment">//将map转换成key-value pair(称作entry)存储在set中</span><br>                .stream()<br>                .collect(<br>                        Collectors.groupingBy(entry -&gt; entry.getKey().charAt(<span class="hljs-number">0</span>), TreeMap::<span class="hljs-keyword">new</span>, Collectors.toList()))            <span class="hljs-comment">//将首字母相同的单词放在同一个列表中，元素类型为entry</span><br>                .forEach((letter, wordList) -&gt;    <span class="hljs-comment">//按层级进行输出</span><br>                &#123;<br>                    System.out.printf(<span class="hljs-string">&quot;%n%C%n&quot;</span>, letter);<br>                    wordList.stream().forEach(word -&gt; System.out.printf(<br>                            <span class="hljs-string">&quot;%13s: %d%n&quot;</span>, word.getKey(), word.getValue()<br>                    ));<br>                &#125;);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="实例5：使用流来统计随机结果"><a href="#实例5：使用流来统计随机结果" class="headerlink" title="实例5：使用流来统计随机结果"></a>实例5：使用流来统计随机结果</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">import</span> java.security.SecureRandom;<br><span class="hljs-keyword">import</span> java.util.function.Function;<br><span class="hljs-keyword">import</span> java.util.stream.Collectors;<br><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">RandomIntStream</span> &#123;<br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">main</span><span class="hljs-params">(String[] args)</span> &#123;<br>        <span class="hljs-type">SecureRandom</span> <span class="hljs-variable">random</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">SecureRandom</span>();<br><br>        System.out.printf(<span class="hljs-string">&quot;%-6s%s%n&quot;</span>, <span class="hljs-string">&quot;Face&quot;</span>, <span class="hljs-string">&quot;Frequency&quot;</span>);<br>        random.ints(<span class="hljs-number">600_000</span>, <span class="hljs-number">1</span>, <span class="hljs-number">7</span>)                                           <span class="hljs-comment">//返回IntStream</span><br>                .boxed()                              <span class="hljs-comment">//将IntStream转化为Stream&lt;Integer&gt;,以使用方法collect</span><br>                .collect(Collectors.groupingBy(Function.identity(),   <span class="hljs-comment">//等价于digit -&gt; digit，即返回自身</span><br>                        Collectors.counting()))<br>                .forEach((face, frequency) -&gt;<br>                        System.out.printf(<span class="hljs-string">&quot;%-6d%d%n&quot;</span>, face, frequency));<br>    &#125;<br>&#125;<br><br></code></pre></td></tr></table></figure>
+
+<p>注：Java不允许原始数据放入集合中，而infinite stream（比如IntStream）的元素个数是未知的，因此需要使用boxed将其转换为Stream&lt; Integer &gt;。</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Lambda/">#Lambda</a>
+      
+        <a href="/tags/%E6%B5%81/">#流</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Lambda表达式和流</div>
+      <div>http://example.com/2023/01/10/Lambda表达式和流/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Chen Shuwen</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年1月10日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2023/01/10/OrangeOS-alloc_free/" title="OrangeOS-alloc_free">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">OrangeOS-alloc_free</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/01/10/Java_Web/" title="JavaWeb">
+                        <span class="hidden-mobile">JavaWeb</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

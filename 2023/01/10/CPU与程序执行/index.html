@@ -1,0 +1,726 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Chen Shuwen">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="CPU与程序执行程序执行过程 取指令。将要执行的指令存放在PC中，取出的指令存放到IR中 译码。不同指令被翻译成不同的控制信号 计算源操作数地址并取操作数。 执行数据操作。在操作元件中对取出的操作数进行计算 目的操作数地址计算并存结果。 指令地址计算并将其送PC。如果是定长指令字，如MIPS指令集，则在第一步取指令的同时计算出下一条指令地址并送PC。此时跳过该步  CPU基本功能和组成  程序计数">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CPU与程序执行">
+<meta property="og:url" content="http://example.com/2023/01/10/CPU%E4%B8%8E%E7%A8%8B%E5%BA%8F%E6%89%A7%E8%A1%8C/index.html">
+<meta property="og:site_name" content="Chen Shuwen&#39;s Tech Site">
+<meta property="og:description" content="CPU与程序执行程序执行过程 取指令。将要执行的指令存放在PC中，取出的指令存放到IR中 译码。不同指令被翻译成不同的控制信号 计算源操作数地址并取操作数。 执行数据操作。在操作元件中对取出的操作数进行计算 目的操作数地址计算并存结果。 指令地址计算并将其送PC。如果是定长指令字，如MIPS指令集，则在第一步取指令的同时计算出下一条指令地址并送PC。此时跳过该步  CPU基本功能和组成  程序计数">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2023/01/10/CPU%E4%B8%8E%E7%A8%8B%E5%BA%8F%E6%89%A7%E8%A1%8C/image-20211215190616698.png">
+<meta property="og:image" content="http://example.com/2023/01/10/CPU%E4%B8%8E%E7%A8%8B%E5%BA%8F%E6%89%A7%E8%A1%8C/image-20211215191928041.png">
+<meta property="og:image" content="http://example.com/2023/01/10/CPU%E4%B8%8E%E7%A8%8B%E5%BA%8F%E6%89%A7%E8%A1%8C/image-20211215193611503.png">
+<meta property="og:image" content="http://example.com/2023/01/10/CPU%E4%B8%8E%E7%A8%8B%E5%BA%8F%E6%89%A7%E8%A1%8C/image-20211215194427866.png">
+<meta property="article:published_time" content="2023-01-10T04:09:21.731Z">
+<meta property="article:modified_time" content="2023-01-10T13:12:12.693Z">
+<meta property="article:author" content="Chen Shuwen">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://example.com/2023/01/10/CPU%E4%B8%8E%E7%A8%8B%E5%BA%8F%E6%89%A7%E8%A1%8C/image-20211215190616698.png">
+  
+  
+  
+  <title>CPU与程序执行 - Chen Shuwen&#39;s Tech Site</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Chen Shuwen&#39;s Tech Site</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="CPU与程序执行"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-01-10 12:09" pubdate>
+          2023年1月10日 中午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          1.5k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          13 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">CPU与程序执行</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="CPU与程序执行"><a href="#CPU与程序执行" class="headerlink" title="CPU与程序执行"></a>CPU与程序执行</h1><h2 id="程序执行过程"><a href="#程序执行过程" class="headerlink" title="程序执行过程"></a>程序执行过程</h2><ol>
+<li>取指令。将要执行的指令存放在PC中，取出的指令存放到IR中</li>
+<li>译码。不同指令被翻译成不同的控制信号</li>
+<li>计算源操作数地址并取操作数。</li>
+<li>执行数据操作。在操作元件中对取出的操作数进行计算</li>
+<li>目的操作数地址计算并存结果。</li>
+<li>指令地址计算并将其送PC。如果是定长指令字，如MIPS指令集，则在第一步取指令的同时计算出下一条指令地址并送PC。此时跳过该步</li>
+</ol>
+<h2 id="CPU基本功能和组成"><a href="#CPU基本功能和组成" class="headerlink" title="CPU基本功能和组成"></a>CPU基本功能和组成</h2><p><img src="/2023/01/10/CPU%E4%B8%8E%E7%A8%8B%E5%BA%8F%E6%89%A7%E8%A1%8C/image-20211215190616698.png" srcset="/img/loading.gif" lazyload alt="image-20211215190616698"></p>
+<ol>
+<li>程序计数器（PC）</li>
+<li>指令寄存器（IR）</li>
+<li>指令译码器（ID）</li>
+<li>启停控制逻辑。脉冲源产生时钟脉冲控制时序信号的发生和停止，实现对机器的启动与停机</li>
+<li>时序信号产生部件。以时钟脉冲为基础，产生不同指令对应的周期、节拍、工作脉冲等时序信号，实现机器指令执行过程中的时序控制</li>
+<li>操作控制信号形成部件。综合以上信号标志形成不同的控制信号，如读数据或者写数据</li>
+<li>总线控制逻辑。实现对总线传输的控制，包括对数据和地址信息的缓冲和控制</li>
+</ol>
+<h2 id="中断和异常"><a href="#中断和异常" class="headerlink" title="中断和异常"></a>中断和异常</h2><p>内部异常：由CPU内部的异常引起的意外事件。如除0，断点，堆栈溢出，缺页</p>
+<p>外部中断：外设完成任务或者发生某些特殊事件。每条指令执行完成后，CPU会主动查询有没有中断请求，如果有，则将下一条地址作为断点保存，然后转到用来处理相应中断事件的“中断服务程序“执行。</p>
+<p>中断和异常都会破坏流水线的执行，造成流水线堵塞</p>
+<h2 id="数据通路基本结构和工作原理"><a href="#数据通路基本结构和工作原理" class="headerlink" title="数据通路基本结构和工作原理"></a>数据通路基本结构和工作原理</h2><p>数据通路：指令执行过程中数据所经过的路径</p>
+<h3 id="基本结构"><a href="#基本结构" class="headerlink" title="基本结构"></a>基本结构</h3><p>组合逻辑元件（操作元件）：</p>
+<p>如MUX（多路选择器），Adder（加法器），ALU（算数逻辑部件），Decoder（译码器）</p>
+<p>时序逻辑元件（存储元件）：</p>
+<p>具有存储功能，如D触发器，输入状态在时钟控制下被写入到电路中，并保持电路的输出值不变，直到下一个时钟到达。输入端状态由时钟决定何时被写入</p>
+<p><img src="/2023/01/10/CPU%E4%B8%8E%E7%A8%8B%E5%BA%8F%E6%89%A7%E8%A1%8C/image-20211215191928041.png" srcset="/img/loading.gif" lazyload alt="image-20211215191928041"></p>
+<p>输入状态改变发生在时钟下降沿，需要经过建立时间和保持时间</p>
+<p>输出端状态改变需要经过Clock-to-Q，即锁存延迟。该时间远小于保存时间</p>
+<p>寄存器是状态存储元件，由n个D触发器组成一个n位寄存器</p>
+<h3 id="数据通路的时序控制"><a href="#数据通路的时序控制" class="headerlink" title="数据通路的时序控制"></a>数据通路的时序控制</h3><p>现代计算机中，定时信号就是时钟信号，一个时钟周期就是一个节拍。</p>
+<p>只有状态元件能够存储信息，所有操作元件都必须从状态元件接收输入，并将输出写入状态元件中。而所有状态元件在同一个时钟信号控制下写入信息。</p>
+<p>数据通路的时钟周期：Cycle Time &#x3D; Clk-to-Q + Longest Delay + 建立时间 + 时钟偏移（可参考上图理解）</p>
+<h2 id="流水线指令执行"><a href="#流水线指令执行" class="headerlink" title="流水线指令执行"></a>流水线指令执行</h2><p>理想情况下，每个时钟周期都有一条指令进入流水线</p>
+<p><img src="/2023/01/10/CPU%E4%B8%8E%E7%A8%8B%E5%BA%8F%E6%89%A7%E8%A1%8C/image-20211215193611503.png" srcset="/img/loading.gif" lazyload alt="image-20211215193611503"></p>
+<p>流水线数据通路设计准则：指令流水段个数以最复杂指令所用的功能段个数为准；流水段的长度以最复杂功能段的操作所用时间为准</p>
+<p>适合流水线的指令集特征：</p>
+<ol>
+<li>指令长度应该尽量一致。有利于取指和译码</li>
+<li>指令格式尽量规整，保证源操作数寄存器的位置相同，如都在指令的第25<del>21位和20</del>16位</li>
+<li>采用load&#x2F;store风格，即只有这两个指令和存储器交互</li>
+<li>数据和指令要对齐存放。有利于减少访存次数，因为CPU每次取数据是按照对齐位来取的</li>
+</ol>
+<h2 id="CISC指令集"><a href="#CISC指令集" class="headerlink" title="CISC指令集"></a>CISC指令集</h2><p>复杂指令集，主要被Intel使用，缺点是不适用指令流水线，需要翻译成多个RISC的微操作</p>
+<h2 id="RISC指令集"><a href="#RISC指令集" class="headerlink" title="RISC指令集"></a>RISC指令集</h2><p>精简指令集，多用在嵌入式设备和移动端设备，采用流水线的方式执行指令</p>
+<h2 id="指令流水线的实现"><a href="#指令流水线的实现" class="headerlink" title="指令流水线的实现"></a>指令流水线的实现</h2><p><img src="/2023/01/10/CPU%E4%B8%8E%E7%A8%8B%E5%BA%8F%E6%89%A7%E8%A1%8C/image-20211215194427866.png" srcset="/img/loading.gif" lazyload alt="image-20211215194427866"></p>
+<p>流水线冒险：一些情况可能使得流水线无法正确、按时执行后续指令，从而引起流水线阻塞或者停顿</p>
+<ol>
+<li>结构冒险。硬件资源冲突，同一个部件被多个指令使用，可以通过引入告诉缓冲存储器（cache）避免访存冲突</li>
+<li>数据冒险。后面指令用到前面指令的运算结果时，前面指令的结果还没有产生。可以添加nop延迟指令执行</li>
+<li>控制冒险。指令执行顺序被改变，最常见的分支跳转</li>
+</ol>
+<p>高级流水线技术：</p>
+<p>超流水线：增加流水线级数</p>
+<p>多发射流水线：同时启动多条指令</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>CPU与程序执行</div>
+      <div>http://example.com/2023/01/10/CPU与程序执行/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Chen Shuwen</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年1月10日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2023/01/10/DES/" title="DES">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">DES</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/01/10/Cpp-%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2/" title="Cpp-类型转换">
+                        <span class="hidden-mobile">Cpp-类型转换</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

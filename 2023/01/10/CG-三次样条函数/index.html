@@ -1,0 +1,763 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Chen Shuwen">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="CG-三次样条函数推导参数连续性给定2条曲线：$$\boldsymbol{F_1}(t), t \in [t_0, t_1]$$ $$\boldsymbol{F_2}(t), t \in [t_1, t_2]$$ 曲线$\boldsymbol{F_1}(t)$和$\boldsymbol{F_2}(t)$是$C^r$连续的，如果它们从$0$阶导数至$r$阶导数在$t_1$处完全相同 根据定义有： $">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CG-三次样条函数">
+<meta property="og:url" content="http://example.com/2023/01/10/CG-%E4%B8%89%E6%AC%A1%E6%A0%B7%E6%9D%A1%E5%87%BD%E6%95%B0/index.html">
+<meta property="og:site_name" content="Chen Shuwen&#39;s Tech Site">
+<meta property="og:description" content="CG-三次样条函数推导参数连续性给定2条曲线：$$\boldsymbol{F_1}(t), t \in [t_0, t_1]$$ $$\boldsymbol{F_2}(t), t \in [t_1, t_2]$$ 曲线$\boldsymbol{F_1}(t)$和$\boldsymbol{F_2}(t)$是$C^r$连续的，如果它们从$0$阶导数至$r$阶导数在$t_1$处完全相同 根据定义有： $">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-01-10T04:09:18.336Z">
+<meta property="article:modified_time" content="2023-01-10T04:09:18.336Z">
+<meta property="article:author" content="Chen Shuwen">
+<meta property="article:tag" content="CG">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>CG-三次样条函数 - Chen Shuwen&#39;s Tech Site</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Chen Shuwen&#39;s Tech Site</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="CG-三次样条函数"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-01-10 12:09" pubdate>
+          2023年1月10日 中午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          5.3k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          44 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">CG-三次样条函数</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="CG-三次样条函数"><a href="#CG-三次样条函数" class="headerlink" title="CG-三次样条函数"></a>CG-三次样条函数</h1><h2 id="推导"><a href="#推导" class="headerlink" title="推导"></a>推导</h2><h3 id="参数连续性"><a href="#参数连续性" class="headerlink" title="参数连续性"></a>参数连续性</h3><p>给定2条曲线：<br>$$<br>\boldsymbol{F_1}(t), t \in [t_0, t_1]<br>$$</p>
+<p>$$<br>\boldsymbol{F_2}(t), t \in [t_1, t_2]<br>$$</p>
+<p>曲线$\boldsymbol{F_1}(t)$和$\boldsymbol{F_2}(t)$是$C^r$连续的，如果它们从$0$阶导数至$r$阶导数在$t_1$处完全相同</p>
+<p>根据定义有：</p>
+<p>$C^0$连续：曲线上的点连续，不存在尖点</p>
+<p>$C^1$连续：曲线上点的一阶导数存在且连续</p>
+<p>$C^2$连续：曲线上点的二阶导数存在且连续</p>
+<h3 id="几何连续性"><a href="#几何连续性" class="headerlink" title="几何连续性"></a>几何连续性</h3><p>由于参数连续性过于严格，在集合设计中不太直观，连续性依赖于参数的选择，同一条曲线，参数不同，连续阶也不同。但是，可以通过引入参数变换使其满足参数连续。</p>
+<p>设$\varphi (t) (a \leq t \leq b)$ 是给定的曲线。若存在一个参数变换$ t &#x3D; \rho (s)(a_1 \leq s \leq b_1)$, 使得$\varphi(\rho(s)) \in C^n[a_1, b_1]$, 且$\frac{d\varphi(\rho(s))}{ds} \neq 0$，则称曲线$\varphi (t) (a \leq t \leq b)$是$n$阶几何连续的曲线，记为：<br>$$<br>\varphi(t) \in GC^n[a, b] \ or \ \varphi(t) \in G^n[a,b]<br>$$<br>性质：</p>
+<ul>
+<li>条件$\frac{d\varphi(\rho(s))}{ds} \neq 0$保证了曲线上没有奇点</li>
+<li>几何连续性与参数选择无关，是曲线本身固有的性质</li>
+<li>$G^n$的条件比$C^n$要宽，曲线类型更多</li>
+</ul>
+<p>根据定义有：</p>
+<p>$G^0$连续：两条曲线有公共的端点</p>
+<p>$G^1$连续：两条曲线在连接点处有公共的切线，即切线方向连续</p>
+<p>$G^2$连续：两条曲线在连接点处有公共的曲率圆，即曲率连续</p>
+<h3 id="C-2-连续"><a href="#C-2-连续" class="headerlink" title="$C^2$连续"></a>$C^2$连续</h3><p>对于 $ R^{2} $ 内的一组点集$$ {P_i | i \in [1, n]} $$, 取参数集合为$${ t_i | t \in [1, n] }$$，假设经过点$$P_i &#x3D; (x_i, y_i)$$ 和$$P_{i+1} &#x3D; (x_{i+1}, y_{i+1})$$ 的曲线方程为$$\boldsymbol{F_i}(t) &#x3D; (X_i(t), Y_i(t))$$, 则：<br>$$<br>\boldsymbol{F_i}(t) &#x3D; \boldsymbol{a_i} + \boldsymbol{b_i}(t - t_i) + \boldsymbol{c_i}(t - t_i)^2 + \boldsymbol{d_i} (t - t_i)^3 \tag1<br>$$</p>
+<p>$$<br>\boldsymbol{F^{‘}_i}(t) &#x3D; \boldsymbol b_i + 2\boldsymbol{c_i}(t - t_i) + 3\boldsymbol{d_i}(t-t_i)^2 \tag2<br>$$</p>
+<p>$$<br>\boldsymbol{F^{\‘\‘}_i}(t) &#x3D; 2\boldsymbol{c_i} + 6\boldsymbol{d_i}(t-t_i) \tag3<br>$$</p>
+<p>曲线经过点$P_i$, 则:<br>$$<br>\boldsymbol{a_i} &#x3D; (x_i, y_i) &#x3D; \boldsymbol{P_i} \tag4<br>$$<br>曲线经过点$$P_{i+1}$$且$C^0$连续，令$$h_{i} &#x3D; t_{i+1}-t_{i}$$, 则：<br>$$<br>\boldsymbol{a_{i+1}} &#x3D; \boldsymbol{a_i} + \boldsymbol{b_i}hi + \boldsymbol{c_i}h_i^2 + \boldsymbol{d_i}h_i^3 \tag5<br>$$<br>由于$C^1$连续，则：<br>$$<br>\boldsymbol{F^{‘}<em>i}(t</em>{i+1}) &#x3D; \boldsymbol b_i + 2\boldsymbol{c_i}(t_{i+1} - t_i) + 3\boldsymbol{d_i}(t_{i+1}-t_i)^2 &#x3D; \boldsymbol b_i + 2\boldsymbol{c_i}h_i + 3\boldsymbol{d_i}h_i^2 \tag6<br>$$</p>
+<p>$$<br>\boldsymbol{F^{‘}<em>{i+1}}(t</em>{i+1}) &#x3D; \boldsymbol b_{i+1} + 2\boldsymbol{c_{i+1}}(t_{i+1} - t_{i+1}) + 3\boldsymbol{d_{i+1}}(t_{i+1}-t_{i+1})^2 &#x3D; \boldsymbol b_{i+1} \tag7<br>$$</p>
+<p>联立(6)(7)式可得：<br>$$<br>\boldsymbol {b_{i+1}} &#x3D; \boldsymbol b_i + 2\boldsymbol{c_i}h_i + 3\boldsymbol{d_i}h_i^2 \tag8<br>$$<br>由于$C^2$连续，则：<br>$$<br>2\boldsymbol{c_i} + 6\boldsymbol{d_i} h_i &#x3D; 2\boldsymbol{c_{i+1}} \tag9<br>$$<br>设$\boldsymbol{m_i}$ 为插值点$ P_i $的二阶导数，则<br>$$<br>\boldsymbol{m_i} &#x3D; 2\boldsymbol{c_i}	\tag{10}<br>$$<br>根据(9)式得：<br>$$<br>\boldsymbol{m_i} + 6\boldsymbol{d_i} h_i &#x3D; \boldsymbol{m_{i+1}} \tag{11}<br>$$<br>得到：<br>$$<br>\boldsymbol{d_i} &#x3D; \frac{\boldsymbol {m_{i+1}} - \boldsymbol{m_i}}{6h_i} \tag{12}<br>$$<br>联立(5)(12)式可得：<br>$$<br>\boldsymbol {b_i} &#x3D; \frac{\boldsymbol {P_{i+1}} - \boldsymbol {P_{i}} }{h_i} - \frac{\boldsymbol{m_i}h_i}{2} - \frac{(\boldsymbol{m_{i+1}} - \boldsymbol {m_{i}} ) h_i}{6} \tag{13}<br>$$<br>联立(4)(8)(10)(12)(13)可得：<br>$$<br>\boldsymbol{m_i} h_i + 2\boldsymbol {m_{i+1}}(h_i + h_{i+1}) + \boldsymbol {m_{i + 2}}h_{i + 1} &#x3D; 6(\frac{\boldsymbol {P_{i+2}} - \boldsymbol{P_{i+1}} }{h_{i+1}} - \frac{\boldsymbol {P_{i+1}} - \boldsymbol{P_{i}}}{h_i} ), i \in [1, n-2] \tag{14}<br>$$<br>此时还缺少两个方程才能解出曲线的未知参数，有如下约束可以选择：</p>
+<ul>
+<li><p>自由端：指定曲线在两个端点的二阶导数，即<br>  $$<br>  \boldsymbol {m_1} &#x3D; \boldsymbol {m_n} &#x3D; \boldsymbol {0} \tag{15}<br>  $$<br>  该样条为自然三次样条</p>
+</li>
+<li><p>夹持端：指定曲线在两个端点的一阶导数</p>
+</li>
+<li><p>其他：</p>
+<ul>
+<li>曲线两端为抛物线</li>
+<li>周期端</li>
+<li>混合边界条件</li>
+</ul>
+</li>
+</ul>
+<p>这里以自然边界条件为例，则线性方程组为：<br>$$<br>\begin{bmatrix}<br>1 &amp; 0  &amp; 0 &amp; 0 &amp; \cdots   &amp; 0   \<br>h_1 &amp; 2(h_1 + h_2)  &amp; h_2 &amp; 0 &amp; \cdots   &amp; 0  \<br>0 &amp; h_2  &amp; 2(h_2 + h_3) &amp; h_3 &amp; \cdots   &amp; 0  \<br>\vdots &amp; \vdots  &amp; \vdots &amp; \vdots &amp; \ddots   &amp; \vdots  \<br>0 &amp; \cdots &amp; 0 &amp; h_{n-2}  &amp; 2(h_{n-2} + h_{n-1})  &amp; h_{n-1}  \<br>0 &amp; \cdots &amp; 0 &amp; 0 &amp; 0 &amp; 1\<br>\end{bmatrix}</p>
+<h1 id="begin-bmatrix-m-1-m-2-m-3-vdots-m-n-1-m-n-end-bmatrix"><a href="#begin-bmatrix-m-1-m-2-m-3-vdots-m-n-1-m-n-end-bmatrix" class="headerlink" title="\begin{bmatrix}m_1 \m_2 \m_3 \\vdots \m_{n-1} \m_n \\end{bmatrix}"></a>\begin{bmatrix}<br>m_1 \<br>m_2 \<br>m_3 \<br>\vdots \<br>m_{n-1} \<br>m_n \<br>\end{bmatrix}</h1><p>6<br>\begin{bmatrix}<br>0 \<br>\frac{\boldsymbol {P_3} - \boldsymbol{P_2} }{h_2} - \frac{\boldsymbol {P_2} - \boldsymbol{P_1} }{h_1} \<br>\frac{\boldsymbol {P_4} - \boldsymbol{P_3} }{h_3} - \frac{\boldsymbol {P_3} - \boldsymbol{P_2} }{h_2} \<br>\vdots \<br>\frac{\boldsymbol {P_n} - \boldsymbol{P_{n-1}} }{h_{n-1}} - \frac{\boldsymbol {P_{n-1}} - \boldsymbol{P_{n-2}} }{h_{n-2}} \<br>0 \<br>\end{bmatrix}<br>$$<br>将该方程组的第1行第1列，最后1行最后1列去掉，满足三对角矩阵和对角线占优，可以使用追赶法求解方程组，具体方法见：</p>
+<p><a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Tridiagonal_matrix_algorithm">Tridiagonal matrix algorithm</a></p>
+<h2 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h2><p>github代码：</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/olleh-dlrow/Vortex/blob/master/Sandbox/src/CubicSplinesTest.h">https://github.com/olleh-dlrow/Vortex/blob/master/Sandbox/src/CubicSplinesTest.h</a></p>
+<h3 id="数据结构"><a href="#数据结构" class="headerlink" title="数据结构"></a>数据结构</h3><p>型值点具有如下信息：</p>
+<ul>
+<li>位置</li>
+<li>一阶左导数</li>
+<li>一阶右导数</li>
+<li>参数t</li>
+<li>几何连续性类型</li>
+</ul>
+<h3 id="绘制自然三次样条"><a href="#绘制自然三次样条" class="headerlink" title="绘制自然三次样条"></a>绘制自然三次样条</h3><p>输入：型值点</p>
+<p>输出：拟合后的三次样条曲线，型值点的参数值、导数值</p>
+<p>根据公式计算每段曲线的未知参数，并初始化型值点的参数值和导数值，最后根据曲线计算若干离散点进行绘制</p>
+<h3 id="编辑型值点"><a href="#编辑型值点" class="headerlink" title="编辑型值点"></a>编辑型值点</h3><p>选中型值点后，进入编辑模式，可以通过调整切线的控制点改变该点的切线值，根据点的几何连续性类型有如下情况：</p>
+<p>$G^0$连续：切线无约束</p>
+<p>$G^1$连续：左右切线向量的方向相同</p>
+<p>$G^2 $连续：左右切线向量相同</p>
+<h3 id="移动型值点"><a href="#移动型值点" class="headerlink" title="移动型值点"></a>移动型值点</h3><p>在编辑模式下，拖动型值点即可移动该点，此时需要更新型值点两端的曲线，根据曲线两端点的函数值和一阶导数得到4个方程，可以解得曲线$$\boldsymbol{F_i} (t)$$的参数如下，其中$$h_{i} &#x3D; t_{i+1} - t_{i}$$：<br>$$<br>\boldsymbol{a_i} &#x3D; (x_i, y_i) &#x3D; \boldsymbol{F_i}(t_i)<br>$$</p>
+<p>$$<br>\boldsymbol{b_i} &#x3D; \boldsymbol{F^{\‘}_{i+}}(t_i)<br>$$</p>
+<p>$$<br>\boldsymbol{d_i} &#x3D; \frac{2\boldsymbol{F_i}(t_i) + \boldsymbol{F^{\‘}<em>{i+}}(t_i) h_i + \boldsymbol{F^{\‘}</em>{i-}}(t_{i+1})h_i - 2\boldsymbol{F_i}(t_{i+1})}{h_i^3}<br>$$</p>
+<p>$$<br>\boldsymbol{c_i} &#x3D; \frac{\boldsymbol{F^{\‘}<em>{i-}}(t</em>{i+1}) - \boldsymbol{F^{\‘}<em>{i+}}(t</em>{i}) - 3\boldsymbol{d_i}h_i^2 }{2h_i}<br>$$</p>
+<h3 id="添加型值点"><a href="#添加型值点" class="headerlink" title="添加型值点"></a>添加型值点</h3><p>在完成初始化后，添加新的型值点不再需要保证$C^2$连续， 此时根据末端点$$P_{i}$$和新点$$P_{i+1}$$生成曲线$$\boldsymbol{F_i}(t)$$，需要4个约束方程来计算未知参数，一种方法是，使用两个点的函数值和$$P_i$$在$$\boldsymbol{F_{i-1}}(t)$$的一阶、二阶导数建立4个方程，该方法经过实现效果并不好，生成的新曲线容易出现极大值。这里介绍第二种方法，使用自然端约束，即$$P_{i+1}$$的二阶导数为$$0$$</p>
+<p>根据条件建立4个方程，可以解得4个未知参数如下，其中$$h_i &#x3D; t_{i+1} - t_i$$：<br>$$<br>\boldsymbol{a_i} &#x3D; (x_i, y_i) &#x3D; \boldsymbol{F_i}(t_i)<br>$$</p>
+<p>$$<br>\boldsymbol{b_i} &#x3D; \boldsymbol{F^{‘}<em>{i+}}(t_i) &#x3D; \boldsymbol{F^{‘}</em>{i-}}(t_i)<br>$$</p>
+<p>$$<br>\boldsymbol{d_i} &#x3D; \frac{\boldsymbol{a_i} + \boldsymbol{b_i}h_i - \boldsymbol{F_i}(t_{i+1})}{2h_i^3}<br>$$</p>
+<p>$$<br>\boldsymbol{c_i} &#x3D; -3\boldsymbol{d_i}h_i<br>$$</p>
+<p>该方法生成的切线向量长度适中，比较适合进一步编辑</p>
+<h3 id="删除型值点"><a href="#删除型值点" class="headerlink" title="删除型值点"></a>删除型值点</h3><p>鼠标悬停在某个型值点上后，按下E键即可删除该点，此时需要更新所有点的参数$t$，并重新计算曲线，方法同移动型值点处的计算方法</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/CG/" class="category-chain-item">CG</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/CG/">#CG</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>CG-三次样条函数</div>
+      <div>http://example.com/2023/01/10/CG-三次样条函数/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Chen Shuwen</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年1月10日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2023/01/10/Cpp-%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" title="Cpp-并发编程">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Cpp-并发编程</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/01/10/AStar/" title="AStar">
+                        <span class="hidden-mobile">AStar</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

@@ -1,0 +1,714 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Chen Shuwen">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="Unity Cull Unity引擎在引入了SRP之后Cull执行的时机已经放在脚本层了，本文就跟踪下Unity引擎在SRP下是如何Cull的（引擎版本2019.4）。 ​    假设现在是个空场景，然后加入了一个相机，这个时候相机找不到任何物体来拍摄。继续往场景里放一些可渲染物体——通过Instantiate GameObject，上面有Renderer Component。这时候在场景树（或者">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Chen Shuwen&#39;s Tech Site">
+<meta property="og:url" content="http://example.com/2023/01/10/Unity%20Cull/index.html">
+<meta property="og:site_name" content="Chen Shuwen&#39;s Tech Site">
+<meta property="og:description" content="Unity Cull Unity引擎在引入了SRP之后Cull执行的时机已经放在脚本层了，本文就跟踪下Unity引擎在SRP下是如何Cull的（引擎版本2019.4）。 ​    假设现在是个空场景，然后加入了一个相机，这个时候相机找不到任何物体来拍摄。继续往场景里放一些可渲染物体——通过Instantiate GameObject，上面有Renderer Component。这时候在场景树（或者">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-01-10T04:09:33.766Z">
+<meta property="article:modified_time" content="2023-01-10T04:09:33.766Z">
+<meta property="article:author" content="Chen Shuwen">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>Chen Shuwen&#39;s Tech Site</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Chen Shuwen&#39;s Tech Site</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text=""></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-01-10 12:09" pubdate>
+          2023年1月10日 中午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          8.2k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          69 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none"></h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>Unity Cull</p>
+<p>Unity引擎在引入了SRP之后Cull执行的时机已经放在脚本层了，本文就跟踪下Unity引擎在SRP下是如何Cull的（引擎版本2019.4）。</p>
+<p>​    假设现在是个空场景，然后加入了一个相机，这个时候相机找不到任何物体来拍摄。继续往场景里放一些可渲染物体——通过Instantiate GameObject，上面有Renderer Component。这时候在场景树（或者说Scene Hierarchy）里挂上了对应的Scene Node，然而相机不会傻到在Scene Hierarchy上遍历和筛选，这上面很多Node跟渲染毫无关系。</p>
+<p>RendererScene</p>
+<p>引擎底层在构造Scene Nodes的同时在RendererScene里构造Renderer Nodes。在Renderer AwakeFromLoad、SetEnabled、Deactivate时同步给RendererScene进行<strong>AddRenderer</strong>和<strong>RemoveRenderer</strong>。也就是一个Scene Node是active且带Renderer Component又是enabled的就会加入RendererScene。这里考虑到多线程列表增删问题，包括一些渲染（如CustomRenderer等）有可能还在使用Renderer Node的数据（如AABB Bounds等），这里使用了<strong>Pending List</strong>，来做延迟增删。</p>
+<p>​    如果说真正绘制前的工作就是将要渲染的“东西”不断组织、加工、提炼的过程，那么现在刚刚十分粗略的组织了Renderer Nodes，接下来还需要继续整理中间数据，然后继续下一步加工。</p>
+<p>​    RendererScene主要存与渲染有关的三个数据：1）对应的SceneNode。2）对应的<strong>AABB BoundingBox</strong>。3）对应的可见性信息<strong>VisibilityBits</strong>。如下分别在列表上一一对应。1）是已经直接得到了，2）、3）还并没有这个数据。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">// These arrays are always kept in sync</span><br>dynamic_array&lt;SceneNode&gt;    m_RendererNodes;  <br>dynamic_array&lt;AABB&gt;         m_BoundingBoxes;  <br>dynamic_array&lt;UInt8&gt;        m_VisibilityBits;  <br></code></pre></td></tr></table></figure>
+
+
+
+<p>可见性更新</p>
+<p>先来看可见性信息。可见性是跟渲染相关的所以理当由RendererScene维护，它主要负责在可见性发生变化的时候通过各Renderer（如MeshRenderer）把变化状态通知给其他关联的Component或系统。所以每一个Renderer Node的VisibilityBits有以下四个状态（mask）：1）不可见。2）当帧应该可见。3）上一帧可见。4）已经可见。</p>
+<figure class="highlight tap"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs tap">enum<br>&#123;  <br>  kVisibleCurrentFrame =<span class="hljs-number"> 1 </span>&lt;&lt; 0,  <br>  kVisiblePreviousFrame =<span class="hljs-number"> 1 </span>&lt;&lt; 1,  <br>  kBecameVisibleCalled =<span class="hljs-number"> 1 </span>&lt;&lt;<span class="hljs-number"> 2 </span> <br>&#125;;  <br></code></pre></td></tr></table></figure>
+
+<p>​    Unity内置的更新大循环（应该会有其他篇详解）中有一步：属于EarlyUpdate类别中<br>的<strong>RendererNotifyInvisible</strong>。一帧中相对来说算发生的比较早的了，比图1的Awake还要早。</p>
+<p>   在这一步里让RendererScene进行<strong>NotifyInvisible</strong>：遍历每一个Renderer Node，如果vbits是3）“上一帧可见”，就认为当帧1）“不可见”，通过Renderer通知出去：RendererBecameInvisible。然后更新vbits，如果是2）“当帧应该可见”，则更新为3）“上一帧可见”，否则就更新为1）“不可见”。这样如果本帧可见，这一帧后面再没有更新过vbits那下帧就该发不可见通知了；一直不可见不会频繁通知。</p>
+<figure class="highlight 1c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs 1c">intnodeCount = m_RendererNodes.size();  <br>for(int i = <span class="hljs-number">0</span>; i &lt; nodeCount; ++i)  <br>&#123;  <br>  SceneNode<span class="hljs-meta">&amp; node = m_RendererNodes[i];  </span><br>  UInt8<span class="hljs-meta">&amp; vbits = m_VisibilityBits[i];  </span><br>  if (vbits == kVisiblePreviousFrame)  <br>  static_cast&lt;Renderer*&gt;(node.renderer)-&gt;RendererBecameInvisible();  <br>  <span class="hljs-comment">// Roll visibility over to next frame  </span><br>  vbits = (vbits <span class="hljs-meta">&amp; kVisibleCurrentFrame) ? kVisiblePreviousFrame : 0;  </span><br>&#125;  <br></code></pre></td></tr></table></figure>
+
+<p> 总之，这一步更新就是对第一帧不可见的Renderer发通知，且即使这个Node后面Cull发现是不可见的，也只有到下一帧这个时候再发不可见通知了。</p>
+<p>![image-20220815140352112](Unity Cull&#x2F;image-20220815140352112.png)</p>
+<p> 如图2，不可见通知发生比较早，也是为了减少后面的各系统不必要更新。更新后进行Cull（后文祥述）后，才真正决定了一个物体的可见性，自然也要通知RendererScene：Cull通过<strong>SceneAfterCullingOutputReady</strong>回调，进行<strong>UpdateVisibility</strong>。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">// Update visibility bits for static objects</span><br><span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i = <span class="hljs-number">0</span>; i &lt; visible[kStaticRenderers].size; ++i)  <br>&#123;  <br>  <span class="hljs-type">int</span> index = visible[kStaticRenderers].indices[i];  <br>  m_VisibilityBits[index] |= kVisibleCurrentFrame;  <br>&#125;  <br><span class="hljs-comment">// Update visibility bits for dynamic objects</span><br>size_toffset = <span class="hljs-built_in">GetStaticObjectCount</span>();  <br><span class="hljs-keyword">for</span>(inti = <span class="hljs-number">0</span>; i &lt; visible[kDynamicRenderer].size; ++i)  <br>&#123;  <br>  intindex = visible[kDynamicRenderer].indices[i] + offset;  <br>  m_VisibilityBits[index] |= kVisibleCurrentFrame;  <br>&#125;  <br><span class="hljs-keyword">for</span>(<span class="hljs-type">unsigned</span> i = <span class="hljs-number">0</span>, n = m_RendererNodes.<span class="hljs-built_in">size</span>(); i &lt; n; ++i)  <br>&#123;  <br>  SceneNode&amp; node = m_RendererNodes[i];  <br>  UInt8&amp; vbits = m_VisibilityBits[i];  <br>  <span class="hljs-keyword">if</span>(vbits == kVisibleCurrentFrame)  <br>  &#123;  <br>    <span class="hljs-built_in">static_cast</span>&lt;Renderer*&gt;(node.renderer)-&gt;<span class="hljs-built_in">RendererBecameVisible</span>();  <br>    vbits |= kBecameVisibleCalled;  <br>  &#125;  <br>&#125;  <br></code></pre></td></tr></table></figure>
+
+<p> 这里传入可见列表，所以可见的对象vbits一直经历“可见-&gt;上一帧可见-&gt;可见”的过程，如果哪一帧不可见了就变成“可见-&gt;上一帧可见-&gt;不可见”。如果vbits是2）“当帧应该可见”通过Renderer通知出去：<strong>RendererBecameVisible</strong>。</p>
+<p>至此可见性部分就完了，当然具体怎么判断还在后文。</p>
+<p>AABB Bounds更新</p>
+<p>   Renderer的包围盒算是为Cull特供的信息，单独花点时间组织的数据也就是为了减少Cull的996情况。那在一帧里更新的时间点肯定要早于Cull了，但是早多少呢？这还真不能早太多，因为系统可能会更新Transform，还有些Renderer比如ParticleSystemRenderer和SkinnedMeshRenderer需要根据每一个粒子或当前动作详细更新包围盒。所以更新包围盒发生系统都更新后的非常靠近Cull的地方。在PostLateUpdate类别中的<strong>UpdateAllRenderers</strong>进行更新。</p>
+<p>​    这里调用RendererUpdateManager::<strong>UpdateAll</strong>进行AABB相关更新，当然也不止AABB。这里当然是在RendererScene上来做，主要就是更新每一个Node的<strong>世界空间下AABB</strong>和<strong>WorldMatrix</strong>。</p>
+<p>​    为什么更新WorldMatrix呢？又或者说为什么在更新Renderer时更新每一个Scene Node都有的属性呢？WorldMatrix确实每一个Scene Node的Transform都有的属性，但是除了Renderer是每一帧都需要更新这个值，其他大多Scene Node都是用到时<strong>按需</strong>从Transform Chain上更新就可以了。Renderer因为最终渲染需要构造<strong>MVP矩阵</strong>是必须更新的，这里正好跟着AABB的更新一起计算出来。</p>
+<p>​    那么AABB如何更新呢？前文有提到不同类型的Renderer更新策略可能是不同的，那么引擎设计上应该将更新的实现路由给每一种Renderer。</p>
+<p>​    拿MeshRenderer举例，在InitializeClass时将更新的方法都注册。</p>
+<figure class="highlight reasonml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs reasonml"><span class="hljs-constructor">GetRendererUpdateManager()</span>.<span class="hljs-constructor">RegisterDispatchUpdate(<span class="hljs-params">kRendererMesh</span>, TransformChangeSystemMask(0)</span>, DispatchUpdate, PrepareDispatchUpdate, PrepareSingleRendererUpdate, FinalizeUpdate);  <br></code></pre></td></tr></table></figure>
+
+
+
+<p>​    这里先对<strong>TransformChangeDispatch</strong>，注册新的<strong>ChangeSystem</strong>。TransformChangeDispatch是用JobSystem开发的监控Transform变化和多线程更新的框架。所有Renderer监控的Mask都包含：TransformChangeDispatch::<strong>kInterestedInGlobalTRS</strong> | TransformChangeDispatch::<strong>kInterestedInRendererUpdate</strong>，也就是一帧内发生平移、旋转、缩放和Local Bounds变化的transform会传递给这里注册的方法，这样实现了不同更新系统对应不同监控变化量解耦的设计实现。</p>
+<p>​    继续RendererUpdateManager::UpdateAll，依次遍历每种renderer分别进行Prepare、Update和Finalize（都是上面RegisterDispatchUpdate注册好的）。这样每一个更新进来的Transform都是根据指定Mask筛选出来的。</p>
+<p>​    拿MeshRenderer举例看就是更新WorldMatrix和World AABB。</p>
+<figure class="highlight reasonml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs reasonml">TransformAccessReadOnly transformAccess = changedTransforms<span class="hljs-literal">[<span class="hljs-identifier">i</span>]</span>;  <br>affineX worldMatrix = <span class="hljs-constructor">CalculateGlobalMatrix(<span class="hljs-params">transformAccess</span>)</span>;  <br>aabb localAABB = aabb<span class="hljs-constructor">Load(&amp;<span class="hljs-params">renderer</span>.GetWritableTransformInfo()</span>.localAABB);  <br>aabb worldAABB = aabb<span class="hljs-constructor">Transform(<span class="hljs-params">worldMatrix</span>, <span class="hljs-params">localAABB</span>)</span>;  <br><span class="hljs-constructor">StoreWorldMatrix(<span class="hljs-params">renderer</span>, <span class="hljs-params">worldMatrix</span>, CalculateHierarchyTransformType(<span class="hljs-params">transformAccess</span>)</span>, jobData-&gt;motionVectorFrameIndex);  <br><span class="hljs-constructor">StoreAABB(<span class="hljs-params">renderer</span>, <span class="hljs-params">jobData</span>, <span class="hljs-params">worldAABB</span>)</span>;  <br></code></pre></td></tr></table></figure>
+
+<p>​    那么至此准备工作基本都就绪了，Cull已经有了可以工作的先决条件了。</p>
+<h3 id="4、CullScriptable"><a href="#4、CullScriptable" class="headerlink" title="4、CullScriptable"></a>4、CullScriptable</h3><p>​    之前的处理都是针对RendererScene的，只是对Scene的抽象加工，那么还需要确定相机才能决定最终绘制，接下来的操作就该跟相机有点关系了。</p>
+<p>​    场景里可以有多个相机，RendererScene的更新是一帧一次，那么Cull和渲染就是每个相机一次了。在URP中RenderSingleCamera就是每一个相机的入口。</p>
+<p>​    首先从当前相机的<strong>CullingParameters</strong>，包括很多跟Cull有关的数据比如<strong>LayerMask</strong>、裁剪平面等等；这部分数据本来停在Native层就可以了，反正Cull也是在Native层的，所以这里可以根据URP封装的相机参数继续覆盖CullingParameters个别属性。然后就可以开始Cull。</p>
+<figure class="highlight reasonml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs reasonml">var cullResults = context.<span class="hljs-constructor">Cull(<span class="hljs-params">ref</span> <span class="hljs-params">cullingParameters</span>)</span>;<br></code></pre></td></tr></table></figure>
+
+<p>​    从这里开始正式进入Native层<strong>CullScriptable</strong>。Unity实现了Occlusion Cull，这里就不跟踪这块实现了，只看最普通Cull。这里又分几种情况讨论：</p>
+<p>​    第一种是<strong>BatchRendererGroup</strong>，它暴漏到脚本层允许上层开发批量绘制，这个不仅在实际绘制有GPU Instance的助力，并且在CPU侧一个Group在上层通过<strong>OnPerformCulling</strong>自定义进行Cull，而不是一个物体一个Renderer，而是一个Batch一个Renderer，减少更新和Cull的耗时。</p>
+<p>​    第二种是<strong>CullingGroup</strong>，它同样暴漏到脚本层允许上层维护一堆包围球，自己维护包围球和物体（也可以是Renderer）的对应关系，根据返回某一个包围球的可见性做相应操作。Unity在开始对Renderer Cull前先进行CullingGroup的Cull。然后再次对RendererScene进行UpdateAll更新（多次更新只更新变化量，而不是全量），这样可以减少实际Cull的负载。</p>
+<p>​    第三种是Terrain等特殊系统，他们采用<strong>QuadTree</strong>进行Cull，对特殊类型可以高效进行裁剪，这里就不跟踪。</p>
+<p>​    第四种就是在RendererScene上进行Cull了。</p>
+<h3 id="5、CullScene"><a href="#5、CullScene" class="headerlink" title="5、CullScene"></a>5、CullScene</h3><p>​    前面说到在实际Cull开始前，UpdateAll对RendererScene又更新了，这时候已经得到了最终的Renderers了，所以调用<strong>PrepareCullingParametersRendererArrays</strong>将Renderers分类传递给Cull，分类如下：</p>
+<figure class="highlight autohotkey"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs autohotkey">enum<br>&#123;  <br>  kStaticRenderers = <span class="hljs-number">0</span>,  <br><span class="hljs-built_in">  kDynamicRenderer,</span>  <br><span class="hljs-built_in">  kSceneIntermediate,</span>  <br><span class="hljs-built_in">  kCameraIntermediate,</span>  <br><span class="hljs-built_in">  kTreeRenderer,</span>  <br><span class="hljs-built_in">  kCustomCullRenderers,</span>  <br><span class="hljs-built_in">  kStandardVisibleListCount,</span>  <br>  kSpriteGroup = kStandardVisibleListCount,  <br>  kBatchRendererGroupsStart  <br>&#125;<span class="hljs-comment">;  </span><br></code></pre></td></tr></table></figure>
+
+<p>​    然后分别开始进行Cull，这里同样使用Job System，遍历每一个Renderer依次进行如下三个筛选，前面被筛掉就无需后续了。</p>
+<ol>
+<li><strong>判断LOD Mask和Layer Mask，快速把无关的Renderer剔除掉。</strong></li>
+<li><strong>根据优化过的投影体（平头椎体或长方体）的面，与Renderer的AABB进行计算，判断AABB是否在几个面的内部。</strong></li>
+<li><strong>基于相机Layer的Distance Cull，不同Layer可以设置裁切举例，默认的话是超过远裁剪面。</strong></li>
+</ol>
+<p>​    因为这里的Renderer数量可能非常多，所以每一个Job的Input分多个<strong>Blocks</strong>，每一个Block里是一种渲染器的一部分Renderer Nodes，前面的筛选完成后并没有紧密排列，还需要一个Job重新Combine一下数据。如图3，蓝色是可见Node的Index，灰色是不可见Node的Index。</p>
+<p>![image-20220815143736881](Unity Cull&#x2F;image-20220815143736881.png)</p>
+<p>  视锥体裁剪后的数据存在<strong>CullingOutput</strong>的visible中，其按照Renderer分类，每一个List中存Node对应的Index。这些Jobs用<strong>sceneCullingOutputIsReady</strong> JobFence进行同步等待。因为存的还是Index，那么在以上都完成后还需要继续将数据继续加工到CullResults的<strong>rendererCullCallbacks</strong>变成Renderer Nodes的列表。</p>
+<p>​    那么经过以上的历程，终于得到可见的Renderer Nodes列表了，是不是就可以交付给渲染模块进行渲染了呢？</p>
+<h3 id="6、交付渲染前的操作"><a href="#6、交付渲染前的操作" class="headerlink" title="6、交付渲染前的操作"></a><strong>6、交付渲染前的操作</strong></h3><p>​    首先跟渲染相关每个相机需要Cull的不止是Renderer Nodes，还有Lights和ReflectionProbes。</p>
+<p>​    然后然后调用<strong>afterCullingOutputReady</strong>，把所有可见的Renderers通知出去，前文提到RendererScene进行UpdateVisibility的时机就是这里。同时对每个脚本层Renderer Component同GameObject的MonoBehaviour发送<strong>OnWillRenderObject</strong>消息。</p>
+<p>​    除了afterCullingOutputReady，Cull历程中还有很关键的一环：<strong>DispatchGeometryJobs</strong>。看起来和Cull好像没啥关系，这里面对每种Renderer调用<strong>rendererCullingOutputReady</strong>回调，传递Cull筛选出来的Renderer Nodes。大部分的Renderer都没注册，一般不需要对Cull出来的渲染体做什么额外操作，但有些需要，比如ParicleSystemRenderer。像这种复杂的Renderer，不是简单画一个Mesh。因为开销不低，所以时机是根据Cull筛选后，只对需要渲染的物体生成实际的绘制对象。比如计算每一个粒子，然后生成对应面片，Dynamic Batch到VBO、IBO等渲染Buffer中等等。这块又是一大坨东西，完全可以专门写一篇了。这里只要知道大概做的什么。</p>
+<p>​    现在就只剩最后一件事了：组织真正的渲染数据。现在Cull得到的是Renderer实例的列表，就这样拿去渲染未免太粗糙了点。所以这里引入新的概念<strong>SharedRendererScene</strong>，不同于RendererScene，这里真正存用于渲染的Render Node。那么这里就要从Renderer实例中提取Render Node，可以看<strong>ExtractSceneRenderNodeQueue</strong>方法。</p>
+<p>​    每个Renderer会通过<strong>RegisterPrepareRenderNodesCallback</strong>注册<strong>Prepare Render Node</strong>的方法。拿MeshRenderer举例，如果Mesh没有Prepare过，会进行PrepareMesh，主要是构造渲染VBO、IBO等渲染Buffer。然后赋值最重要的<strong>rendererSpecificData</strong>，对于MeshRenderer来说就是<strong>MeshRenderingData</strong>。</p>
+<p>​    最后就是把<strong>executeBatchedCallback</strong>、<strong>executeCallback</strong>和<strong>cleanupCallback</strong>等对这个（或这一批）Render Node渲染的回调注册，由每个Renderer根据Render Node进行渲染。这些就不是重点了，分析渲染的时候RenderNode都做了什么就更清晰了，到时就串联起来了，这里只是知道目的和大概做了什么。</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div></div>
+      <div>http://example.com/2023/01/10/Unity Cull/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Chen Shuwen</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年1月10日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

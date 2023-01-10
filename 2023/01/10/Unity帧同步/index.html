@@ -1,0 +1,715 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Chen Shuwen">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="Unity帧同步​    帧的同步跟网络的帧同步毫无关系。帧指的是一张图像生成的整个过程，而整个渲染过程是在一个循环里持续产生帧。那么“帧的同步”想探究的就是：帧何时开始？帧循环和屏幕固定的刷新如何对应？（引擎版本2019.4） ​    先看一下涉及到的概念： ​    Application.targetFrameRate，这个比较常见，用户可以设置一个期望的帧率。 ​    QualityS">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Chen Shuwen&#39;s Tech Site">
+<meta property="og:url" content="http://example.com/2023/01/10/Unity%E5%B8%A7%E5%90%8C%E6%AD%A5/index.html">
+<meta property="og:site_name" content="Chen Shuwen&#39;s Tech Site">
+<meta property="og:description" content="Unity帧同步​    帧的同步跟网络的帧同步毫无关系。帧指的是一张图像生成的整个过程，而整个渲染过程是在一个循环里持续产生帧。那么“帧的同步”想探究的就是：帧何时开始？帧循环和屏幕固定的刷新如何对应？（引擎版本2019.4） ​    先看一下涉及到的概念： ​    Application.targetFrameRate，这个比较常见，用户可以设置一个期望的帧率。 ​    QualityS">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2023/01/10/Unity%E5%B8%A7%E5%90%8C%E6%AD%A5/image-20220813195039824.png">
+<meta property="og:image" content="http://example.com/2023/01/10/Unity%E5%B8%A7%E5%90%8C%E6%AD%A5/image-20220813195401156.png">
+<meta property="og:image" content="http://example.com/2023/01/10/Unity%E5%B8%A7%E5%90%8C%E6%AD%A5/image-20220813195442804.png">
+<meta property="og:image" content="http://example.com/2023/01/10/Unity%E5%B8%A7%E5%90%8C%E6%AD%A5/image-20220813195632695.png">
+<meta property="og:image" content="http://example.com/2023/01/10/Unity%E5%B8%A7%E5%90%8C%E6%AD%A5/image-20220813195815252.png">
+<meta property="og:image" content="http://example.com/2023/01/10/Unity%E5%B8%A7%E5%90%8C%E6%AD%A5/image-20220813195850287.png">
+<meta property="article:published_time" content="2023-01-10T04:09:42.440Z">
+<meta property="article:modified_time" content="2023-01-10T04:09:42.440Z">
+<meta property="article:author" content="Chen Shuwen">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://example.com/2023/01/10/Unity%E5%B8%A7%E5%90%8C%E6%AD%A5/image-20220813195039824.png">
+  
+  
+  
+  <title>Chen Shuwen&#39;s Tech Site</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Chen Shuwen&#39;s Tech Site</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text=""></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-01-10 12:09" pubdate>
+          2023年1月10日 中午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          7.3k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          62 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none"></h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="Unity帧同步"><a href="#Unity帧同步" class="headerlink" title="Unity帧同步"></a>Unity帧同步</h1><p>​    帧的同步跟网络的帧同步毫无关系。帧指的是一张图像生成的整个过程，而整个渲染过程是在一个循环里持续产生帧。那么“帧的同步”想探究的就是：帧何时开始？帧循环和屏幕固定的刷新如何对应？（引擎版本2019.4）</p>
+<p>​    先看一下涉及到的概念：</p>
+<p>​    <strong>Application.targetFrameRate</strong>，这个比较常见，用户可以设置一个期望的帧率。</p>
+<p>​    <strong>QualitySettings.vSyncCount</strong>，是硬件垂直同步，0表示不垂直同步，还有1234可以根据硬件刷新频率决定每几个刷新间隔同步一次（比如2，屏幕刷新率是60Hz情况下，游戏会以最高30帧运行）。IOS平台是忽略<a target="_blank" rel="noopener" href="https://docs.unity3d.com/ScriptReference/QualitySettings-vSyncCount.html">QualitySettings.vSyncCount</a>这个值的，系统会根据一帧渲染好的时间在最近一个硬件VBlank时上屏。Android平台两种都支持，但是不能同时使用。但是移动平台出于电量和寿命考虑，是强制VSync的。也就是即使不设置vSyncCount，Present渲染指令也会等待VSync的信号。</p>
+<p>​    <strong>渲染线程模式</strong>，Unity主要分单线程、多线程、Jobfied Rendering和Native Graphic Jobs。无论哪种渲染线程模式，Unity都是同帧渲染的，也就是本帧先更新、筛选好的内容会在本帧提交给GPU进行渲染。不同模式只是考虑渲染部分如何进行并行化，应该会有其他文章分析这部分。</p>
+<h3 id="1、SyncBehaviour-amp-Sync"><a href="#1、SyncBehaviour-amp-Sync" class="headerlink" title="1、SyncBehaviour&amp;Sync"></a>1、SyncBehaviour&amp;Sync</h3><p>​    首先是<strong>同步模式</strong>：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">enum</span> <span class="hljs-title class_">SyncBehaviour</span>  <br>&#123;  <br>    NoSync,  <br>    SyncOutsideOfPlayerLoop,  <br>    SyncInUpdateTime,  <br>    SyncInWaitForPresent  <br>&#125;; <br></code></pre></td></tr></table></figure>
+
+<p>​     不同的同步模式，决定实际同步等待的方式。然后看下如何选择同步模式。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-keyword">if</span> UNITY_GFX_USE_PLATFORM_VSYNC  </span><br>    <span class="hljs-keyword">return</span> SyncOutsideOfPlayerLoop;  <br><span class="hljs-meta">#<span class="hljs-keyword">else</span>  </span><br><span class="hljs-type">const</span> <span class="hljs-type">int</span> vSyncWanted = <span class="hljs-built_in">GetWantedVSyncCount</span>();  <br><span class="hljs-keyword">if</span> (vSyncWanted &gt; <span class="hljs-number">0</span>)  <br>&#123;  <br>    <span class="hljs-keyword">if</span> (vSyncWanted &lt;= <span class="hljs-built_in">GetMaxSupportedVSyncCount</span>())  <br>        <span class="hljs-keyword">return</span> SyncInWaitForPresent;  <br>    <span class="hljs-keyword">else</span>  <br>        <span class="hljs-keyword">return</span> SyncInUpdateTime;  <br>&#125;  <br><span class="hljs-keyword">if</span> (<span class="hljs-built_in">GetActualTargetFrameRate</span>() &gt; <span class="hljs-number">0</span>)  <br>    <span class="hljs-keyword">return</span> SyncInUpdateTime;  <br><span class="hljs-keyword">return</span> NoSync;  <br></code></pre></td></tr></table></figure>
+
+<p>​    通过以上，可以看出分别在什么情况或设置下选择不同的<strong>SyncBehaviour</strong>。其中<strong>UNITY_GFX_USE_PLATFORM_VSYNC</strong>表示在Unity的PlayerLoop之外进行同步等待，通常是操作系统提供的；如果设置了vSyncCount，且支持设置里的Count数，则是<strong>SyncInWaitForPresent</strong>模式。否则设置了targetFrameRate大于0就是<strong>SyncInUpdateTime</strong>模式。</p>
+<p>​    这里主要跟踪游戏中通常选择的模式：SyncInUpdateTime。那么这个模式是如何控制帧的同步的呢？</p>
+<p>​    在Unity更新大循环的Initialization类别有个<strong>PlayerUpdateTime</strong>。这个也是Unity内置的第一个更新系统了，在这里第一时间更新帧时间，为后面系统更新做准备，同时进行了帧的同步控制：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-built_in">GetTimeManager</span>().<span class="hljs-built_in">Sync</span>(TimeManager::InUpdateTime);<br></code></pre></td></tr></table></figure>
+
+<p>​    这个方法在SyncInUpdateTime的模式下就是CPU侧判断是否达到目标帧率的时间，不然<strong>Sleep+Busy Wait</strong>结合来休息一会。Profiler中以<strong>WaitForTargetFPS</strong>标记来看为了达到目标帧率实际同步等待的时间。</p>
+<p>​    Android平台有点特殊，即使是SyncInUpdateTime模式，前文说过也是会强制进行进行VSync的，如果帧率可以被刷新率整除（近似值：余数绝对值&lt;0.01f），那么依然使用垂直同步来达到目标帧率，而不再使用软件层方法。</p>
+<h3 id="2、VSync"><a href="#2、VSync" class="headerlink" title="2、VSync"></a>2、VSync</h3><p>​    有了以上机制，主线程循环可以保证不超过目标帧率，但是这并不能做到应用的帧循环和屏幕固定的刷新对应上。</p>
+<p>​    前面提到过移动平台是强制VSync的，那么理想的情况应该是：引擎可以知道VSync发生的时间点，那么在这之后立即开始执行渲染指令，写入Buffer，尽量在下一次VSync发生前Present。</p>
+<p>​    这样就又回到帧的同步问题了：确保渲染指令的开始是上一次屏幕刷新后立即开始的，这样即使某一帧开销异常大，那么后面通过VSync还是能调整到渲染和屏幕刷新重回正确的频率。所以除了上面的机制控制主线程一帧的时机，主线程还要受到VSync的同步控制。<br>​    这里重点讨论多线程渲染模式，Unity多线程渲染是主线程扮演<strong>生产者</strong>，在<strong>跨线程队列</strong>上产生渲染指令（RCMD），渲染线程扮演<strong>消费者</strong>从队列取出RCMD，然后执行真正的渲染API（GCMD）。如图1：</p>
+<p><img src="/2023/01/10/Unity%E5%B8%A7%E5%90%8C%E6%AD%A5/image-20220813195039824.png" srcset="/img/loading.gif" lazyload alt="image-20220813195039824"></p>
+<p>渲染线程，执行的最后一条Command是PresentFrame：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">case</span> kGfxCmd_PresentFrame:    <br>&#123;    <br>    <span class="hljs-built_in">PROFILER_AUTO</span>(gMTPresentFrame, <span class="hljs-literal">NULL</span>);    <br>    GfxCmdPresentFrame present = stream.<span class="hljs-built_in">ReadValueType</span>&lt;GfxCmdPresentFrame&gt;();    <br>    <span class="hljs-keyword">if</span> (present.blitChannels != kShaderChannelMaskInvalid)    <br>        m_Device-&gt;<span class="hljs-built_in">PresentFrame</span>(present.blitChannels);    <br>    <span class="hljs-keyword">else</span>    <br>        m_Device-&gt;<span class="hljs-built_in">PresentFrame</span>();    <br>    <br>    <span class="hljs-keyword">if</span> (present.signalEvent)    <br>        <span class="hljs-built_in">SignalEvent</span>(kEventTypePresent);    <br>    <span class="hljs-built_in">UnityMemoryBarrier</span>();    <br>    m_PresentFrameID = present.presentFrameID;    <br>    stream.<span class="hljs-built_in">ReadReleaseData</span>(ThreadedStreamBuffer::kSignalRelaxed);    <br>    <span class="hljs-keyword">break</span>;    <br>&#125;    <br></code></pre></td></tr></table></figure>
+
+<p>​    可以看到通过<strong>m_Device-&gt;PresentFrame()<strong>调用就是实际的Buffer上屏的GCMD，那么VSync也同时可能发生在这里。通过Profiler的</strong>Gfx.PresentFrame</strong>标记可以看到<strong>渲染线程上</strong>屏包括vSync的总共耗时。在PresentFrame执行完后，会给主线程发一条同步消息<strong>SignalEvent(kEventTypePresent)</strong> 。在<strong>主线程</strong>一帧的渲染开始前或后（取决于同步时机）调用的**GfxDeviceClient::WaitForPendingPresent()**方法里，通过</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cpp">m_DeviceWorker-&gt;<span class="hljs-built_in">WaitForEvent</span>(GfxDeviceWorker::kEventTypePresent); <br></code></pre></td></tr></table></figure>
+
+<p>   来进行主线程对渲染线程的同步等待。同理<strong>主线程上</strong>这部分耗时在Proflier里通过<strong>Gfx.WaitForPresentOnGfxThread</strong>标记来得到。</p>
+<h3 id="3、总结"><a href="#3、总结" class="headerlink" title="3、总结"></a>3、总结</h3><p>​    最后来梳理下任意一帧：主线程一帧开始更新前收到SyncBehaviour的目标帧率控制，然后可以开始更新，直到<strong>FinishFrameRendering</strong>这一步，同步等待渲染线程，或执行上一帧渲染、或在进行VSync，然后继续提交本帧渲染指令。</p>
+<p>​    当性能分析时观察到Gfx.WaitForPresentOnGfxThread时，已知的是主线程已经迫不及待想进行下一帧渲染了，也就是到了FinishFrameRendering这一步了，新一帧的部分更新都做完了，但是受渲染线程拖累不得不停一下。那么进一步分析就是渲染线程为什么慢，一个可能是 <strong>Camera.Render</strong>指标比较高，说明要渲染的东西太多了，生成和提交指令花费了太多时间，成为瓶颈，其中可能是各种<strong>Gfx.Draw</strong>、<strong>Gfx.SetRenderTarget</strong>等指标来看渲染指令在CPU测开销很高；另一可能是<strong>Gfx.PresentFrame</strong>指标比较高，也就是GPU侧渲染实际执行和垂直同步等待。比如说硬件最高帧率只有60帧，目标帧率非要设置到120帧，而此时应用可以轻松跑到8ms以内，那么Gfx.PresentFrame会相对较高，来让主线程慢下来。从而完成软件、硬件侧每一帧的同步。</p>
+<p>​    当然上面说到的性能指标并不是完全准确的，因为渲染线程和GPU侧不是完全同步的，那么<strong>从CPU侧去衡量GPU的耗时</strong>就是不完全准确的，这些指标主要作为一定的参考。对于GPU的耗时可以通过Command去 <strong>Querry</strong>的方式由GPU来告诉它的时间才更为准确。</p>
+<h3 id="1、再谈VSync"><a href="#1、再谈VSync" class="headerlink" title="1、再谈VSync"></a>1、再谈VSync</h3><p>​    从篇幅（一）粗略了解到移动平台的软硬件同步依赖于VSync，在多线程渲染模式下，完成两个线程的同步。那么本篇需要从这里开始继续深入看下VSync。</p>
+<p>​    在移动平台，高帧率不是首要追求，而是稳定、省电。所以在硬件上通常会支持垂直同步，对于硬件的同步等待成为VBlank，表示扫描线扫描线从扫完一屏到清屏后准备重新开始的这个过程。VSync则表示整个软硬件同步的整个过程，包括对个别不支持垂直同步的已经可能需要操作系统模拟垂直同步，以及即便有硬件的支持，操作系统封装设计上也会引入软件的垂直同步来达到最优调度这个过程，那么这些都称为广义上的VSync。</p>
+<p>​    对于桌面平台，因为显卡、系统、显示器都是各个厂商、架构的，那么为了既没有画面撕裂，又能最大化帧率减少垂直同步的等待时间，产生了G-Sync、FreeSync等显示器和显卡自适应调节的技术规范，来分别需要显卡提供同步信号，显示器调节刷新率来支持。</p>
+<p>​    而对于移动平台都是一体机，且有更稳定的需求，则有系统层面对VSync提供了更多控制权，不仅仅是直接使用硬件垂直同步，而是同时在系统中增加了更多的调度。IOS因为软硬件整体都相对封闭，控制方面没有暴漏过多系统API，但是相信系统底层也有保证这部分的高效调度。<br>​    Android因为其开放性，可以更多窥探内部实现原理。Android在2012年提出Project Butter黄油计划，为了解决曾经影响严重UI卡顿问题，并在Android 4.1开始使用这个机制。并在此之后继续进行了一系列演变，其主要内容是：1、引入硬件VBlank信号进行同步；2、多级缓冲Triple Buffer；3、VSync虚拟化，将硬件VBlank信号转成软件VSync信号供其他系统（Choreographer、SurfaceFlinger）使用。</p>
+<p><img src="/2023/01/10/Unity%E5%B8%A7%E5%90%8C%E6%AD%A5/image-20220813195401156.png" srcset="/img/loading.gif" lazyload alt="image-20220813195401156"></p>
+<p>  如图1，硬件同步信号在DispalySync模块中分成两条同步信号VSync App给Choreogrpaher使用，VSync SF给SurfaceFlinger使用，两个系统分不同线程单独做相应处理。Choreographer目的是给上层App提供稳定的时机进行渲染，其实也就是我们应用层面得到的VSync信号。SurfaceFlinger目的是接收到硬件VSync信号时唤醒工作（减少不必要运行开销），遍历每一个提交了的缓冲区，没提交的忽略，如果有新的缓冲区则获取新缓冲区，否则使用之前的缓冲区，然后通知Hardware Composer将所有可见缓冲区合成一张图，如图2。</p>
+<p><img src="/2023/01/10/Unity%E5%B8%A7%E5%90%8C%E6%AD%A5/image-20220813195442804.png" srcset="/img/loading.gif" lazyload alt="image-20220813195442804"></p>
+<p>  同时SurfaceFlinger还负责给DispSync发送反馈时间戳（图1，retire fence timestamps），来判断软硬件的VSync是否在一定误差内，来决定是否需要重新启用硬件VBlank同步流程。</p>
+<p>​    Android因为开源不同厂商对以上过程都有一定程度自定义的权限，或者以上步骤中一些参数可以由厂商自行配置，如<strong>VSync Offset</strong>，表示VSync App和VSync SF之间的一个偏移，可以让SurfaceFlinger稍晚于Choreographer工作，这样可以让APP层当帧的内容能在同一个周期内上屏，但具体值可以由厂商自行根据软硬件条件决定。</p>
+<p>​    当然以上过程还有许多值得深挖的地方，不同厂商的实现也可能与官方有所区别，这里粗略地总结下主要为了本文主题，Unity内部仍然会在以上基础上进行开发，来更深入地优化渲染过程。</p>
+<h3 id="2、长短帧抖动"><a href="#2、长短帧抖动" class="headerlink" title="2、长短帧抖动"></a>2、长短帧抖动</h3><p>​    《<a target="_blank" rel="noopener" href="https://developer.android.com/games/sdk/frame-pacing#frame_stats">Achieve proper frame pacing</a>》通过这篇文档可以详细了解常见长、短帧抖动产生的原因，以及Android团队给出的解决方案：Swappy库，这里继续看Unity各平台下如何应用的。<br>​    先再来看下Unity多线程渲染的流程：</p>
+<p><img src="/2023/01/10/Unity%E5%B8%A7%E5%90%8C%E6%AD%A5/image-20220813195632695.png" srcset="/img/loading.gif" lazyload alt="image-20220813195632695"></p>
+<p>如图3，基本描述了篇幅（一）的所有内容，这里描述的是CPU、GPU均有较多富余的理想情况。根据上面文章，当长、短帧出现的时候按照上一篇所讲的内容，就会发生抖动。所以继续看回渲染线程<strong>PresentFrame</strong>的地方：</p>
+<p>​    在这里是真正用当前使用的渲染器在这一帧所有物体渲染完后交换缓冲区上屏，先看下Android平台的GLES渲染器的情况，在WindowContextEGL::Present方法中调用SwappyGL::Swap。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-function"><span class="hljs-type">bool</span> <span class="hljs-title">Swap</span><span class="hljs-params">(EGLDisplay display, EGLSurface surface)</span>  </span><br><span class="hljs-function"></span>&#123;  <br>    <span class="hljs-keyword">if</span> (Swappy::<span class="hljs-built_in">IsEnabledAndActive</span>())  <br>    &#123;  <br>        <span class="hljs-keyword">return</span> <span class="hljs-built_in">SwappyGL_swap</span>(display, surface);  <br>    &#125;  <br>    <span class="hljs-keyword">else</span>  <br>    &#123;  <br>        <span class="hljs-keyword">return</span> <span class="hljs-built_in">eglSwapBuffers</span>(display, surface);  <br>    &#125;  <br>&#125;  <br></code></pre></td></tr></table></figure>
+
+<p>​    Swappy库的开关在ProjectSettings里，如图4：</p>
+<p><img src="/2023/01/10/Unity%E5%B8%A7%E5%90%8C%E6%AD%A5/image-20220813195815252.png" srcset="/img/loading.gif" lazyload alt="image-20220813195815252"></p>
+<p> 如果没有打开则直接调GLES指令<strong>eglSwapBuffers</strong>。如果开启了则交由Swappy去控制。</p>
+<p>​    分别通过<strong>eglPresentationTimeANDROID</strong>设置present time解决短帧问题、**eglCreateSyncKHR(EGL_SYNC_FENCE_KHR)**来同步等待解决长帧问题。</p>
+<p>​    其中前一个问题需要考虑合适的present time，除了设置target frame rate可以影响外，还需要考虑unity提供的<strong>OnDemandFrameInterval</strong>，这个机制是分离主线程更新和渲染的频率，控制每几个更新帧做执行一次渲染操作。</p>
+<p>​    长帧问题则是如图5、6描述：</p>
+<p><img src="/2023/01/10/Unity%E5%B8%A7%E5%90%8C%E6%AD%A5/image-20220813195850287.png" srcset="/img/loading.gif" lazyload alt="image-20220813195850287"></p>
+<p> 为了避免一个长帧的影响扩散，如果B只有一帧显示，卡顿会更明显一点。因为垂直同步等待并不是每帧都会发生，所以通过Fence Sync确保C帧Present的时间是在B帧Present之后才开始，这样B帧和C帧的时间均正常了。</p>
+<p>​    同时Swappy还支持<strong>AutoSwapInterval</strong>和<strong>AutoPipelineMode</strong>，分别可以自动控制present时间和开启Pipeline模式，Pipeline模式可以自动延帧，以增加延迟来减少帧耗时，但是Unity这里两者都是关闭的。</p>
+<p>​    IOS平台相对简单一些：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">extern</span> <span class="hljs-string">&quot;C&quot;</span> <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">PresentMTL</span><span class="hljs-params">(UnityDisplaySurfaceMTL* surface)</span>  </span><br><span class="hljs-function"></span>&#123;  <br>    <span class="hljs-keyword">if</span> (surface-&gt;drawable)  <br>    &#123;  <br>    <span class="hljs-meta">#<span class="hljs-keyword">if</span> PLATFORM_IOS || PLATFORM_TVOS  </span><br>        <span class="hljs-keyword">if</span> (@<span class="hljs-built_in">available</span>(iOS <span class="hljs-number">10.3</span>, tvOS <span class="hljs-number">10.2</span>, *))  <br>        &#123;  <br>            <span class="hljs-type">const</span> <span class="hljs-type">int</span> targetFPS = <span class="hljs-built_in">UnityGetTargetFPS</span>(); <span class="hljs-built_in">assert</span>(targetFPS &gt; <span class="hljs-number">0</span>);  <br>            [<span class="hljs-built_in">UnityCurrentMTLCommandBuffer</span>() presentDrawable: surface-&gt;drawable afterMinimumDuration: <span class="hljs-number">1.0</span> / targetFPS];  <br>            <span class="hljs-keyword">return</span>;  <br>        &#125;  <br>    <span class="hljs-meta">#<span class="hljs-keyword">endif</span>  </span><br>  <br>        <span class="hljs-comment">// note that we end up here if presentDrawable: afterMinimumDuration: is not supported  </span><br>        [<span class="hljs-built_in">UnityCurrentMTLCommandBuffer</span>() presentDrawable: surface-&gt;drawable];  <br>    &#125;  <br>&#125;  <br></code></pre></td></tr></table></figure>
+
+<p>​    <strong>presentDrawable</strong>的<strong>afterMinimumDuration</strong>可以控制present time。</p>
+<figure class="highlight reasonml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs reasonml">- (void)callbackFramerateChange:(<span class="hljs-built_in">int</span>)targetFPS  <br>&#123;  <br>    <span class="hljs-built_in">int</span> maxFPS = (<span class="hljs-built_in">int</span>)<span class="hljs-literal">[UIS<span class="hljs-identifier">creen</span> <span class="hljs-identifier">mainScreen</span>]</span>.maximumFramesPerSecond;  <br>    <span class="hljs-keyword">if</span> (targetFPS &lt;= <span class="hljs-number">0</span>)  <br>        targetFPS = <span class="hljs-constructor">UnityGetTargetFPS()</span>;  <br>    <span class="hljs-keyword">if</span> (targetFPS &gt; maxFPS)  <br>        targetFPS = maxFPS;  <br>  <br>    _enableRunLoopAcceptInput = (targetFPS<span class="hljs-operator"> == </span>maxFPS<span class="hljs-operator"> &amp;&amp; </span><span class="hljs-constructor">UnityDeviceCPUCount()</span> &gt; <span class="hljs-number">1</span>);  <br>    <span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">_displayLink</span>.</span></span>preferredFramesPerSecond = targetFPS;  <br>&#125; <br></code></pre></td></tr></table></figure>
+
+<p>​    <strong>CADisplayLink</strong>的<strong>preferredFramesPerSecond</strong>可以设置一个预期的刷新率。如果屏幕最高刷新率是60，那么可以自动根据帧率调节至15、20、30或60。</p>
+<p>​    其实在写本篇过程中还是存在很多疑惑的，有些疑惑可能只有深入不同平台操作系统、驱动和厂商实现等才能有个答案，那么本篇也算是对这个过程的一个初探和记录，如果有一天需要更深入这里去做优化，或许可以由此开始。</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div></div>
+      <div>http://example.com/2023/01/10/Unity帧同步/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Chen Shuwen</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年1月10日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

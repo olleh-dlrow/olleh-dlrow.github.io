@@ -1,0 +1,772 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Chen Shuwen">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="UnityShader-基础纹理纹理映射(texture mapping)：使用一张图片来控制模型外观 纹理映射坐标(texture-mapping)：定义了该顶点在纹理中对应的2D坐标，通常使用二维变量(u, v)表示，也被称为UV坐标，范围被归一化到[0, 1] 纹理采样时使用的纹理坐标不一定在[0, 1]范围内，会根据平铺模式决定如何采样 在Unity中，纹理空间符合OpenGL传统，原点位">
+<meta property="og:type" content="article">
+<meta property="og:title" content="UnityShader-基础纹理">
+<meta property="og:url" content="http://example.com/2021/07/15/UnityShader-%E5%9F%BA%E7%A1%80%E7%BA%B9%E7%90%86/index.html">
+<meta property="og:site_name" content="Chen Shuwen&#39;s Tech Site">
+<meta property="og:description" content="UnityShader-基础纹理纹理映射(texture mapping)：使用一张图片来控制模型外观 纹理映射坐标(texture-mapping)：定义了该顶点在纹理中对应的2D坐标，通常使用二维变量(u, v)表示，也被称为UV坐标，范围被归一化到[0, 1] 纹理采样时使用的纹理坐标不一定在[0, 1]范围内，会根据平铺模式决定如何采样 在Unity中，纹理空间符合OpenGL传统，原点位">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2021/07/15/UnityShader-%E5%9F%BA%E7%A1%80%E7%BA%B9%E7%90%86/image-20210823153409761.png">
+<meta property="og:image" content="http://example.com/2021/07/15/UnityShader-%E5%9F%BA%E7%A1%80%E7%BA%B9%E7%90%86/texture_properties.png">
+<meta property="article:published_time" content="2021-07-15T14:12:03.000Z">
+<meta property="article:modified_time" content="2023-01-10T04:09:41.223Z">
+<meta property="article:author" content="Chen Shuwen">
+<meta property="article:tag" content="Unity">
+<meta property="article:tag" content="Shader">
+<meta property="article:tag" content="Texture">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://example.com/2021/07/15/UnityShader-%E5%9F%BA%E7%A1%80%E7%BA%B9%E7%90%86/image-20210823153409761.png">
+  
+  
+  
+  <title>UnityShader-基础纹理 - Chen Shuwen&#39;s Tech Site</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Chen Shuwen&#39;s Tech Site</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="UnityShader-基础纹理"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2021-07-15 22:12" pubdate>
+          2021年7月15日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          15k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          128 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">UnityShader-基础纹理</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="UnityShader-基础纹理"><a href="#UnityShader-基础纹理" class="headerlink" title="UnityShader-基础纹理"></a>UnityShader-基础纹理</h1><p>纹理映射(texture mapping)：使用一张图片来控制模型外观</p>
+<p>纹理映射坐标(texture-mapping)：定义了该顶点在纹理中对应的2D坐标，通常使用二维变量(u, v)表示，也被称为UV坐标，范围被归一化到[0, 1]</p>
+<p>纹理采样时使用的纹理坐标不一定在[0, 1]范围内，会根据平铺模式决定如何采样</p>
+<p>在Unity中，纹理空间符合OpenGL传统，原点位于纹理左下角</p>
+<p>纹理的处理过程可以用以下图片内容描述：</p>
+<p><img src="/2021/07/15/UnityShader-%E5%9F%BA%E7%A1%80%E7%BA%B9%E7%90%86/image-20210823153409761.png" srcset="/img/loading.gif" lazyload alt="image-20210823153409761"></p>
+<ul>
+<li><p>在应用阶段，物体上每个顶点的纹理坐标就已经被计算出来，并伴随顶点位置信息一齐传递给几何阶段</p>
+</li>
+<li><p>在几何阶段，纹理坐标会经过平铺和位移变换，生成所谓的UV坐标，这时利用UV坐标可以计算出该顶点采样的像素值，算法类似于插值：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-keyword">struct</span> PIXEL <span class="hljs-title function_">GetTargetPixelWithUV</span><span class="hljs-params">()</span><br>&#123;<br>    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">PIXEL</span> <span class="hljs-title">pixels</span>[<span class="hljs-title">HORIZONTAL_AMOUNT_OF_PIXELS</span>][<span class="hljs-title">VERTICAL_AMOUNT_OF_PIXELS</span>];</span><br>    <span class="hljs-type">int</span> row = Lerp(<span class="hljs-number">0</span>, HORIZONTAL_AMOUNT_OF_PIXELS, uv.x);<br>    <span class="hljs-type">int</span> col = Lerp(<span class="hljs-number">0</span>, VERTICAL_AMOUNT_OF_PIXELS, uv.y);<br>    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">PIXEL</span> <span class="hljs-title">target</span> =</span> pixels[row][col];<br>    <span class="hljs-keyword">return</span> target;<br>&#125;<br></code></pre></td></tr></table></figure></li>
+</ul>
+<h2 id="单张纹理"><a href="#单张纹理" class="headerlink" title="单张纹理"></a>单张纹理</h2><p>Shader实现：</p>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br></pre></td><td class="code"><pre><code class="hljs glsl"><span class="hljs-comment">// Upgrade <span class="hljs-doctag">NOTE:</span> replaced &#x27;_Object2World&#x27; with &#x27;unity_ObjectToWorld&#x27;</span><br><br>Shader &quot;AABB/Single Texture&quot; &#123;<br>    Properties &#123;<br>        _Color (&quot;Color Tint&quot;, Color) = (<span class="hljs-number">1</span>, <span class="hljs-number">1</span>, <span class="hljs-number">1</span>, <span class="hljs-number">1</span>)<br>        _MainTex (&quot;Main Tex&quot;, <span class="hljs-number">2</span>D) = &quot;white&quot; &#123;&#125;<br>        _Specular (&quot;Specular&quot;, Color) = (<span class="hljs-number">1</span>, <span class="hljs-number">1</span>, <span class="hljs-number">1</span>, <span class="hljs-number">1</span>)<br>        _Gloss (&quot;Gloss&quot;, Range(<span class="hljs-number">8.0</span>, <span class="hljs-number">256</span>)) = <span class="hljs-number">20</span><br>    &#125;<br>    SubShader &#123;<br>        Pass &#123;<br>            Tags &#123; &quot;LightMode&quot; = &quot;ForwardBase&quot; &#125;<br><br>            CGPROGRAM<br><br>            <span class="hljs-meta">#include &quot;UnityCG.cginc&quot;</span><br>            <span class="hljs-meta">#include &quot;Lighting.cginc&quot;</span><br>            <span class="hljs-meta">#pragma vertex vert</span><br>            <span class="hljs-meta">#pragma fragment frag</span><br><br>            fixed4 _Color;<br>            <span class="hljs-type">sampler2D</span> _MainTex;<br>            <span class="hljs-comment">// 声明纹理的某个属性：纹理名_ST, S: scale T: translation</span><br>            <span class="hljs-comment">// _MainTex_ST.xy 存储缩放值， .zw存放偏移值</span><br>            float4 _MainTex_ST;<br>            fixed4 _Specular;<br>            <span class="hljs-type">float</span> _Gloss;<br><br>            struct a2v &#123;<br>                float4 vertex : POSITION;<br>                float3 normal : NORMAL;<br>                float4 texcoord : TEXCOORD0;<br>            &#125;;<br><br>            struct v2f &#123;<br>                float4 pos : SV_POSITION;<br>                float3 worldNormal : TEXCOORD0;<br>                float3 worldPos : TEXCOORD1;<br>                float2 uv : TEXCOORD2;<br>            &#125;;<br><br>            v2f vert(a2v v) &#123;<br>                v2f o;<br>                o.pos = UnityObjectToClipPos(v.vertex);<br>                o.worldNormal = UnityObjectToWorldNormal(v.normal);<br>                o.worldPos = mul(unity_ObjectToWorld, v.vertex).xyz;<br><br>                <span class="hljs-comment">//o.uv = v.texcoord.xy * _MainTex_ST.xy + _MainTex_ST.zw;</span><br>                <span class="hljs-comment">// built-in function</span><br>                o.uv = TRANSFORM_TEX(v.texcoord, _MainTex);<br><br>                <span class="hljs-keyword">return</span> o;<br>            &#125;<br><br>            fixed4 frag(v2f i): SV_Target &#123;<br>                fixed3 worldNormal = <span class="hljs-built_in">normalize</span>(i.worldNormal);<br>                fixed3 worldLightDir = <span class="hljs-built_in">normalize</span>(UnityWorldSpaceLightDir(i.worldPos));<br><br>                <span class="hljs-comment">// 使用CG的tex2D函数进行采样，第一个参数是需要采样的纹理。第二个参数是纹理坐标，返回计算得到的纹素（纹理像素）值</span><br>                <span class="hljs-comment">// 使用采样结果和_Color的乘积作为材质的反射率</span><br>                fixed3 albedo = tex2D(_MainTex, i.uv).rgb * _Color.rgb;<br><br>                fixed3 ambient = UNITY_LIGHTMODEL_AMBIENT.xyz * albedo;<br><br>                fixed3 diffuse = _LightColor0.rgb * albedo * saturate(<span class="hljs-built_in">dot</span>(worldNormal, worldLightDir));<br><br>                <span class="hljs-comment">// fixed3 viewDir = normalize(_WorldSpaceCameraPos.xyz - i.worldPos.xyz);</span><br>                <span class="hljs-comment">// 输入为世界空间中的顶点位置</span><br>                fixed3 viewDir = <span class="hljs-built_in">normalize</span>(UnityWorldSpaceViewDir(i.worldPos));<br><br>                <span class="hljs-comment">// Vec_h = (Vec3_view + Vec3_light) / (length(Vec3_view + Vec3_light))</span><br>                fixed3 halfDir = <span class="hljs-built_in">normalize</span>(worldLightDir + viewDir);<br><br>                <span class="hljs-comment">// C_specular = (C_light * m_specular) * (max(0, dot(Vec3_normal * Vec3_h)))**m_gloss</span><br>                fixed3 specular = _LightColor0.rgb * _Specular.rgb * <span class="hljs-built_in">pow</span>(<span class="hljs-built_in">max</span>(<span class="hljs-number">0</span>, <span class="hljs-built_in">dot</span>(worldNormal, halfDir)), _Gloss);<br><br>                <span class="hljs-keyword">return</span> fixed4(ambient + diffuse + specular, <span class="hljs-number">1.0</span>);<br>            &#125;<br>            ENDCG<br>        &#125;<br>    &#125;<br><br>    Fallback &quot;Specular&quot;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p><strong>纹理的属性设置：</strong></p>
+<p><img src="/2021/07/15/UnityShader-%E5%9F%BA%E7%A1%80%E7%BA%B9%E7%90%86/texture_properties.png" srcset="/img/loading.gif" lazyload alt="texture_properties.png-29kB"></p>
+<ul>
+<li>Alpha from Grayscale：勾选后，透明通道的值将会由每个像素的灰度值生成</li>
+<li>Wrap Mode：决定纹理坐标超过[0, 1]后将会如何被平铺。有两种模式：<ul>
+<li>Repeat：如果纹理坐标超过1，则整数部分被舍弃，直接使用小数部分进行采样，结果是纹理不断重复</li>
+<li>Clamp：如果纹理大于1，则被截取到1，如果小于0，则被截取到0</li>
+</ul>
+</li>
+<li>Filter Mode：决定纹理由于变换而产生拉伸时将会采用哪种滤波模式。支持3种模式：Point, Bilinear, Trilinear。得到的图片滤波效果依次提升，但是耗费的性能也会增加<ul>
+<li>Point：使用最近邻(nearest neighbor)滤波，在放大或者缩小时，采样像素数目只有一个</li>
+<li>Bilinear：线性滤波，会找到4个邻近像素进行插值混合，<strong>通常选择该模式</strong></li>
+<li>Trilinear：会在多级渐远纹理之间进行混合，单张纹理下和Bilinear效果相同</li>
+</ul>
+</li>
+</ul>
+<p><strong>多级渐进纹理(mipmapping)：</strong>将原纹理提前用滤波处理来得到很多更小的图像，得到多层较小纹理，当物体远离摄像机时，直接使用较小纹理进行计算。在Unity中通过勾选Generate Mip Maps来实现</p>
+<blockquote>
+<p>注：这里我的理解是，假设原来拥有128x128大小的纹理和平面，两者刚好贴合，当平面因为远离摄像机而面积变小后（经过了透视除法，x, y,z的坐标值被除以w），经过屏幕映射而包围的像素数目减少，假设为64x64像素大小，此时采集128x128大小的纹理时，中间会间隔一个像素无法被采集到，因此容易出现马赛克或者锯齿，丢失细节（在LearnOpenGL中说还会导致内存浪费，我暂时不能理解），因此我们可以提前将纹理以合适的方式处理好（而不一定是默认插值方式），并生成对应的小纹理，这样采样时就能够控制细节。</p>
+</blockquote>
+<p>纹理最大尺寸(Max Size)：如果导入纹理超过设置的最大尺寸，则会将纹理缩放为该最大分辨率。导入纹理大小最好时2的幂，有利于存储</p>
+<p>纹理模式(Format)：影响纹理的精度和占用内存</p>
+<h2 id="凹凸映射-bump-mapping"><a href="#凹凸映射-bump-mapping" class="headerlink" title="凹凸映射(bump mapping)"></a>凹凸映射(bump mapping)</h2><p>目的：使用一张纹理来修改模型表面的法线，以提供更多的细节，让模型看起来凹凸不平</p>
+<p>主要实现方法分为高度纹理(height map)和法线纹理(normal map)</p>
+<h3 id="高度纹理"><a href="#高度纹理" class="headerlink" title="高度纹理"></a>高度纹理</h3><p>高度纹理使用一张高度图来实现凹凸映射，高度图中存储强度值，用于表示模型表面局部的海拔高度</p>
+<p>缺点：计算复杂，不能直接得到表面法线，需要由灰度值计算获得</p>
+<h3 id="法线纹理"><a href="#法线纹理" class="headerlink" title="法线纹理"></a>法线纹理</h3><p>存储表面的法线方向，法线和像素之间的映射关系为：<br>$$<br>pixel &#x3D; \frac{normal + 1}{2}<br>$$<br>法线纹理按照坐标系的不同分为**模型空间下的法线纹理(object-space normal map)<strong>和</strong>切线空间下的法线纹理(tangent-space normal map)**。一般选择后者，因为切线空间下的法线纹理记录的是相对法线信息，能够适应完全不同的网格。</p>
+<p><strong>切线空间：</strong></p>
+<p>原点为顶点，z轴是顶点的法线方向，x轴是切线方向，y轴是副切线方向</p>
+<p><strong>在切线空间下计算：</strong></p>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br></pre></td><td class="code"><pre><code class="hljs glsl">Shader &quot;Normal Map In Tangent Space&quot; &#123;<br>    Properties &#123;<br>        _Color(&quot;Color Tint&quot;, Color) = (<span class="hljs-number">1</span>, <span class="hljs-number">1</span>, <span class="hljs-number">1</span>, <span class="hljs-number">1</span>)<br>        _MainTex(&quot;Main Tex&quot;, <span class="hljs-number">2</span>D) = &quot;white&quot; &#123;&#125;<br>        <span class="hljs-comment">// bump: Unity内置的法线纹理,当没有提供任何法线纹理时。&quot;bump&quot;对应模型自带的法线信息</span><br>        _BumpMap(&quot;Normal Map&quot;, <span class="hljs-number">2</span>D) = &quot;bump&quot; &#123;&#125;<br>        <span class="hljs-comment">// 控制凹凸程度，为0时。法线纹理不会对光照产生任何影响</span><br>        _BumpScale(&quot;Bump Scale&quot;, Float) = <span class="hljs-number">1.0</span><br>        _Specular(&quot;Specular&quot;, Color) = (<span class="hljs-number">1</span>, <span class="hljs-number">1</span>, <span class="hljs-number">1</span>, <span class="hljs-number">1</span>)<br>        _Gloss(&quot;Gloss&quot;, Range(<span class="hljs-number">8.0</span>, <span class="hljs-number">256</span>)) = <span class="hljs-number">20.0</span><br>    &#125;<br><br>    SubShader &#123;<br>        Pass &#123;<br>            Tags &#123; &quot;LightMode&quot; = &quot;ForwardBase&quot; &#125;<br><br>            CGPROGRAM<br>            <span class="hljs-meta">#include &quot;Lighting.cginc&quot;</span><br>            <span class="hljs-meta">#pragma vertex vert</span><br>            <span class="hljs-meta">#pragma fragment frag</span><br><br>            fixed4 _Color;<br>            <span class="hljs-type">sampler2D</span> _MainTex;<br>            float4 _MainTex_ST;<br>            <span class="hljs-type">sampler2D</span> _BumpMap;<br>            float4 _BumpMap_ST;<br>            <span class="hljs-type">float</span> _BumpScale;<br>            fixed4 _Specular;<br>            <span class="hljs-type">float</span> _Gloss;<br><br>            struct a2v &#123;<br>                float4 vertex : POSITION;<br>                float3 normal : NORMAL;<br>                <span class="hljs-comment">// tangent的xyz分量存放切线向量，而w分量决定副切线的方向性</span><br>                float4 tangent : TANGENT;<br>                float4 texcoord : TEXCOORD0;<br>            &#125;;<br><br>            struct v2f &#123;<br>                float4 pos : SV_POSITION;<br>                float4 uv : TEXCOORD0;<br>                float3 lightDir : TEXCOORD1;<br>                float3 viewDir :  TEXCOORD2;<br>            &#125;;<br><br>            v2f vert(a2v v) &#123;<br>                v2f o;<br>                o.pos = UnityObjectToClipPos(v.vertex);<br>                <span class="hljs-comment">// 存储纹理坐标</span><br>                o.uv.xy = v.texcoord.xy * _MainTex_ST.xy + _MainTex_ST.zw;<br>                <span class="hljs-comment">// 存储法线纹理坐标</span><br>                o.uv.zw = v.texcoord.xy * _BumpMap_ST.xy + _BumpMap_ST.zw;<br><br>                <span class="hljs-comment">// float3 binormal = cross(normalize(v.normal), normalize(v.tangent.xyz)) * v.tangent.w;</span><br>                <span class="hljs-comment">// Construct a matrix which transform vectors from object space to tangent space</span><br>                <span class="hljs-comment">// float3x3 rotation = float3x3(v.tangent.xyz, binormal, v.normal);</span><br>                <span class="hljs-comment">// Or just use the built-in macro</span><br>                TANGENT_SPACE_ROTATION;<br><br>                <span class="hljs-comment">// Transform the light direction from object space to tangent space</span><br>                o.lightDir = mul(rotation, ObjSpaceLightDir(v.vertex)).xyz;<br>                <span class="hljs-comment">// Transform the view direction from object space to tangent space</span><br>                o.viewDir = mul(rotation, ObjSpaceViewDir(v.vertex)).xyz;<br><br>                <span class="hljs-keyword">return</span> o;<br>            &#125;<br><br>            fixed4 frag(v2f i): SV_Target &#123;<br>                fixed3 tangentLightDir = <span class="hljs-built_in">normalize</span>(i.lightDir);<br>                fixed3 tangentViewDir = <span class="hljs-built_in">normalize</span>(i.viewDir);<br><br>                <span class="hljs-comment">// Get the texel in the normal map</span><br>                fixed4 packedNormal = tex2D(_BumpMap, i.uv.zw);<br>                fixed3 tangentNormal;<br><br>                <span class="hljs-comment">// If the texture is not marked as &quot;Normal map&quot;</span><br>                <span class="hljs-comment">// tangentNormal.xy = (packedNormal.xy * 2 - 1) * _BumpScale;</span><br>                <span class="hljs-comment">// tangentNormal.z = sqrt(1.0 - saturate(dot(tangentNormal.xy, tangentNormal.xy)));</span><br><br>                <span class="hljs-comment">// Or mark the texture as &quot;Normal map&quot;, and use the built-in function</span><br>                <span class="hljs-comment">// Unity会根据不同平台选择压缩算法，因此使用内置函数获得切线向量会更加安全</span><br>                tangentNormal = UnpackNormal(packedNormal);<br>                tangentNormal.xy *= _BumpScale;<br>                <span class="hljs-comment">// 当_BumpScale越大时，xy的值也就越大，计算出的z值越小，凹凸程度越大</span><br>                <span class="hljs-comment">// 注意到，当tangentNormal.xy为0时，法线方向就为(0, 0, 1)，即默认的法线方向，没有用到凹凸纹理</span><br>                tangentNormal.z = <span class="hljs-built_in">sqrt</span>(<span class="hljs-number">1.0</span> - saturate(<span class="hljs-built_in">dot</span>(tangentNormal.xy, tangentNormal.xy)));<br><br>                <span class="hljs-comment">// 使用CG的tex2D函数进行采样，第一个参数是需要采样的纹理。第二个参数是纹理坐标，返回计算得到的纹素（纹理像素）值</span><br>                <span class="hljs-comment">// 此过程类似于映射，即该片段对应的uv的值被映射到纹理图片的某个像素上，然后对该像素进行采样作为需求的颜色值</span><br>                <span class="hljs-comment">// 使用采样结果和_Color的乘积作为材质的反射率</span><br>                fixed3 albedo = tex2D(_MainTex, i.uv).rgb * _Color.rgb;<br><br>                fixed3 ambient = UNITY_LIGHTMODEL_AMBIENT.xyz * albedo;<br><br>                fixed3 diffuse = _LightColor0.rgb * albedo * saturate(<span class="hljs-built_in">dot</span>(tangentNormal, tangentLightDir));<br><br>                <span class="hljs-comment">// Vec_h = (Vec3_view + Vec3_light) / (length(Vec3_view + Vec3_light))</span><br>                fixed3 halfDir = <span class="hljs-built_in">normalize</span>(tangentLightDir + tangentViewDir);<br><br>                <span class="hljs-comment">// C_specular = (C_light * m_specular) * (max(0, dot(Vec3_normal * Vec3_h)))**m_gloss</span><br>                fixed3 specular = _LightColor0.rgb * _Specular.rgb * <span class="hljs-built_in">pow</span>(<span class="hljs-built_in">max</span>(<span class="hljs-number">0</span>, <span class="hljs-built_in">dot</span>(tangentNormal, halfDir)), _Gloss);<br><br>                <span class="hljs-keyword">return</span> fixed4(ambient + diffuse + specular, <span class="hljs-number">1.0</span>);<br>            &#125;<br>            ENDCG<br><br>        &#125;<br>    &#125;<br>    Fallback &quot;Specular&quot;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p><strong>在世界空间下计算：</strong></p>
+<p>基本思想：在顶点着色器中计算从切线空间到世界空间的变换矩阵，并把它传递给片元着色器。变换矩阵的计算可以由切线空间的标准基在世界空间下的表示得到</p>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br></pre></td><td class="code"><pre><code class="hljs glsl">Shader &quot;Normal Map In World Space&quot; &#123;<br>    Properties &#123;<br>        _Color(&quot;Color Tint&quot;, Color) = (<span class="hljs-number">1</span>, <span class="hljs-number">1</span>, <span class="hljs-number">1</span>, <span class="hljs-number">1</span>)<br>        _MainTex(&quot;Main Tex&quot;, <span class="hljs-number">2</span>D) = &quot;white&quot; &#123;&#125;<br>        <span class="hljs-comment">// bump: Unity内置的法线纹理,当没有提供任何法线纹理时。&quot;bump&quot;对应模型自带的法线信息</span><br>        _BumpMap(&quot;Normal Map&quot;, <span class="hljs-number">2</span>D) = &quot;bump&quot; &#123;&#125;<br>        <span class="hljs-comment">// 控制凹凸程度，为0时。法线纹理不会对光照产生任何影响</span><br>        _BumpScale(&quot;Bump Scale&quot;, Float) = <span class="hljs-number">1.0</span><br>        _Specular(&quot;Specular&quot;, Color) = (<span class="hljs-number">1</span>, <span class="hljs-number">1</span>, <span class="hljs-number">1</span>, <span class="hljs-number">1</span>)<br>        _Gloss(&quot;Gloss&quot;, Range(<span class="hljs-number">8.0</span>, <span class="hljs-number">256</span>)) = <span class="hljs-number">20.0</span><br>    &#125;<br><br>    SubShader &#123;<br>        Pass &#123;<br>            Tags &#123; &quot;LightMode&quot; = &quot;ForwardBase&quot; &#125;<br><br>            CGPROGRAM<br>            <span class="hljs-meta">#include &quot;Lighting.cginc&quot;</span><br>            <span class="hljs-meta">#pragma vertex vert</span><br>            <span class="hljs-meta">#pragma fragment frag</span><br><br>            fixed4 _Color;<br>            <span class="hljs-type">sampler2D</span> _MainTex;<br>            float4 _MainTex_ST;<br>            <span class="hljs-type">sampler2D</span> _BumpMap;<br>            float4 _BumpMap_ST;<br>            <span class="hljs-type">float</span> _BumpScale;<br>            fixed4 _Specular;<br>            <span class="hljs-type">float</span> _Gloss;<br><br>            struct a2v &#123;<br>                float4 vertex : POSITION;<br>                float3 normal : NORMAL;<br>                float4 tangent : TANGENT;<br>                float4 texcoord : TEXCOORD0;<br>            &#125;;<br><br>            struct v2f &#123;<br>                float4 pos : SV_POSITION;<br>                float4 uv : TEXCOORD0;<br>                <span class="hljs-comment">// 目标：存储从切线空间到世界空间的变换矩阵，用于对法线贴图中的法线进行变换</span><br>                <span class="hljs-comment">// 该矩阵由切线空间的坐标轴组成，即x：切线，y：副切线，z：法线</span><br>                float4 TtoW0 : TEXCOORD1;<br>                float4 TtoW1 : TEXCOORD2;<br>                float4 TtoW2 : TEXCOORD3;<br>            &#125;;<br><br>            v2f vert(a2v v) &#123;<br>                v2f o;<br>                o.pos = UnityObjectToClipPos(v.vertex);<br>                <span class="hljs-comment">// 存储纹理坐标</span><br>                o.uv.xy = v.texcoord.xy * _MainTex_ST.xy + _MainTex_ST.zw;<br>                <span class="hljs-comment">// 存储法线纹理坐标</span><br>                o.uv.zw = v.texcoord.xy * _BumpMap_ST.xy + _BumpMap_ST.zw;<br><br>                float3 worldPos = mul(unity_ObjectToWorld, v.vertex).xyz;<br>                fixed3 worldNormal = UnityObjectToWorldNormal(v.normal);<br>                fixed3 worldTangent = UnityObjectToWorldDir(v.tangent.xyz);<br>                fixed3 worldBinormal = <span class="hljs-built_in">cross</span>(worldNormal, worldTangent) * v.tangent.w;<br><br>                <span class="hljs-comment">// Compute the matrix that transform directions from tangent space to world space</span><br>                <span class="hljs-comment">// Put the world position in w component for optimization</span><br>                o.TtoW0 = float4(worldTangent.x, worldBinormal.x, worldNormal.x, worldPos.x);<br>                o.TtoW1 = float4(worldTangent.y, worldBinormal.y, worldNormal.y, worldPos.y);<br>                o.TtoW2 = float4(worldTangent.z, worldBinormal.z, worldNormal.z, worldPos.z);<br><br>                <span class="hljs-keyword">return</span> o;<br>            &#125;<br><br>            fixed4 frag(v2f i): SV_Target &#123;<br>				<span class="hljs-comment">// Get the position in world space		</span><br>				float3 worldPos = float3(i.TtoW0.w, i.TtoW1.w, i.TtoW2.w);<br>				<span class="hljs-comment">// Compute the light and view dir in world space</span><br>				fixed3 lightDir = <span class="hljs-built_in">normalize</span>(UnityWorldSpaceLightDir(worldPos));<br>				fixed3 viewDir = <span class="hljs-built_in">normalize</span>(UnityWorldSpaceViewDir(worldPos));<br>				<br>				<span class="hljs-comment">// Get the normal in tangent space</span><br>				fixed3 bump = UnpackNormal(tex2D(_BumpMap, i.uv.zw));<br>				bump.xy *= _BumpScale;<br>				bump.z = <span class="hljs-built_in">sqrt</span>(<span class="hljs-number">1.0</span> - saturate(<span class="hljs-built_in">dot</span>(bump.xy, bump.xy)));<br>				<span class="hljs-comment">// Transform the narmal from tangent space to world space</span><br>				bump = <span class="hljs-built_in">normalize</span>(half3(<span class="hljs-built_in">dot</span>(i.TtoW0.xyz, bump), <span class="hljs-built_in">dot</span>(i.TtoW1.xyz, bump), <span class="hljs-built_in">dot</span>(i.TtoW2.xyz, bump)));<br>				<br>				fixed3 albedo = tex2D(_MainTex, i.uv).rgb * _Color.rgb;<br>				<br>				fixed3 ambient = UNITY_LIGHTMODEL_AMBIENT.xyz * albedo;<br>				<br>				fixed3 diffuse = _LightColor0.rgb * albedo * <span class="hljs-built_in">max</span>(<span class="hljs-number">0</span>, <span class="hljs-built_in">dot</span>(bump, lightDir));<br><br>				fixed3 halfDir = <span class="hljs-built_in">normalize</span>(lightDir + viewDir);<br>				fixed3 specular = _LightColor0.rgb * _Specular.rgb * <span class="hljs-built_in">pow</span>(<span class="hljs-built_in">max</span>(<span class="hljs-number">0</span>, <span class="hljs-built_in">dot</span>(bump, halfDir)), _Gloss);<br>				<br>				<span class="hljs-keyword">return</span> fixed4(ambient + diffuse + specular, <span class="hljs-number">1.0</span>);<br>            &#125;<br>            ENDCG<br><br>        &#125;<br>    &#125;<br>    Fallback &quot;Specular&quot;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>关于Unity对Normal map类型纹理的压缩问题：</p>
+<p>Unity在某些平台上使用了DXT5nm的压缩格式，因此需要针对这种格式进行解码，在DXT5nm格式的法线纹理中，纹素的a通道对应法线的x分量，g通道对应法线的y分量，r和b通道被舍弃，<strong>法线的z分量由xy推导而得</strong>，这样可以减少法线纹理占用的内存空间</p>
+<p>Create from Grayscale：用于从高度图中生成法线纹理，设置后可以调整Bumpiness和Filtering来控制凹凸程度和计算方式</p>
+<h2 id="渐变纹理-ramp-texture"><a href="#渐变纹理-ramp-texture" class="headerlink" title="渐变纹理(ramp texture)"></a>渐变纹理(ramp texture)</h2><p>可以用于控制漫反射光照效果，生成类似于卡通风格的图像</p>
+<p>实现代码：</p>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br></pre></td><td class="code"><pre><code class="hljs glsl">Shader &quot;Ramp Texture&quot; &#123;<br>    Properties &#123;<br>        _Color(&quot;Color Tint&quot;, Color) = (<span class="hljs-number">1</span>, <span class="hljs-number">1</span>, <span class="hljs-number">1</span>, <span class="hljs-number">1</span>)<br>        _RampTex(&quot;Ramp Tex&quot;, <span class="hljs-number">2</span>D) = &quot;white&quot; &#123;&#125;<br>        _Specular(&quot;Specular&quot;, Color) = (<span class="hljs-number">1</span>, <span class="hljs-number">1</span>, <span class="hljs-number">1</span>, <span class="hljs-number">1</span>)<br>        _Gloss(&quot;Gloss&quot;, Range(<span class="hljs-number">8.0</span>, <span class="hljs-number">256</span>)) = <span class="hljs-number">20</span><br>    &#125;<br><br>    SubShader &#123;<br>        Pass &#123;<br>            Tags &#123; &quot;LightMode&quot; = &quot;ForwardBase&quot; &#125;<br><br>            CGPROGRAM<br><br>            <span class="hljs-meta">#include &quot;Lighting.cginc&quot;</span><br>            <span class="hljs-meta">#pragma vertex vert</span><br>            <span class="hljs-meta">#pragma fragment frag</span><br><br>            fixed4 _Color;<br>            <span class="hljs-type">sampler2D</span> _RampTex;<br>            float4 _RampTex_ST;<br>            fixed4 _Specular;<br>            <span class="hljs-type">float</span> _Gloss;<br><br>            struct a2v &#123;<br>                float4 vertex : POSITION;<br>                float3 normal : NORMAL;<br>                float4 texcoord : TEXCOORD0;<br>            &#125;;<br><br>            struct v2f &#123;<br>                float4 pos : SV_POSITION;<br>                float3 worldNormal : TEXCOORD0;<br>                float3 worldPos: TEXCOORD1;<br>                float2 uv : TEXCOORD2;<br>            &#125;;<br><br>            v2f vert(a2v v) <br>            &#123;<br>                v2f o;<br><br>                o.pos = UnityObjectToClipPos(v.vertex);<br><br>                o.worldNormal = UnityObjectToWorldNormal(v.normal);<br><br>                o.worldPos = mul(unity_ObjectToWorld, v.vertex).xyz;<br><br>                o.uv = TRANSFORM_TEX(v.texcoord, _RampTex);<br><br>                <span class="hljs-keyword">return</span> o;<br>            &#125;<br><br>            fixed4 frag(v2f i) : SV_Target &#123;<br>                fixed3 worldNormal = <span class="hljs-built_in">normalize</span>(i.worldNormal);<br>                fixed3 worldLightDir = <span class="hljs-built_in">normalize</span>(UnityWorldSpaceLightDir(i.worldPos));<br><br>                fixed3 ambient = UNITY_LIGHTMODEL_AMBIENT.xyz;<br><br>                <span class="hljs-comment">// Use the texture to sample the diffuse color</span><br>                fixed halfLambert = <span class="hljs-number">0.5</span> * <span class="hljs-built_in">dot</span>(worldNormal, worldLightDir) + <span class="hljs-number">0.5</span>;<br><br>                <span class="hljs-comment">// 将该片段的halfLambert(0~1)对应的值映射到纹理图片上，获得一个像素值</span><br>                <span class="hljs-comment">// 由于_RampTex为一维纹理，颜色从左到右分段加深，因此漫反射弱(halfLambert小)的地方采样颜色深，</span><br>                <span class="hljs-comment">// 漫反射强(halfLambert大)的地方采样颜色浅，因此形成视觉上的渐变纹理</span><br>                fixed3 diffuseColor = tex2D(_RampTex, fixed2(halfLambert, halfLambert)).rgb * _Color.rgb;<br><br>                fixed3 diffuse = _LightColor0.rgb * diffuseColor;<br><br>                fixed3 viewDir = <span class="hljs-built_in">normalize</span>(UnityWorldSpaceViewDir(i.worldPos));<br><br>                fixed3 halfDir = <span class="hljs-built_in">normalize</span>(worldLightDir + viewDir);<br><br>                fixed3 specular = _LightColor0.rgb * _Specular.rgb * <span class="hljs-built_in">pow</span>(<span class="hljs-built_in">max</span>(<span class="hljs-number">0</span>, <span class="hljs-built_in">dot</span>(worldNormal, halfDir)), _Gloss);<br><br>                <span class="hljs-keyword">return</span> fixed4(ambient + diffuse + specular, <span class="hljs-number">1.0</span>);<br>            &#125;<br>            ENDCG <br>        &#125;<br>    &#125;<br>    Fallback &quot;Specular&quot;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>需要注意的是，我们需要把渐变纹理的Wrap Mode设置成Clamp模式，以防止对纹理进行采样时由于浮点数精度造成的问题</p>
+<h2 id="遮罩纹理-mask-texture"><a href="#遮罩纹理-mask-texture" class="headerlink" title="遮罩纹理(mask texture)"></a>遮罩纹理(mask texture)</h2><p>遮罩允许我们可以保护某些区域，使它们免于某些修改。</p>
+<ul>
+<li>用于控制某些区域的反光强度，得到更加细腻的效果</li>
+<li>控制多种纹理的混合</li>
+</ul>
+<p>流程：通过采样得到遮罩纹理的纹素值，然后使用其中某个（或某几个）通道的值来于某种表面属性相乘，可以保证像素级别地控制模型表面的各种性质</p>
+<p>实现代码：</p>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br></pre></td><td class="code"><pre><code class="hljs glsl">Shader &quot;Mask Texture&quot; &#123;<br>	Properties &#123;<br>		_Color (&quot;Color Tint&quot;, Color) = (<span class="hljs-number">1</span>, <span class="hljs-number">1</span>, <span class="hljs-number">1</span>, <span class="hljs-number">1</span>)<br>		_MainTex (&quot;Main Tex&quot;, <span class="hljs-number">2</span>D) = &quot;white&quot; &#123;&#125;<br>		_BumpMap (&quot;Normal Map&quot;, <span class="hljs-number">2</span>D) = &quot;bump&quot; &#123;&#125;<br>		_BumpScale(&quot;Bump Scale&quot;, Float) = <span class="hljs-number">1.0</span><br>		_SpecularMask (&quot;Specular Mask&quot;, <span class="hljs-number">2</span>D) = &quot;white&quot; &#123;&#125;<br>		_SpecularScale (&quot;Specular Scale&quot;, Float) = <span class="hljs-number">1.0</span><br>		_Specular (&quot;Specular&quot;, Color) = (<span class="hljs-number">1</span>, <span class="hljs-number">1</span>, <span class="hljs-number">1</span>, <span class="hljs-number">1</span>)<br>		_Gloss (&quot;Gloss&quot;, Range(<span class="hljs-number">8.0</span>, <span class="hljs-number">256</span>)) = <span class="hljs-number">20</span><br>	&#125;<br>	SubShader &#123;<br>		Pass &#123; <br>			Tags &#123; &quot;LightMode&quot;=&quot;ForwardBase&quot; &#125;<br>		<br>			CGPROGRAM<br>			<br>			<span class="hljs-meta">#pragma vertex vert</span><br>			<span class="hljs-meta">#pragma fragment frag</span><br>			<br>			<span class="hljs-meta">#include &quot;Lighting.cginc&quot;</span><br>			<br>			fixed4 _Color;<br>			<span class="hljs-type">sampler2D</span> _MainTex;<br>            <span class="hljs-comment">// 三个纹理公用一个属性变量，此时修改平铺和偏移系数会同时影响3个纹理的采样</span><br>			float4 _MainTex_ST;<br>			<span class="hljs-type">sampler2D</span> _BumpMap;<br>			<span class="hljs-type">float</span> _BumpScale;<br>			<span class="hljs-type">sampler2D</span> _SpecularMask;<br>			<span class="hljs-type">float</span> _SpecularScale;<br>			fixed4 _Specular;<br>			<span class="hljs-type">float</span> _Gloss;<br>			<br>			struct a2v &#123;<br>				float4 vertex : POSITION;<br>				float3 normal : NORMAL;<br>				float4 tangent : TANGENT;<br>				float4 texcoord : TEXCOORD0;<br>			&#125;;<br>			<br>			struct v2f &#123;<br>				float4 pos : SV_POSITION;<br>				float2 uv : TEXCOORD0;<br>				float3 lightDir: TEXCOORD1;<br>				float3 viewDir : TEXCOORD2;<br>			&#125;;<br><br>            v2f vert(a2v v) &#123;<br>                v2f o;<br>                o.pos = UnityObjectToClipPos(v.vertex);<br><br>                o.uv.xy = v.texcoord.xy * _MainTex_ST.xy + _MainTex_ST.zw;<br><br>                <span class="hljs-comment">// Construct a matrix: rotation,</span><br>                <span class="hljs-comment">// which transform vectors from object space to tangent space</span><br>                TANGENT_SPACE_ROTATION;<br>                <br>                o.lightDir = mul(rotation, ObjSpaceLightDir(v.vertex)).xyz;<br>                o.viewDir = mul(rotation, ObjSpaceViewDir(v.vertex)).xyz;<br><br>                <span class="hljs-keyword">return</span> o;<br>            &#125;<br><br>            fixed4 frag(v2f i) : SV_Target &#123;<br>                fixed3 tangentLightDir = <span class="hljs-built_in">normalize</span>(i.lightDir);<br>                fixed3 tangentViewDir = <span class="hljs-built_in">normalize</span>(i.viewDir);<br><br>                fixed3 tangentNormal = UnpackNormal(tex2D(_BumpMap, i.uv));<br><br>                tangentNormal.xy *= _BumpScale;<br><br>                tangentNormal.z = <span class="hljs-built_in">sqrt</span>(<span class="hljs-number">1.0</span> - saturate(<span class="hljs-built_in">dot</span>(tangentNormal.xy, tangentNormal.xy)));<br><br>                fixed3 albedo = tex2D(_MainTex, i.uv).rgb * _Color.rgb;<br><br>                fixed3 ambient = UNITY_LIGHTMODEL_AMBIENT * albedo;<br><br>                fixed3 diffuse = _LightColor0.rgb * albedo * <span class="hljs-built_in">max</span>(<span class="hljs-number">0</span>, <span class="hljs-built_in">dot</span>(tangentNormal, tangentLightDir));<br><br>                fixed3 halfDir = <span class="hljs-built_in">normalize</span>(tangentLightDir + tangentViewDir);<br><br>                <span class="hljs-comment">// Get the mask value</span><br>                fixed specularMask = tex2D(_SpecularMask, i.uv).r * _SpecularScale;<br><br>                <span class="hljs-comment">// Compute specular term with the specular mask</span><br>                fixed3 specular = _LightColor0.rgb * _Specular.rgb * <span class="hljs-built_in">pow</span>(<span class="hljs-built_in">max</span>(<span class="hljs-number">0</span>, <span class="hljs-built_in">dot</span>(tangentNormal, halfDir)), _Gloss) * specularMask;<br><br>                <span class="hljs-keyword">return</span> fixed4(ambient + diffuse + specular, <span class="hljs-number">1.0</span>);<br><br>            &#125;<br>            ENDCG<br>        &#125;<br>    &#125;<br>    FallBack &quot;Specular&quot;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Unity/" class="category-chain-item">Unity</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Unity/">#Unity</a>
+      
+        <a href="/tags/Shader/">#Shader</a>
+      
+        <a href="/tags/Texture/">#Texture</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>UnityShader-基础纹理</div>
+      <div>http://example.com/2021/07/15/UnityShader-基础纹理/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Chen Shuwen</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2021年7月15日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2021/07/17/UnityShader-%E9%80%8F%E6%98%8E%E6%95%88%E6%9E%9C/" title="UnityShader-透明效果">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">UnityShader-透明效果</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2021/07/13/UnityShader-%E5%9F%BA%E7%A1%80%E5%85%89%E7%85%A7/" title="UnityShader-基础光照">
+                        <span class="hidden-mobile">UnityShader-基础光照</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

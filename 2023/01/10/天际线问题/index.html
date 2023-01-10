@@ -1,0 +1,789 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Chen Shuwen">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="天际线问题(Skyline Problem)题目A city’s skyline is the outer contour of the silhouette formed by all the buildings in that city when viewed from a distance. Now suppose you are given the locations and height">
+<meta property="og:type" content="article">
+<meta property="og:title" content="天际线问题">
+<meta property="og:url" content="http://example.com/2023/01/10/%E5%A4%A9%E9%99%85%E7%BA%BF%E9%97%AE%E9%A2%98/index.html">
+<meta property="og:site_name" content="Chen Shuwen&#39;s Tech Site">
+<meta property="og:description" content="天际线问题(Skyline Problem)题目A city’s skyline is the outer contour of the silhouette formed by all the buildings in that city when viewed from a distance. Now suppose you are given the locations and height">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://assets.leetcode.com/uploads/2018/10/22/skyline1.png">
+<meta property="og:image" content="https://assets.leetcode.com/uploads/2018/10/22/skyline2.png">
+<meta property="og:image" content="http://example.com/2023/01/10/%E5%A4%A9%E9%99%85%E7%BA%BF%E9%97%AE%E9%A2%98/Skyline-Page-1.png">
+<meta property="article:published_time" content="2023-01-10T04:09:55.735Z">
+<meta property="article:modified_time" content="2023-01-10T04:09:55.735Z">
+<meta property="article:author" content="Chen Shuwen">
+<meta property="article:tag" content="优先队列">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://assets.leetcode.com/uploads/2018/10/22/skyline1.png">
+  
+  
+  
+  <title>天际线问题 - Chen Shuwen&#39;s Tech Site</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Chen Shuwen&#39;s Tech Site</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="天际线问题"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-01-10 12:09" pubdate>
+          2023年1月10日 中午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          5.6k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          47 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">天际线问题</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="天际线问题-Skyline-Problem"><a href="#天际线问题-Skyline-Problem" class="headerlink" title="天际线问题(Skyline Problem)"></a>天际线问题(Skyline Problem)</h1><h2 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h2><p>A city’s skyline is the outer contour of the silhouette formed by all the buildings in that city when viewed from a distance. Now suppose you are <strong>given the locations and height of all the buildings</strong> as shown on a cityscape photo (Figure A), write a program to <strong>output the skyline</strong> formed by these buildings collectively (Figure B).</p>
+<p><a target="_blank" rel="noopener" href="https://leetcode.com/static/images/problemset/skyline1.jpg"><img src="https://assets.leetcode.com/uploads/2018/10/22/skyline1.png" srcset="/img/loading.gif" lazyload alt="Buildings"> </a><a target="_blank" rel="noopener" href="https://leetcode.com/static/images/problemset/skyline2.jpg"><img src="https://assets.leetcode.com/uploads/2018/10/22/skyline2.png" srcset="/img/loading.gif" lazyload alt="Skyline Contour"></a></p>
+<p>The geometric information of each building is represented by a triplet of integers <code>[Li, Ri, Hi]</code>, where <code>Li</code> and <code>Ri</code> are the x coordinates of the left and right edge of the ith building, respectively, and <code>Hi</code> is its height. It is guaranteed that <code>0 ≤ Li, Ri ≤ INT_MAX</code>, <code>0 &lt; Hi ≤ INT_MAX</code>, and <code>Ri - Li &gt; 0</code>. You may assume all buildings are perfect rectangles grounded on an absolutely flat surface at height 0.</p>
+<p>For instance, the dimensions of all buildings in Figure A are recorded as: <code>[ [2 9 10], [3 7 15], [5 12 12], [15 20 10], [19 24 8] ] </code>.</p>
+<p>The output is a list of “<strong>key points</strong>“ (red dots in Figure B) in the format of <code>[ [x1,y1], [x2, y2], [x3, y3], ... ]</code> that uniquely defines a skyline. <strong>A key point is the left endpoint of a horizontal line segment</strong>. Note that the last key point, where the rightmost building ends, is merely used to mark the termination of the skyline, and always has zero height. Also, the ground in between any two adjacent buildings should be considered part of the skyline contour.</p>
+<p>For instance, the skyline in Figure B should be represented as:<code>[ [2 10], [3 15], [7 12], [12 0], [15 10], [20 8], [24, 0] ]</code>.</p>
+<p><strong>Notes:</strong></p>
+<ul>
+<li>The number of buildings in any input list is guaranteed to be in the range <code>[0, 10000]</code>.</li>
+<li>The input list is already sorted in ascending order by the left x position <code>Li</code>.</li>
+<li>The output list must be sorted by the x position.</li>
+<li>There must be no consecutive horizontal lines of equal height in the output skyline. For instance, <code>[...[2 3], [4 5], [7 5], [11 5], [12 7]...]</code> is not acceptable; the three lines of height 5 should be merged into one in the final output as such: <code>[...[2 3], [4 5], [12 7], ...]</code></li>
+</ul>
+<h2 id="解题思路"><a href="#解题思路" class="headerlink" title="解题思路"></a>解题思路</h2><p>用中文简单描述一下：</p>
+<blockquote>
+<p>在一个二维平面上分布着许多矩形的建筑物，你需要将它们的轮廓线用特定的坐标表示出来</p>
+<p>规定：输出的轮廓线中每一个矩形的左上角坐标，而末尾坐标一定为(x, 0)</p>
+</blockquote>
+<br>
+
+<p>初一看，要求的点一定在轮廓线的交叉点或者转折点上，而这些点又一定伴随着某个矩阵的开始或者结束（但并不是每一个开始或者结束点都会产生这些点），因此一个初步的思路是将这些点按一定的顺序排列起来，然后在遍历这些点的过程中，根据当前建筑物的高度决定是否输出某个点。</p>
+<p><img src="/2023/01/10/%E5%A4%A9%E9%99%85%E7%BA%BF%E9%97%AE%E9%A2%98/Skyline-Page-1.png" srcset="/img/loading.gif" lazyload alt="all cross points"></p>
+<p>答案中的点一定在图中的点产生（把高度为0也看成一个矩形），而只有绿色的点才是我们需要输出的。</p>
+<p>可以进一步思考，因为所求的是轮廓线上的点，因此一定和最大高度有关系。假设我们在从左往右检查的过程中，建筑物在依次地生成和销毁，一般情况下（先不考虑重合情况），当一个建筑物开始生成时，如果它的高度比最大高度要小，则不会产生轮廓线，否则为需要输出的点；而当某个建筑物开始消失时，如果最大高度没有改变，则同样不会影响轮廓线，而如果最大高度减小了，说明会和 次大高度 产生一个交叉点，这个点也是需要输出的（两种需要输出情况分别对应上图中第一二个绿色的点）。通过这种思想，我们就需要时刻能够取出和删除最大高度，因此采用优先队列或者二叉平衡树的结构是很理想的（一般使用平衡树，因为需要删除结构中的非最大值）。</p>
+<p>然而，仍然有三种情况需要额外考虑：</p>
+<ol>
+<li><p>两建筑物同时生成</p>
+<p>即起始点的横坐标相同，这时需要先让较高的建筑物生成，以避免输出较矮的那个高度（可以反证法验证一下），否则按逻辑顺序生成。</p>
+</li>
+<li><p>两建筑物同时摧毁</p>
+<p>即结束点的横坐标相同，这时需要先让较矮的建筑物摧毁，以避免输出较矮的那个高度，否则按逻辑顺序摧毁。</p>
+</li>
+<li><p>前一个摧毁的同时，后一个立即生成</p>
+<p>即结束点和起始点的横坐标相同，这时需要先生成建筑物；如果两建筑物刚好高度相同，则不能输出轮廓点。</p>
+</li>
+</ol>
+<br>
+
+<p>讨论完所有情况后，就可以按照规则先将这些点排列起来了。我们用这样一种方式来表示不同意义的点：<br>$$<br>[x, height, start _{or} end]<br>$$<br>其中<strong>x</strong>表示点的横坐标，<strong>height</strong>表示高度，最后一个参数表示该点是起始点还是结束点。</p>
+<p>别担心，尽管这种方式只能表示起始和结束点的坐标，但是结合平衡树后就能够产生交叉点了（当前横坐标+平衡树中存储的最大高度）。</p>
+<br>
+
+<p>先根据题目给出的建筑物坐标以上述方式依次写出各点：</p>
+<p>[2, 10, s]</p>
+<p>[9, 10, e]</p>
+<p>[3, 15, s]</p>
+<p>[7, 15, e]</p>
+<p>[5, 12, s]</p>
+<p>[12, 12, e]</p>
+<p>[15, 10, s]</p>
+<p>[20, 10, e]</p>
+<p>[19, 8, s]</p>
+<p>[24, 8, e]</p>
+<p>但是，这种顺序是无法满足要求的，根据前面的思想，我们需要制定如下规则：</p>
+<ol>
+<li>横坐标小的放前面</li>
+<li>横坐标相同<ol>
+<li>同为s, 先放高的</li>
+<li>同为e, 先放矮的</li>
+<li>一s一e， 先放s</li>
+</ol>
+</li>
+</ol>
+<p>经过上述规则后排序如下：</p>
+<p>[2, 10, s]</p>
+<p>[3, 15, s]</p>
+<p>[5, 12, s]</p>
+<p>[7, 15, e]</p>
+<p>[9, 10 , e]</p>
+<p>[12, 12, e]</p>
+<p>[15, 10, s]</p>
+<p>[19, 8, s]</p>
+<p>[20, 10, e]</p>
+<p>[24, 8, e]</p>
+<p>接下来就可以正式处理这些点了：</p>
+<p>需要的结构体：平衡树，初始值为0（假定也是一个矩形）；数组，存放和排序上述点。</p>
+<p>对于某个具体点：</p>
+<p>​		如果是起始点，将高度插入树中（相当于生成建筑物），并且如果高度大于最大高度，输出这个点。</p>
+<p>​		如果是结束点，将该高度从树中移除（相当于销毁建筑物），并且如果移除的高度同时是最大高度，则输出该点的横坐标和新的最大高度（即交叉点），<strong>但一种情况除外，即两建筑物一生成一摧毁并且高度恰好相同时不能输出为轮廓点！</strong></p>
+<br>
+
+<p>以下是使用了c++ map 结构的代码，具体map存储高度的方式见代码：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-comment">//BuildingPoint,存储是否为起始点，该点的横坐标和该点的高度</span><br><span class="hljs-keyword">struct</span> <span class="hljs-title class_">BuildingPoint</span>&#123;<br>    <span class="hljs-type">bool</span> isStart;<br>    <span class="hljs-type">int</span> x;<br>    <span class="hljs-type">int</span> height;<br>    <span class="hljs-built_in">BuildingPoint</span>(<span class="hljs-type">bool</span> flag, <span class="hljs-type">int</span> index, <span class="hljs-type">int</span> h)&#123;<br>        isStart = flag;<br>        x = index;<br>        height = h;<br>    &#125;<br>    <span class="hljs-type">bool</span> <span class="hljs-keyword">operator</span>&lt;(<span class="hljs-type">const</span> BuildingPoint&amp; a)<span class="hljs-type">const</span>&#123;<br>        <span class="hljs-keyword">if</span>(<span class="hljs-keyword">this</span>-&gt;x &lt; a.x)&#123;<br>            <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;<br>        &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span>(<span class="hljs-keyword">this</span>-&gt;x &gt; a.x)&#123;<br>            <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;<br>        &#125; <span class="hljs-keyword">else</span> &#123;<br>            <span class="hljs-comment">//如果横坐标相同</span><br>            <span class="hljs-comment">//同为s,先放高的</span><br>            <span class="hljs-comment">//同为e,先放矮的</span><br>            <span class="hljs-comment">//一s一e,先放s</span><br>            <span class="hljs-keyword">if</span>(<span class="hljs-keyword">this</span>-&gt;isStart &amp;&amp; a.isStart)&#123;<br>                <span class="hljs-keyword">if</span>(<span class="hljs-keyword">this</span>-&gt;height &gt;= a.height)<span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;<br>                <span class="hljs-keyword">else</span> <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;<br>            &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span>(!<span class="hljs-keyword">this</span>-&gt;isStart &amp;&amp; !a.isStart)&#123;<br>                <span class="hljs-keyword">if</span>(<span class="hljs-keyword">this</span>-&gt;height &lt;= a.height)<span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;<br>                <span class="hljs-keyword">else</span> <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;<br>            &#125; <span class="hljs-keyword">else</span> &#123;<br>                <span class="hljs-keyword">if</span>(<span class="hljs-keyword">this</span>-&gt;isStart)<span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;<br>                <span class="hljs-keyword">else</span> <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;<br>            &#125;<br>        &#125;<br>    &#125;<br>&#125;;<br><br>vector&lt;vector&lt;<span class="hljs-type">int</span>&gt;&gt; <span class="hljs-built_in">skyLine</span>(vector&lt;vector&lt;<span class="hljs-type">int</span>&gt;&gt;&amp; buildings)&#123;<br>    <span class="hljs-comment">//用来存放高度的平衡树,键值分别为高度和出现的次数</span><br>    map&lt;<span class="hljs-type">int</span>, <span class="hljs-type">int</span>&gt; heightCounts;<br>    <span class="hljs-comment">//当前的最大高度</span><br>    <span class="hljs-type">int</span> maxHeight = <span class="hljs-number">0</span>;<br>    <span class="hljs-comment">//当前高度</span><br>    <span class="hljs-type">int</span> currentHeight;<br>    <span class="hljs-comment">//存放buildPoint的数组</span><br>    vector&lt;BuildingPoint&gt; BuildingPoints;<br>    <span class="hljs-comment">//存放结果的数组</span><br>    vector&lt;vector&lt;<span class="hljs-type">int</span>&gt;&gt; ans;<br><br>    <span class="hljs-comment">//初始化</span><br>    <span class="hljs-comment">//初始化heightCounts</span><br>    heightCounts[<span class="hljs-number">0</span>] = <span class="hljs-number">1</span>;<br><br>    <span class="hljs-comment">//先把所有buildings中的数据放入数组中</span><br>    <span class="hljs-keyword">for</span>(<span class="hljs-keyword">auto</span> it = buildings.<span class="hljs-built_in">begin</span>(); it != buildings.<span class="hljs-built_in">end</span>(); it++)&#123;<br>        <span class="hljs-type">int</span> startIndex = it-&gt;<span class="hljs-built_in">at</span>(<span class="hljs-number">0</span>);<br>        <span class="hljs-type">int</span> endIndex = it-&gt;<span class="hljs-built_in">at</span>(<span class="hljs-number">1</span>);<br>        <span class="hljs-type">int</span> height = it-&gt;<span class="hljs-built_in">at</span>(<span class="hljs-number">2</span>);<br>        BuildingPoints.<span class="hljs-built_in">push_back</span>(<span class="hljs-built_in">BuildingPoint</span>(<span class="hljs-literal">true</span>, startIndex, height));<br>        BuildingPoints.<span class="hljs-built_in">push_back</span>(<span class="hljs-built_in">BuildingPoint</span>(<span class="hljs-literal">false</span>, endIndex, height));<br>    &#125;<br>    <span class="hljs-comment">//对该数组进行排序</span><br>    <span class="hljs-built_in">sort</span>(BuildingPoints.<span class="hljs-built_in">begin</span>(), BuildingPoints.<span class="hljs-built_in">end</span>());<br><br>    <span class="hljs-comment">//循环处理</span><br>    <span class="hljs-comment">//对于某个具体点：</span><br>    <span class="hljs-comment">//如果是起始点，将高度插入树中，并且如果高度大于最大高度，输出这个点。</span><br>    <span class="hljs-comment">//如果是结束点，将该高度从树中移除，并且如果移除的高度同时是最大高度，则输出该点的横坐标和新的最大高度（即交叉点）。</span><br>    <span class="hljs-keyword">for</span>(<span class="hljs-keyword">auto</span> it = BuildingPoints.<span class="hljs-built_in">begin</span>(); it != BuildingPoints.<span class="hljs-built_in">end</span>(); it++)&#123;<br>        <span class="hljs-keyword">if</span>(it-&gt;isStart)&#123;<br>            <span class="hljs-comment">//如果是起点，放入heightCounts中</span><br>            <span class="hljs-keyword">if</span>(heightCounts.<span class="hljs-built_in">count</span>(it-&gt;height) &lt;= <span class="hljs-number">0</span>)&#123;<br>                heightCounts[it-&gt;height] = <span class="hljs-number">1</span>;<br>            &#125; <span class="hljs-keyword">else</span> &#123;<br>                heightCounts[it-&gt;height]++;<br>            &#125;<br>            <span class="hljs-keyword">if</span>(it-&gt;height &gt; maxHeight)&#123;<br>                ans.<span class="hljs-built_in">push_back</span>(<span class="hljs-built_in">vector</span>&lt;<span class="hljs-type">int</span>&gt;(&#123;it-&gt;x, it-&gt;height&#125;));<br>                maxHeight = it-&gt;height;<br>            &#125;<br>        &#125; <span class="hljs-keyword">else</span> &#123;<br>            <span class="hljs-comment">//弹出这个结束坐标的高度</span><br>            currentHeight = it-&gt;height;<br>            <span class="hljs-keyword">if</span>(heightCounts[currentHeight] == <span class="hljs-number">1</span>)&#123;<br>                heightCounts.<span class="hljs-built_in">erase</span>(currentHeight);<br>            &#125; <span class="hljs-keyword">else</span> &#123;<br>                heightCounts[currentHeight]--;<br>            &#125;<br><br>            <span class="hljs-comment">//如果同时是最大值，则更新最大高度，输出当前坐标值和新的最大高度</span><br>            <span class="hljs-keyword">if</span>(currentHeight == maxHeight)&#123;<br>                maxHeight = heightCounts.<span class="hljs-built_in">rbegin</span>()-&gt;first;<br>                <span class="hljs-keyword">if</span>(maxHeight != currentHeight)&#123;<span class="hljs-comment">//特殊情况：高度相等时不能作为轮廓点</span><br>                    ans.<span class="hljs-built_in">push_back</span>(<span class="hljs-built_in">vector</span>&lt;<span class="hljs-type">int</span>&gt;(&#123;it-&gt;x, maxHeight&#125;));<br>                &#125;<br>            &#125;<br>        &#125;<br>    &#125;<br>    <span class="hljs-keyword">return</span> ans;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p><strong>核心思想</strong></p>
+<p>利用优先队列或者平衡树结构来存储建筑物，以实时根据最大高度输出结果。</p>
+<br>
+
+<p>参考解法链接：</p>
+<p><a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=GSBLe8cKu0s">Skyline Problem</a></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/" class="category-chain-item">数据结构与算法</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E4%BC%98%E5%85%88%E9%98%9F%E5%88%97/">#优先队列</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>天际线问题</div>
+      <div>http://example.com/2023/01/10/天际线问题/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Chen Shuwen</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年1月10日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2023/01/10/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%8E%9F%E7%90%86-%E5%87%BD%E6%95%B0%E4%BE%9D%E8%B5%96/" title="数据库原理-函数依赖">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">数据库原理-函数依赖</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/01/10/%E8%BD%AF%E4%BB%B6%E9%80%86%E5%90%91%E8%AF%BE%E7%A8%8B%E8%AE%BE%E8%AE%A1/" title="逆向分析-除法优化MagicNumber算法逆向">
+                        <span class="hidden-mobile">逆向分析-除法优化MagicNumber算法逆向</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

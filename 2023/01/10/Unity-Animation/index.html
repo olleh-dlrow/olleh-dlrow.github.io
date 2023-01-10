@@ -1,0 +1,874 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Chen Shuwen">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="Unity-AnimationEditor 动画片段集(Animation Clips) 动画数据被存放在动画片段集中，如人物的跑动、跳跃，路灯的亮度变化等数据。动画片段集分为两个部分：  Values：某个属性的值  Bindings：该动画片段集绑定的对象物体的属性，如位置，旋转，光照强度等     编辑窗口 注：动画只有附着在一个具体的游戏对象上（该动画有上下文）才可以被编辑关键帧  改变时">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Unity-Animation">
+<meta property="og:url" content="http://example.com/2023/01/10/Unity-Animation/index.html">
+<meta property="og:site_name" content="Chen Shuwen&#39;s Tech Site">
+<meta property="og:description" content="Unity-AnimationEditor 动画片段集(Animation Clips) 动画数据被存放在动画片段集中，如人物的跑动、跳跃，路灯的亮度变化等数据。动画片段集分为两个部分：  Values：某个属性的值  Bindings：该动画片段集绑定的对象物体的属性，如位置，旋转，光照强度等     编辑窗口 注：动画只有附着在一个具体的游戏对象上（该动画有上下文）才可以被编辑关键帧  改变时">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2023/01/10/Unity-Animation/image-20210628231944021.png">
+<meta property="og:image" content="http://example.com/2023/01/10/Unity-Animation/151645b8-1c94-49ba-8f91-a545fa02b0d9_image19.png">
+<meta property="og:image" content="http://example.com/2023/01/10/Unity-Animation/image-20210628235432991.png">
+<meta property="og:image" content="http://example.com/2023/01/10/Unity-Animation/image-20210629000628052.png">
+<meta property="og:image" content="http://example.com/2023/01/10/Unity-Animation/image-20210629000708338.png">
+<meta property="og:image" content="http://example.com/2023/01/10/Unity-Animation/99348067-460f-4513-96b2-3f17387ae2e0_image14.png">
+<meta property="og:image" content="http://example.com/2023/01/10/Unity-Animation/dfa36069-8cbe-428e-87f5-f37d24f9404b_image5.png">
+<meta property="og:image" content="http://example.com/2023/01/10/Unity-Animation/9d403922-3988-490e-ae4f-85cdf429cf7d_image20.png">
+<meta property="og:image" content="http://example.com/2023/01/10/Unity-Animation/be53f113-d521-4685-99f0-f84ff4f4c497_image12.png">
+<meta property="og:image" content="http://example.com/2023/01/10/Unity-Animation/acc192d4-6389-4def-b3e4-02514e6737c9_image10.png">
+<meta property="og:image" content="http://example.com/2023/01/10/Unity-Animation/image-20210629004016725.png">
+<meta property="og:image" content="http://example.com/2023/01/10/Unity-Animation/image-20210629004040728.png">
+<meta property="og:image" content="http://example.com/2023/01/10/Unity-Animation/image-20210629004103401.png">
+<meta property="og:image" content="http://example.com/2023/01/10/Unity-Animation/image-20210629004212816.png">
+<meta property="og:image" content="http://example.com/2023/01/10/Unity-Animation/image-20210628232857756.png">
+<meta property="og:image" content="http://example.com/2023/01/10/Unity-Animation/Unity-Animation-Animator.png">
+<meta property="og:image" content="http://example.com/2023/01/10/Unity-Animation/image-20210629092513734.png">
+<meta property="og:image" content="http://example.com/2023/01/10/Unity-Animation/04acdada-2bcc-4ee6-a36a-b89f22045646_image5.png">
+<meta property="article:published_time" content="2023-01-10T04:09:35.814Z">
+<meta property="article:modified_time" content="2023-01-10T04:09:35.814Z">
+<meta property="article:author" content="Chen Shuwen">
+<meta property="article:tag" content="Unity">
+<meta property="article:tag" content="Animation">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://example.com/2023/01/10/Unity-Animation/image-20210628231944021.png">
+  
+  
+  
+  <title>Unity-Animation - Chen Shuwen&#39;s Tech Site</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Chen Shuwen&#39;s Tech Site</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Unity-Animation"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-01-10 12:09" pubdate>
+          2023年1月10日 中午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          2.9k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          25 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">Unity-Animation</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="Unity-Animation"><a href="#Unity-Animation" class="headerlink" title="Unity-Animation"></a>Unity-Animation</h1><h2 id="Editor"><a href="#Editor" class="headerlink" title="Editor"></a>Editor</h2><ol>
+<li><p>动画片段集(Animation Clips)</p>
+<p>动画数据被存放在动画片段集中，如人物的跑动、跳跃，路灯的亮度变化等数据。动画片段集分为两个部分：</p>
+<ul>
+<li><p>Values：某个属性的值</p>
+</li>
+<li><p>Bindings：该动画片段集绑定的对象物体的属性，如位置，旋转，光照强度等</p>
+<p><img src="/2023/01/10/Unity-Animation/image-20210628231944021.png" srcset="/img/loading.gif" lazyload alt="image-20210628231944021"></p>
+</li>
+</ul>
+</li>
+<li><p>编辑窗口</p>
+<p>注：动画只有附着在一个具体的游戏对象上（该动画有上下文）才可以被编辑关键帧</p>
+<ul>
+<li><p>改变时间线显示单位：可调整为秒单位或帧单位，如下图展开菜单栏的前两项</p>
+<p><img src="/2023/01/10/Unity-Animation/151645b8-1c94-49ba-8f91-a545fa02b0d9_image19.png" srcset="/img/loading.gif" lazyload alt="img"></p>
+</li>
+<li><p>显示帧数：需要先勾选Show Sample Rate（如上图），表示1秒内显示多少帧，如下图Samples的位置</p>
+<p><img src="/2023/01/10/Unity-Animation/image-20210628235432991.png" srcset="/img/loading.gif" lazyload alt="image-20210628235432991"></p>
+</li>
+<li><p>预览模式(Preview Mode)：</p>
+<p><img src="/2023/01/10/Unity-Animation/image-20210629000628052.png" srcset="/img/loading.gif" lazyload alt="image-20210629000628052"></p>
+<p>该模式下，时间线和属性会蓝色高亮，该模式用于编辑关键帧</p>
+</li>
+<li><p>记录模式(Record Mode)：</p>
+<p><img src="/2023/01/10/Unity-Animation/image-20210629000708338.png" srcset="/img/loading.gif" lazyload alt="image-20210629000708338"></p>
+<p>进入模式后，时间线会变红，在该模式下添加的任何绑定、关键帧、曲线的修改都会被记录到动画中，可用于自行添加关键帧</p>
+</li>
+<li><p>切换Animation Clips:</p>
+<p><img src="/2023/01/10/Unity-Animation/99348067-460f-4513-96b2-3f17387ae2e0_image14.png" srcset="/img/loading.gif" lazyload alt="img"></p>
+<p>可以在当前的Animator中新建Clip，也可以切换到已存在的一个Clips上编辑</p>
+</li>
+<li><p>筛选动画曲线：</p>
+<p>点击下图中的按钮后，左栏只会显示游戏对象中存在的绑定</p>
+<p><img src="/2023/01/10/Unity-Animation/dfa36069-8cbe-428e-87f5-f37d24f9404b_image5.png" srcset="/img/loading.gif" lazyload alt="img"></p>
+</li>
+<li><p>添加关键帧和事件：</p>
+<p><img src="/2023/01/10/Unity-Animation/9d403922-3988-490e-ae4f-85cdf429cf7d_image20.png" srcset="/img/loading.gif" lazyload alt="img"></p>
+<p>在选定的帧点击创建事件按钮后，就可以设置动画事件，如果该动画具有上下文，则直接选择脚本中的函数</p>
+</li>
+<li><p>Dopesheet Mode:</p>
+<p>只会显示绑定量在某个时间结点是否有关键帧</p>
+</li>
+<li><p>Curves Mode:</p>
+<p>能够显示每一帧的属性值</p>
+<p>曲线编辑模式如下图：</p>
+<p><img src="/2023/01/10/Unity-Animation/be53f113-d521-4685-99f0-f84ff4f4c497_image12.png" srcset="/img/loading.gif" lazyload alt="img"></p>
+<ul>
+<li>Clamped Auto：平滑接近关键帧</li>
+<li>Free Smooth: 自由编辑曲线<ul>
+<li>Flat: 曲线的切线时水平的</li>
+</ul>
+</li>
+<li>Broken: 左右的切线不平行<ul>
+<li>Free：自由编辑</li>
+<li>Linear：相邻关键帧用直线连接</li>
+<li>Constant：保持前一个关键帧的值不变，直到下一个关键帧发生突变，图像类似于脉冲信号</li>
+</ul>
+</li>
+<li>Weighted：可以控制曲线的长度</li>
+</ul>
+</li>
+<li><p>Ripple Editting：</p>
+<p><img src="/2023/01/10/Unity-Animation/acc192d4-6389-4def-b3e4-02514e6737c9_image10.png" srcset="/img/loading.gif" lazyload alt="img"></p>
+<p>勾选后，关键帧的移动能够带动后面的关键帧移动</p>
+<p>勾选前：</p>
+<p><img src="/2023/01/10/Unity-Animation/image-20210629004016725.png" srcset="/img/loading.gif" lazyload alt="image-20210629004016725"></p>
+<p>勾选后：</p>
+<p><img src="/2023/01/10/Unity-Animation/image-20210629004040728.png" srcset="/img/loading.gif" lazyload alt="image-20210629004040728"></p>
+<p>移动黄色区域后：</p>
+<p><img src="/2023/01/10/Unity-Animation/image-20210629004103401.png" srcset="/img/loading.gif" lazyload alt="image-20210629004103401"></p>
+<p>曲线模式同样能够整块编辑</p>
+<p><img src="/2023/01/10/Unity-Animation/image-20210629004212816.png" srcset="/img/loading.gif" lazyload alt="image-20210629004212816"></p>
+</li>
+</ul>
+</li>
+<li><p>动画转换(Animation Transaction)</p>
+<p><img src="/2023/01/10/Unity-Animation/image-20210628232857756.png" srcset="/img/loading.gif" lazyload alt="image-20210628232857756"></p>
+<ul>
+<li>Has Exit Time: 当前动画只有播放到指定的时间后才能退出，可用于动画的流畅衔接</li>
+<li>Exit Time: 退出时间和动画完成时间的比例</li>
+<li>Fixed Duration: 选中时以秒来计算转换持续时间，否则按帧计算</li>
+<li>Transition Duration: 转换持续时间</li>
+<li>Transition Offset: 下一个动画从哪个位置开始播放，即图中1:00开始经过30s的位置</li>
+<li>Interruption Source: 能够被某个动画打断转换，例如该值设置为Current State，代表动画转换时，如果当前动画被播放，则可以打断转换，并且被打断后从头开始播放动画</li>
+<li>Ordered Interruption: 打断是否有先后顺序</li>
+</ul>
+</li>
+</ol>
+<h2 id="Animator"><a href="#Animator" class="headerlink" title="Animator"></a>Animator</h2><p>动画系统的整体结构如下：</p>
+<p><img src="/2023/01/10/Unity-Animation/Unity-Animation-Animator.png" srcset="/img/loading.gif" lazyload></p>
+<p>动画参数：</p>
+<ul>
+<li>Floats</li>
+<li>Integers</li>
+<li>Booleans</li>
+<li>Triggers</li>
+</ul>
+<h3 id="Animation-Blending"><a href="#Animation-Blending" class="headerlink" title="Animation Blending"></a>Animation Blending</h3><p>动画混合，指的是对于某个属性值而言，其最终值是多个动画的加权平均数</p>
+<p><strong>混合树（Blending Tree）</strong></p>
+<p>类型：</p>
+<ul>
+<li>1D：可以通过一个参数来混合多个动画</li>
+<li>2D Simple Directional：2个参数控制动画，但每个轴上只有2个动画</li>
+<li>2D Freeform Directional：每个方向可以有多个动画</li>
+<li>2D Freeform Cartesian：参数可以代表不同的概念，不仅仅是PosX和PosY</li>
+<li>Direct：每个动画通过一个参数直接调节，多个动画可以叠加</li>
+</ul>
+<p>对于每个Motion，有下列参数需要注意：</p>
+<p><img src="/2023/01/10/Unity-Animation/image-20210629092513734.png" srcset="/img/loading.gif" lazyload alt="image-20210629092513734"></p>
+<p>临界值(threhold)：该动画达到最大混合权重的位置，根据实际参数值到临界值的距离降低该动画的权重</p>
+<p>时间范围设置(Time Scale setting)：设置该动画的相对播放速度</p>
+<p>混合树内也可以嵌套另一个混合树</p>
+<h3 id="State"><a href="#State" class="headerlink" title="State"></a>State</h3><p>每个动画机都需要管理若干个状态，状态所具有的属性如下：</p>
+<ul>
+<li><p>Motion：设置状态的动画或者混合树</p>
+</li>
+<li><p>Speed：设置动画的播放速度</p>
+<p>可以通过代码来控制播放速度的大小，勾选Parameter，在Multiplier右栏填写参数名称</p>
+<p><img src="/2023/01/10/Unity-Animation/04acdada-2bcc-4ee6-a36a-b89f22045646_image5.png" srcset="/img/loading.gif" lazyload alt="img"></p>
+</li>
+<li><p>Normalized Time：动画播放的相对时间，0表示开始播放，1表示播放结束</p>
+</li>
+<li><p>Motion Time：可以通过参数设置Normalized Time</p>
+</li>
+<li><p>Cycle Offset：设置动画循环开始的时间</p>
+</li>
+</ul>
+<p>Any State：能够从任何状态发出转换，并且该状态的转换是优先的</p>
+<h3 id="State-Machine"><a href="#State-Machine" class="headerlink" title="State Machine"></a>State Machine</h3><p>可以像创建状态一样创建状态机</p>
+<p>状态机的转换：</p>
+<p>可以从状态机内部直接转换到状态机外部的某个状态，也可以先转换到状态机自身，再进行二次转换；状态机的转进同理</p>
+<h3 id="Layers"><a href="#Layers" class="headerlink" title="Layers"></a>Layers</h3><p>动画层索引（Animator Layer indices）：动画层索引自顶向下递增，初值为0</p>
+<p>动画层权重（Animator Layer weights）：决定每个动画层的混合权重</p>
+<p>蒙版（Masking）：可以设置哪些游戏对象受到动画影响，例如可以只在人物的上半身设置攻击动画的模板</p>
+<p>混合类型：</p>
+<ul>
+<li>Override blending：类似于混合树混合，动画层之间的权重不可叠加</li>
+<li>Additive blending：动画层的权重可以叠加</li>
+</ul>
+<p>同步（Sync）：当前动画层发生转换时，同步的动画层也发生转换，可以设置Timing选项调整权重(?)</p>
+<h2 id="Scripts"><a href="#Scripts" class="headerlink" title="Scripts"></a>Scripts</h2><p>设置动画机的参数：</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs c#">animator.SetBool();<br>animator.SetFloat();<br>animator.SetInteger();<br>animator.SetTrigger();<br></code></pre></td></tr></table></figure>
+
+<p>该函数有2个重载，第一个参数可以是字符串，也可以是该字符串的哈希值（调用<code>Animator.StringToHash(str)</code>转换，后者的性能更好</p>
+<p>获取动画机的参数：</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs c#">animator.GetBool();<br>animator.GetFloat();<br>animator.GetInteger();<br></code></pre></td></tr></table></figure>
+
+<p>控制动画层权重：</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs c#">animator.SetLayerWeight();<br>animator.GetLayerWeight();<br></code></pre></td></tr></table></figure>
+
+<p>控制动画播放：</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs c#">animator.Play(name, index of layer, offset);<br>animator.PlayInFixedTime();   <span class="hljs-comment">// offset is based on seconds but not Normalized Time</span><br>animator.CrossFade();         <span class="hljs-comment">// 添加渐变效果</span><br>animator.CrossFadeInFixedTime();<br></code></pre></td></tr></table></figure>
+
+<p>状态和动画片段的信息：</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs c#">animator.IsTransition();                  <span class="hljs-comment">// 判断状态是否在发生转换</span><br>animator.GetCurrentAnimatorStateInfo();   <span class="hljs-comment">// 获得当前状态信息</span><br>animator.GetNextAnimatorStateInfo();      <span class="hljs-comment">// 获得下一个状态信息</span><br>animator.GetCurrentAnimatorClipInfo();    <span class="hljs-comment">// 获得当前动画片段信息，返回一个动画片段信息的数组，用于获取混合树及权重</span><br>animator.GetNextAnimatorClipInfo();       <span class="hljs-comment">// 获得下一个动画片段信息</span><br></code></pre></td></tr></table></figure>
+
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Unity/" class="category-chain-item">Unity</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Unity/">#Unity</a>
+      
+        <a href="/tags/Animation/">#Animation</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Unity-Animation</div>
+      <div>http://example.com/2023/01/10/Unity-Animation/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Chen Shuwen</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年1月10日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2023/01/10/Unity-%E5%8D%8F%E7%A8%8B/" title="Unity-协程">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Unity-协程</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/01/10/Unity-Physics/" title="Unity-Physics">
+                        <span class="hidden-mobile">Unity-Physics</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

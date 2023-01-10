@@ -1,0 +1,852 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Chen Shuwen">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="Unity-Physics2DPhysics 2D Settings用于设置一些全局属性，如重力大小，层与层之间的碰撞关系  Rigidbody 2D设置面板如下：   Body Type： Dynamic：受到力的影响 Kinematic：不会受到力的影响（包括重力），物体运动受代码控制 Static：永不移动，只会与动态刚体碰撞，除非设置useFullKinematicContacts，它将和">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Unity-Physics">
+<meta property="og:url" content="http://example.com/2023/01/10/Unity-Physics/index.html">
+<meta property="og:site_name" content="Chen Shuwen&#39;s Tech Site">
+<meta property="og:description" content="Unity-Physics2DPhysics 2D Settings用于设置一些全局属性，如重力大小，层与层之间的碰撞关系  Rigidbody 2D设置面板如下：   Body Type： Dynamic：受到力的影响 Kinematic：不会受到力的影响（包括重力），物体运动受代码控制 Static：永不移动，只会与动态刚体碰撞，除非设置useFullKinematicContacts，它将和">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2023/01/10/Unity-Physics/image-20210629164215458.png">
+<meta property="og:image" content="http://example.com/2023/01/10/Unity-Physics/image-20210629164850404.png">
+<meta property="og:image" content="http://example.com/2023/01/10/Unity-Physics/image-20210629223725787.png">
+<meta property="og:image" content="http://example.com/2023/01/10/Unity-Physics/image-20210629224333684.png">
+<meta property="og:image" content="http://example.com/2023/01/10/Unity-Physics/image-20210629224434929.png">
+<meta property="og:image" content="http://example.com/2023/01/10/Unity-Physics/image-20210629224548908.png">
+<meta property="og:image" content="http://example.com/2023/01/10/Unity-Physics/image-20210630011020233.png">
+<meta property="og:image" content="http://example.com/2023/01/10/Unity-Physics/image-20210630102922401.png">
+<meta property="og:image" content="http://example.com/2023/01/10/Unity-Physics/image-20210701004104980.png">
+<meta property="og:image" content="http://example.com/2023/01/10/Unity-Physics/image-20210701145313483.png">
+<meta property="article:published_time" content="2023-01-10T04:09:35.814Z">
+<meta property="article:modified_time" content="2023-01-10T04:09:35.814Z">
+<meta property="article:author" content="Chen Shuwen">
+<meta property="article:tag" content="Unity">
+<meta property="article:tag" content="Physics">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://example.com/2023/01/10/Unity-Physics/image-20210629164215458.png">
+  
+  
+  
+  <title>Unity-Physics - Chen Shuwen&#39;s Tech Site</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Chen Shuwen&#39;s Tech Site</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Unity-Physics"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-01-10 12:09" pubdate>
+          2023年1月10日 中午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          2.7k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          23 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">Unity-Physics</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="Unity-Physics"><a href="#Unity-Physics" class="headerlink" title="Unity-Physics"></a>Unity-Physics</h1><h2 id="2D"><a href="#2D" class="headerlink" title="2D"></a>2D</h2><h3 id="Physics-2D-Settings"><a href="#Physics-2D-Settings" class="headerlink" title="Physics 2D Settings"></a>Physics 2D Settings</h3><p>用于设置一些全局属性，如重力大小，层与层之间的碰撞关系</p>
+<p><img src="/2023/01/10/Unity-Physics/image-20210629164215458.png" srcset="/img/loading.gif" lazyload alt="image-20210629164215458"></p>
+<h3 id="Rigidbody-2D"><a href="#Rigidbody-2D" class="headerlink" title="Rigidbody 2D"></a>Rigidbody 2D</h3><p>设置面板如下：</p>
+<p><img src="/2023/01/10/Unity-Physics/image-20210629164850404.png" srcset="/img/loading.gif" lazyload alt="image-20210629164850404"></p>
+<ul>
+<li>Body Type：<ul>
+<li>Dynamic：受到力的影响</li>
+<li>Kinematic：不会受到力的影响（包括重力），物体运动受代码控制</li>
+<li>Static：永不移动，只会与动态刚体碰撞，除非设置useFullKinematicContacts，它将和Kinematic刚体碰撞</li>
+</ul>
+</li>
+<li>Material：物体的材质，可以设置弹性和摩擦属性</li>
+<li>Simulated：如果取消勾选，则该物体不受力的影响，且不和其他物体产生接触</li>
+<li>Use Auto Mass：是否根据碰撞器检测质量</li>
+<li>Mass：物体的质量，这会影响物体的惯性、碰撞等</li>
+<li>Linear Drag：运动阻力</li>
+<li>Angular Drag：旋转阻力</li>
+<li>Gravity Scale：重力对物体的影响</li>
+<li>Collision Detection：碰撞检测<ul>
+<li>Discrete：离散检测，不适用于高速物体</li>
+<li>Continuous：连续检测，适用于高速物体，但是会消耗性能</li>
+</ul>
+</li>
+<li>Sleep Mode：睡眠模式<ul>
+<li>Never Sleep：很消耗性能，尽量不要用</li>
+<li>Start Awake：初始化时唤醒</li>
+<li>Start Asleep：最初为睡眠状态（不受重力影响），被碰撞后才唤醒</li>
+</ul>
+</li>
+<li>Interpolate：是否在更新之间插值（一般用于移动不稳定的情况）<ul>
+<li>None：不插值</li>
+<li>Interpolate：根据前一帧插值</li>
+<li>Extrapolate：根据后一帧预估插值</li>
+</ul>
+</li>
+<li>Constraints：锁定方向或者旋转</li>
+</ul>
+<h3 id="Collider-2D"><a href="#Collider-2D" class="headerlink" title="Collider 2D"></a>Collider 2D</h3><h4 id="Circle-Collider-2D"><a href="#Circle-Collider-2D" class="headerlink" title="Circle Collider 2D"></a>Circle Collider 2D</h4><p><img src="/2023/01/10/Unity-Physics/image-20210629223725787.png" srcset="/img/loading.gif" lazyload alt="image-20210629223725787"></p>
+<ul>
+<li>Material：设置碰撞体的材质（Physics Material 2D），可以设置摩擦力和弹性系数</li>
+<li>Is Trigger：是否为触发体，如果勾选，代表可以被穿过</li>
+<li>Used By Effector：是否能够被Effector 2D使用</li>
+<li>Offset：调整碰撞体的偏移位置</li>
+<li>Radius：调整碰撞体的半径</li>
+</ul>
+<h4 id="Box-Collider-2D"><a href="#Box-Collider-2D" class="headerlink" title="Box Collider 2D"></a>Box Collider 2D</h4><p><img src="/2023/01/10/Unity-Physics/image-20210629224333684.png" srcset="/img/loading.gif" lazyload alt="image-20210629224333684"></p>
+<p>大部分属性和Circle Collider 2D相同，但也有一些特殊的属性</p>
+<h4 id="polygon-collider-2D"><a href="#polygon-collider-2D" class="headerlink" title="polygon collider 2D"></a>polygon collider 2D</h4><p><img src="/2023/01/10/Unity-Physics/image-20210629224434929.png" srcset="/img/loading.gif" lazyload alt="image-20210629224434929"></p>
+<p>多边形碰撞体，必须是闭合的图形</p>
+<p>编辑：直接在多边形的边上点击以添加新的结点，按住ctrl后移动到边上会显示为红色，点击后合并红色的边</p>
+<h4 id="edge-collider-2D"><a href="#edge-collider-2D" class="headerlink" title="edge collider 2D"></a>edge collider 2D</h4><p><img src="/2023/01/10/Unity-Physics/image-20210629224548908.png" srcset="/img/loading.gif" lazyload alt="image-20210629224548908"></p>
+<p>可以不是闭合的，用作地形碰撞</p>
+<p>编辑方法同上</p>
+<h3 id="Hinge-Joint-2D"><a href="#Hinge-Joint-2D" class="headerlink" title="Hinge Joint 2D"></a>Hinge Joint 2D</h3><p>铰链接合组件，可用于制作活动门、铁链等需要旋转的物体，该组件必须配合Rigidbody 2D使用</p>
+<p><img src="/2023/01/10/Unity-Physics/image-20210630011020233.png" srcset="/img/loading.gif" lazyload alt="image-20210630011020233"></p>
+<ul>
+<li>Enable Collision：勾选后，该游戏对象和连接的刚体之间会发生碰撞，否则能够穿过刚体</li>
+<li>Connected Rigid Body：连接的刚体组件</li>
+<li>Auto Configure Connected Anchor：自动设置锚点和连接锚点</li>
+<li>Anchor：锚点，物体旋转的轴</li>
+<li>Connected Anchor：连接锚点，如果物体锚点偏离了连接锚点，则物体会被瞬移回去，因此相当于一个固定点</li>
+<li>Use Motor：使用驱动力，勾选后，可以设置驱动速度<ul>
+<li>Motor Speed：需要达到的最大驱动速度，正方向为顺时针</li>
+<li>Maximum Motor Force：施加用于达到驱动速度的力，如果该值过小，则无法达到驱动速度</li>
+</ul>
+</li>
+<li>Use Limits：设置旋转的角度<ul>
+<li>Lower Angle：最小允许旋转角度</li>
+<li>Upper Angle：最大允许旋转角度</li>
+</ul>
+</li>
+<li>Break Force：能够破坏铰链的力的大小</li>
+<li>Break Torque：能够破坏铰链的力矩的大小</li>
+</ul>
+<p>通过合理的设置上述属性，能够设计一些有趣的机关：</p>
+<ul>
+<li>弹簧木板：木板被碰撞打开后能够回到原来的位置，可以通过使用驱动力和限制角度实现</li>
+<li>锁链：为每个锁环设置Hinge Joint 2D组件，并连接上一个组件，最后利用Distance Joint 2D限制悬挂物体到支点的距离</li>
+</ul>
+<p>详细步骤见：<a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=l6awvCT29yU">Hinge Joint 2D - Official Unity Tutorial - YouTube</a></p>
+<h3 id="Area-Effector-2D"><a href="#Area-Effector-2D" class="headerlink" title="Area Effector 2D"></a>Area Effector 2D</h3><p><img src="/2023/01/10/Unity-Physics/image-20210630102922401.png" srcset="/img/loading.gif" lazyload alt="image-20210630102922401"></p>
+<ul>
+<li>Use Collider Mask：使用碰撞器蒙版</li>
+<li>Force<ul>
+<li>Use Global Angle：力的方向相对于全局</li>
+<li>Force Angle：力的方向，默认是相对自身（且不受物体绕y轴的影响），除非勾选Global Angle</li>
+<li>Force Magnitude：力的大小</li>
+<li>Force Variation：给力添加一个随机量，即最终的合力由Magnitude加上0到Variation之间的值</li>
+<li>Force Target：<ul>
+<li>Rigidbody：受影响物体为刚体</li>
+<li>Collider：受影响物体为碰撞体，且会旋转</li>
+</ul>
+</li>
+<li>Damping：<ul>
+<li>Drag：运动阻力大小，可以用来限制物体在其他方向的移动</li>
+<li>Angular Drag：旋转阻力大小</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="Distance-Joint-2D"><a href="#Distance-Joint-2D" class="headerlink" title="Distance Joint 2D"></a>Distance Joint 2D</h3><p><img src="/2023/01/10/Unity-Physics/image-20210701004104980.png" srcset="/img/loading.gif" lazyload alt="image-20210701004104980"></p>
+<p>用于限制刚体和其连接刚体之间的距离</p>
+<ul>
+<li>Enable Collision：勾选后，连接刚体和该物体之间可以碰撞</li>
+<li>Connected Rigid Body：连接的刚体</li>
+<li>Auto Configure Connected Anchor：勾选后，自动设置连接锚点的位置</li>
+<li>Anchor：物体需要回归的位置</li>
+<li>Connected Anchor：连接刚体的锚点</li>
+<li>Auto Configure Distance：自动设置两个锚点之间的距离</li>
+<li>Distance：两个锚点之间的距离</li>
+<li>Max Distance Only：勾选后，物体可以移动到两个锚点之间的位置，否则只能做圆周运动</li>
+<li>Break Force：能够破坏该组件的力</li>
+</ul>
+<h3 id="Point-Effector-2D"><a href="#Point-Effector-2D" class="headerlink" title="Point Effector 2D"></a>Point Effector 2D</h3><p><img src="/2023/01/10/Unity-Physics/image-20210701145313483.png" srcset="/img/loading.gif" lazyload alt="image-20210701145313483"></p>
+<p>可以用于产生类似于爆炸或者磁铁的效果</p>
+<ul>
+<li>Use Collider Mask：使用蒙版</li>
+<li>Force：<ul>
+<li>Force Magnitude：力的大小，正方向指向力的源头</li>
+<li>Force Variation：附加一个随机大小的力，最大值为设置的值</li>
+<li>Distance Scale：产生效果的物理距离相对于实际距离的大小，只有Force Mode设置为非Constant只时才会生效，以线性模式举例，如果Scale为5，则计算力的大小时距离取实际距离的5倍</li>
+<li>Force Source：力的来源<ul>
+<li>Collider：来源为Collider的中心点</li>
+<li>Rigidbody：来源为质点</li>
+</ul>
+</li>
+<li>Force Target：力的目标<ul>
+<li>Collider：只有碰撞体受影响</li>
+<li>Rigidbody：只有刚体受影响</li>
+</ul>
+</li>
+<li>Force Mode：力的模式（力关于距离的函数）<ul>
+<li>Constant：恒定力，不受距离影响</li>
+<li>Inverse Linear：距离和力的大小呈线性相反关系</li>
+<li>Inverse Squared：距离和力的大小呈平方相反关系</li>
+</ul>
+</li>
+<li>Drag：线性移动的阻力，可以防止物体移动越过中心点</li>
+<li>Angular Drag：旋转阻力</li>
+</ul>
+</li>
+</ul>
+<h2 id="3D"><a href="#3D" class="headerlink" title="3D"></a>3D</h2>
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Unity/" class="category-chain-item">Unity</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Unity/">#Unity</a>
+      
+        <a href="/tags/Physics/">#Physics</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Unity-Physics</div>
+      <div>http://example.com/2023/01/10/Unity-Physics/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Chen Shuwen</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年1月10日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2023/01/10/Unity-Animation/" title="Unity-Animation">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Unity-Animation</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/01/10/Unity-Serialize/" title="Unity-Serialize">
+                        <span class="hidden-mobile">Unity-Serialize</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

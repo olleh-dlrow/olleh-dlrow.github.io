@@ -1,0 +1,735 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Chen Shuwen">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="C# —— 装箱和拆箱1、装箱和拆箱是一个抽象的概念2、装箱是将值类型转换为引用类型 ；拆箱是将引用类型转换为值类型利用装箱和拆箱功能，可通过允许值类型的任何值与Object 类型的值相互转换，将值类型与引用类型链接起来例如： 123int val &#x3D; 100;object obj &#x3D; val;Console.WriteLine (“对象的值 &#x3D; &amp;#123;0&amp;#125;&quot;, obj)">
+<meta property="og:type" content="article">
+<meta property="og:title" content="C#--装箱和拆箱">
+<meta property="og:url" content="http://example.com/2023/01/10/%E8%A3%85%E7%AE%B1%E5%92%8C%E6%8B%86%E7%AE%B1/index.html">
+<meta property="og:site_name" content="Chen Shuwen&#39;s Tech Site">
+<meta property="og:description" content="C# —— 装箱和拆箱1、装箱和拆箱是一个抽象的概念2、装箱是将值类型转换为引用类型 ；拆箱是将引用类型转换为值类型利用装箱和拆箱功能，可通过允许值类型的任何值与Object 类型的值相互转换，将值类型与引用类型链接起来例如： 123int val &#x3D; 100;object obj &#x3D; val;Console.WriteLine (“对象的值 &#x3D; &amp;#123;0&amp;#125;&quot;, obj)">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-01-10T04:10:03.266Z">
+<meta property="article:modified_time" content="2023-01-10T04:10:03.266Z">
+<meta property="article:author" content="Chen Shuwen">
+<meta property="article:tag" content="C#">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>C#--装箱和拆箱 - Chen Shuwen&#39;s Tech Site</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Chen Shuwen&#39;s Tech Site</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="C#--装箱和拆箱"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-01-10 12:10" pubdate>
+          2023年1月10日 中午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          4k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          34 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">C#--装箱和拆箱</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="C-——-装箱和拆箱"><a href="#C-——-装箱和拆箱" class="headerlink" title="C# —— 装箱和拆箱"></a>C# —— 装箱和拆箱</h1><p>1、装箱和拆箱是一个抽象的概念<br>2、装箱是将值类型转换为引用类型 ；拆箱是将引用类型转换为值类型<br>利用装箱和拆箱功能，可通过允许值类型的任何值与Object 类型的值相互转换，将值类型与引用类型链接起来<br>例如：</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs c#"><span class="hljs-built_in">int</span> val = <span class="hljs-number">100</span>;<br><span class="hljs-built_in">object</span> obj = val;<br>Console.WriteLine (“对象的值 = &#123;<span class="hljs-number">0</span>&#125;<span class="hljs-string">&quot;, obj);</span><br></code></pre></td></tr></table></figure>
+
+
+<p>这是一个装箱的过程，是将值类型转换为引用类型的过程</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs c#"><span class="hljs-built_in">int</span> val = <span class="hljs-number">100</span>;<br><span class="hljs-built_in">object</span> obj = val;<br><span class="hljs-built_in">int</span> num = (<span class="hljs-built_in">int</span>) obj;<br>Console.WriteLine (<span class="hljs-string">&quot;num: &#123;0&#125;&quot;</span>, num);<br></code></pre></td></tr></table></figure>
+
+<p>这是一个拆箱的过程，是将值类型转换为引用类型，再由引用类型转换为值类型的过程</p>
+<p>注：被装过箱的对象才能被拆箱<br>3、.NET中，数据类型划分为值类型和引用(不等同于C++的指针)类型，与此对应，内存分配被分成了两种方式，一为栈，二为堆，注意：是托管堆。<br>   值类型只会在栈中分配。<br>   引用类型分配内存与托管堆。<br>   托管堆对应于垃圾回收。</p>
+<p>**4：装箱&#x2F;拆箱是什么？<br>**装箱：用于在垃圾回收堆中存储值类型。装箱是值类型到 object 类型或到此值类型所实现的任何接口类型的隐式转换。<br>拆箱：从 object 类型到值类型或从接口类型到实现该接口的值类型的显式转换。</p>
+<p>**5：为何需要装箱？(为何要将值类型转为引用类型？)<br>**一种最普通的场景是，调用一个含类型为Object的参数的方法，该Object可支持任意为型，以便通用。当你需要将一个值类型(如Int32)传入时，需要装箱。<br>另一种用法是，一个非泛型的容器，同样是为了保证通用，而将元素类型定义为Object。于是，要将值类型数据加入容器时，需要装箱。</p>
+<p>**6：装箱&#x2F;拆箱的内部操作。<br>**装箱：<br>对值类型在堆中分配一个对象实例，并将该值复制到新的对象中。按三步进行。<br>第一步：新分配托管堆内存(大小为值类型实例大小加上一个方法表指针和一个SyncBlockIndex)。<br>第二步：将值类型的实例字段拷贝到新分配的内存中。<br>第三步：返回托管堆中新分配对象的地址。这个地址就是一个指向对象的引用了。<br>有人这样理解：如果将Int32装箱，返回的地址，指向的就是一个Int32。我认为也不是不能这样理解，但这确实又有问题，一来它不全面，二来指向Int32并没说出它的实质(在托管堆中)。<br>拆箱：<br>检查对象实例，确保它是给定值类型的一个装箱值。将该值从实例复制到值类型变量中。<br>有书上讲，拆箱只是获取引用对象中指向值类型部分的指针，而内容拷贝则是赋值语句之触发。我觉得这并不要紧。最关键的是检查对象实例的本质，拆箱和装箱的类型必需匹配，这一点上，在IL层上，看不出原理何在，我的猜测，或许是调用了类似GetType之类的方法来取出类型进行匹配(因为需要严格匹配)。</p>
+<p>**7：装箱&#x2F;拆箱对执行效率的影响<br>**显然，从原理上可以看出，装箱时，生成的是全新的引用对象，这会有时间损耗，也就是造成效率降低。<br>那该如何做呢？<br>首先，应该尽量避免装箱。<br>比如上例2的两种情况，都可以避免，在第一种情况下，可以通过重载函数来避免。第二种情况，则可以通过泛型来避免。<br>当然，凡事并不能绝对，假设你想改造的代码为第三方程序集，你无法更改，那你只能是装箱了。<br>对于装箱&#x2F;拆箱代码的优化，由于C#中对装箱和拆箱都是隐式的，所以，根本的方法是对代码进行分析，而分析最直接的方式是了解原理结何查看反编译的IL代码。比如：在循环体中可能存在多余的装箱，你可以简单采用提前装箱方式进行优化。</p>
+<p>**8：对装箱&#x2F;拆箱更进一步的了解<br>**装箱&#x2F;拆箱并不如上面所讲那么简单明了，比如：装箱时，变为引用对象，会多出一个方法表指针，这会有何用处呢？<br>我们可以通过示例来进一步探讨。<br>举个例子。</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><code class="hljs c#">Struct A : ICloneable<br>&#123;<br><span class="hljs-keyword">public</span> Int32 x;<br><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">override</span> String <span class="hljs-title">ToString</span>()</span> &#123;<br><span class="hljs-keyword">return</span> String.Format(”&#123;<span class="hljs-number">0</span>&#125;”,x);<br>&#125;<br><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-built_in">object</span> <span class="hljs-title">Clone</span>()</span> &#123;<br><span class="hljs-keyword">return</span> MemberwiseClone();<br>&#125;<br>&#125;<br><span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">main</span>()</span><br>&#123;<br>A a;<br>a.x = <span class="hljs-number">100</span>;<br>Console.WriteLine(a.ToString());<br>Console.WriteLine(a.GetType());<br>A a2 = (A)a.Clone();<br>ICloneable c = a2;<br>Ojbect o = c.Clone();<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>5.0：a.ToString()。编译器发现A重写了ToString方法，会直接调用ToString的指令。因为A是值类型，编译器不会出现多态行为。因此，直接调用，不装箱。(注：ToString是A的基类System.ValueType的方法)<br>5.1：a.GetType()，GetType是继承于System.ValueType的方法，要调用它，需要一个方法表指针，于是a将被装箱，从而生成方法表指针，调用基类的System.ValueType。(补一句，所有的值类型都是继承于System.ValueType的)。<br>5.2：a.Clone()，因为A实现了Clone方法，所以无需装箱。<br>5.3：ICloneable转型：当a2为转为接口类型时，必须装箱，因为接口是一种引用类型。<br>5.4：c.Clone()。无需装箱，在托管堆中对上一步已装箱的对象进行调用。<br>附：其实上面的基于一个根本的原理，因为未装箱的值类型没有方法表指针，所以，不能通过值类型来调用其上继承的虚方法。另外，接口类型是一个引用类型。对此，我的理解，该方法表指针类似C++的虚函数表指针，它是用来实现引用对象的多态机制的重要依据。</p>
+<p>**9：如何更改已装箱的对象<br>**对于已装箱的对象，因为无法直接调用其指定方法，所以必须先拆箱，再调用方法，但再次拆箱，会生成新的栈实例，而无法修改装箱对象。有点晕吧，感觉在说绕口令。还是举个例子来说：(在上例中追加change方法)</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs c#"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Change</span>(<span class="hljs-params">Int32 x</span>)</span> &#123;<br><span class="hljs-keyword">this</span>.x = x;<br>&#125;<br>调用：<br>A a = <span class="hljs-keyword">new</span> A();<br>a.x = <span class="hljs-number">100</span>;<br>Object o = a; <span class="hljs-comment">//装箱成o，下面，想改变o的值。</span><br>((A)o).Change(<span class="hljs-number">200</span>); <span class="hljs-comment">//改掉了吗？没改掉。</span><br></code></pre></td></tr></table></figure>
+
+<p>没改掉的原因是o在拆箱时，生成的是临时的栈实例A，所以，改动是基于临时A的，并未改到装箱对象。<br>(附：在托管C++中，允许直接取加拆箱时第一步得到的实例引用，而直接更改，但C#不行。)<br>那该如何是好？<br>嗯，通过接口方式，可以达到相同的效果。<br>实现如下：</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs C#"><span class="hljs-keyword">interface</span> <span class="hljs-title">IChange</span> &#123;<br><span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">Change</span>(<span class="hljs-params">Int32 x</span>)</span>;<br>&#125;<br><span class="hljs-keyword">struct</span> A : IChange &#123;<br>…<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>调用：<br>((IChange)o).Change(200);&#x2F;&#x2F;改掉了吗？改掉了。<br>为啥现在可以改？<br>在将o转型为IChange时，这里不会进行再次装箱，当然更不会拆箱，因为o已经是引用类型，再因为它是IChange类型，所以可以直接调用Change，于是，更改的也就是已装箱对象中的字段了，达到期望的效果。</p>
+<p><strong>10、</strong><br>   将值类型转换为引用类型，需要进行装箱操作(boxing)：</p>
+<p>1、首先从托管堆中为新生成的引用对象分配内存。</p>
+<p>2、然后将值类型的数据拷贝到刚刚分配的内存中。</p>
+<p>3、返回托管堆中新分配对象的地址。</p>
+<p>可以看出，进行一次装箱要进行分配内存和拷贝数据这两项比较影响性能的操作。</p>
+<p>将引用内型转换为值内型，需要进行拆箱操作(unboxing)：</p>
+<p>1、首先获取托管堆中属于值类型那部分字段的地址，这一步是严格意义上的拆箱。</p>
+<p>2、将引用对象中的值拷贝到位于线程堆栈上的值类型实例中。</p>
+<p>经过这2步，可以认为是同boxing是互反操作。严格意义上的拆箱，并不影响性能，但伴随这之后的拷贝数据的操作就会同boxing操作中一样影响性能。</p>
+<p><strong>11、</strong><br>NET的所有类型都是由基类System.Object继承过来的，包括最常用的基础类型：int, byte, short，bool等等，就是说所有的事物都是对象。如果申明这些类型得时候都在堆(HEAP)中分配内存，会造成极低的效率！(个中原因以及关于堆和栈得区别会在另一篇里单独得说说！)<br>.NET如何解决这个问题得了？正是通过将类型分成值型(value)和引用型(regerencetype)，C#中定义的值类型包括原类型（Sbyte、Byte、Short、Ushort、Int、Uint、Long、Ulong、Char、Float、Double、Bool、Decimal）、枚举(enum)、结构(struct)，引用类型包括：类、数组、接口、委托、字符串等。<br>值型就是在栈中分配内存，在申明的同时就初始化，以确保数据不为NULL；<br>引用型是在堆中分配内存，初始化为null，引用型是需要GARBAGE COLLECTION来回收内存的，值型不用，超出了作用范围，系统就会自动释放！<br>下面就来说装箱和拆箱的定义！<br>装箱就是隐式的将一个值型转换为引用型对象。比如：</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs c#"><span class="hljs-built_in">int</span> i=<span class="hljs-number">0</span>;<br>Syste.Object obj=i;<br></code></pre></td></tr></table></figure>
+
+<p>这个过程就是装箱！就是将i装箱！<br>拆箱就是将一个引用型对象转换成任意值型！比如：</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs c#"><span class="hljs-built_in">int</span> i=<span class="hljs-number">0</span>;<br>System.Object obj=i;<br><span class="hljs-built_in">int</span> j=(<span class="hljs-built_in">int</span>)obj;<br></code></pre></td></tr></table></figure>
+
+<p>这个过程前2句是将i装箱，后一句是将obj拆箱！</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/C/" class="category-chain-item">C#</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/C/">#C#</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>C#--装箱和拆箱</div>
+      <div>http://example.com/2023/01/10/装箱和拆箱/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Chen Shuwen</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年1月10日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2023/01/10/%E8%87%AA%E7%94%A8-linux%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4(bash+script)/" title="自用-linux常用命令(bash+script)">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">自用-linux常用命令(bash+script)</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/01/10/%E6%A0%88&amp;%E9%80%92%E5%BD%92&amp;%E6%B7%B1%E5%BA%A6%E4%BC%98%E5%85%88%E6%90%9C%E7%B4%A2/" title="栈&amp;递归&amp;深度优先搜索">
+                        <span class="hidden-mobile">栈&amp;递归&amp;深度优先搜索</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

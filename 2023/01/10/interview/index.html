@@ -1,0 +1,1112 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Chen Shuwen">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="常见面试问题TOP48数组 在一个元素为 1 到 100 的整数数组中，如何搜索缺失元素？解决方案：http:&#x2F;&#x2F;javarevisited.blogspot.com&#x2F;2014&#x2F;11&#x2F;how-to-find-missing-number-on-integer-array-java.html缺失1个使用总和减，缺失多个使用BitSet记录缺失位  给定一个数组，如何搜索重复元素？解决方案：http:">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Chen Shuwen&#39;s Tech Site">
+<meta property="og:url" content="http://example.com/2023/01/10/interview/index.html">
+<meta property="og:site_name" content="Chen Shuwen&#39;s Tech Site">
+<meta property="og:description" content="常见面试问题TOP48数组 在一个元素为 1 到 100 的整数数组中，如何搜索缺失元素？解决方案：http:&#x2F;&#x2F;javarevisited.blogspot.com&#x2F;2014&#x2F;11&#x2F;how-to-find-missing-number-on-integer-array-java.html缺失1个使用总和减，缺失多个使用BitSet记录缺失位  给定一个数组，如何搜索重复元素？解决方案：http:">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-01-10T04:09:25.982Z">
+<meta property="article:modified_time" content="2023-01-10T04:09:25.982Z">
+<meta property="article:author" content="Chen Shuwen">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>Chen Shuwen&#39;s Tech Site</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Chen Shuwen&#39;s Tech Site</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text=""></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-01-10 12:09" pubdate>
+          2023年1月10日 中午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          27k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          229 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none"></h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="常见面试问题TOP48"><a href="#常见面试问题TOP48" class="headerlink" title="常见面试问题TOP48"></a>常见面试问题TOP48</h2><h3 id="数组"><a href="#数组" class="headerlink" title="数组"></a>数组</h3><ol>
+<li><p>在一个元素为 1 到 100 的整数数组中，如何搜索缺失元素？<br>解决方案：<a target="_blank" rel="noopener" href="http://javarevisited.blogspot.com/2014/11/how-to-find-missing-number-on-integer-array-java.html">http://javarevisited.blogspot.com/2014/11/how-to-find-missing-number-on-integer-array-java.html</a><br>缺失1个使用总和减，缺失多个使用BitSet记录缺失位</p>
+</li>
+<li><p>给定一个数组，如何搜索重复元素？<br>解决方案：<a target="_blank" rel="noopener" href="http://javarevisited.blogspot.com/2014/01/how-to-remove-duplicates-from-array-java-without-collection-API.html">http://javarevisited.blogspot.com/2014/01/how-to-remove-duplicates-from-array-java-without-collection-API.html</a><br>排序，或Hash表</p>
+</li>
+<li><p>给定一个乱序数组，如何搜索最大和最小元素？<br>解决方案：<a target="_blank" rel="noopener" href="http://java67.blogspot.com/2014/02/how-to-find-largest-and-smallest-number-array-in-java.html">http://java67.blogspot.com/2014/02/how-to-find-largest-and-smallest-number-array-in-java.html</a></p>
+</li>
+<li><p>给定一个数值，如何搜索整数数组中加和为该数值的成对元素？<br>解决方案：<a target="_blank" rel="noopener" href="http://javarevisited.blogspot.com/2014/08/how-to-find-all-pairs-in-array-of-integers-whose-sum-equal-given-number-java.html">http://javarevisited.blogspot.com/2014/08/how-to-find-all-pairs-in-array-of-integers-whose-sum-equal-given-number-java.html</a><br>使用Hash表</p>
+</li>
+<li><p>如果数组包含多个重复值，如何搜索所有重复值？<br>解决方案：<a target="_blank" rel="noopener" href="http://javarevisited.blogspot.com/2014/03/3-ways-to-find-first-non-repeated-character-String-programming-problem.html">http://javarevisited.blogspot.com/2014/03/3-ways-to-find-first-non-repeated-character-String-programming-problem.html</a></p>
+</li>
+<li><p>给定一个数组，如何用 Java 删除重复元素？如何在不使用库的情况下移除数组中的重复元素？<br>解决方案：<a target="_blank" rel="noopener" href="http://javarevisited.blogspot.com/2014/01/how-to-remove-duplicates-from-array-java-without-collection-API.html">http://javarevisited.blogspot.com/2014/01/how-to-remove-duplicates-from-array-java-without-collection-API.html</a></p>
+</li>
+<li><p>如何使用快速排序算法对整数数组进行排序？<br>解决方案：<a target="_blank" rel="noopener" href="http://javarevisited.blogspot.com/2014/08/quicksort-sorting-algorithm-in-java-in-place-example.html">http://javarevisited.blogspot.com/2014/08/quicksort-sorting-algorithm-in-java-in-place-example.html</a></p>
+</li>
+<li><p>如何使用 Java 反转一个数组？<br>解决方案：<a target="_blank" rel="noopener" href="http://javarevisited.blogspot.com/2013/03/how-to-reverse-array-in-java-int-String-array-example.html">http://javarevisited.blogspot.com/2013/03/how-to-reverse-array-in-java-int-String-array-example.html</a></p>
+</li>
+</ol>
+<h3 id="链表"><a href="#链表" class="headerlink" title="链表"></a>链表</h3><ol start="9">
+<li><p>如何在一次传递中找到单链表的中间元素？<br>解决方案：<a target="_blank" rel="noopener" href="http://javarevisited.blogspot.sg/2012/12/how-to-find-middle-element-of-linked-list-one-pass.html">http://javarevisited.blogspot.sg/2012/12/how-to-find-middle-element-of-linked-list-one-pass.html</a><br>快慢指针</p>
+</li>
+<li><p>如何检查给定的链表是否包含循环？如何找到循环的起始节点？<br>解决方案：<a target="_blank" rel="noopener" href="http://javarevisited.blogspot.sg/2013/05/find-if-linked-list-contains-loops-cycle-cyclic-circular-check.html">http://javarevisited.blogspot.sg/2013/05/find-if-linked-list-contains-loops-cycle-cyclic-circular-check.html</a><br>快慢指针</p>
+</li>
+<li><p>如何反转链表？<br>解决方案：<a target="_blank" rel="noopener" href="http://c.biancheng.net/view/8105.html">http://c.biancheng.net/view/8105.html</a><br>4种方法：<br>迭代反转，递归反转（好用），头插法（好用），就地逆置法</p>
+</li>
+<li><p>在没有递归的情况下如何反转单链表？<br>解决方案：<a target="_blank" rel="noopener" href="http://javarevisited.blogspot.sg/2017/03/how-to-reverse-linked-list-in-java-using-iteration-and-recursion.html">http://javarevisited.blogspot.sg/2017/03/how-to-reverse-linked-list-in-java-using-iteration-and-recursion.html</a><br>头插法</p>
+</li>
+<li><p>如何删除乱序链表中的重复节点？<br>解决方案：<a target="_blank" rel="noopener" href="https://www.geeksforgeeks.org/remove-duplicates-from-an-unsorted-linked-list/">https://www.geeksforgeeks.org/remove-duplicates-from-an-unsorted-linked-list/</a><br>排序，Hash</p>
+</li>
+<li><p>如何测量单链表的长度？<br>解决方案：<a target="_blank" rel="noopener" href="http://javarevisited.blogspot.sg/2016/05/how-do-you-find-length-of-singly-linked.html">http://javarevisited.blogspot.sg/2016/05/how-do-you-find-length-of-singly-linked.html</a></p>
+</li>
+<li><p>如何从单链表的末端找出第三个节点？<br>解决方案：<a target="_blank" rel="noopener" href="http://javarevisited.blogspot.sg/2016/07/how-to-find-3rd-element-from-end-in-linked-list-java.html">http://javarevisited.blogspot.sg/2016/07/how-to-find-3rd-element-from-end-in-linked-list-java.html</a></p>
+</li>
+<li><p>如何使用堆栈算出两个链表的总和？<br>解决方案：<a target="_blank" rel="noopener" href="https://www.geeksforgeeks.org/sum-of-two-linked-lists/">https://www.geeksforgeeks.org/sum-of-two-linked-lists/</a><br>递归，先求后面的，得到carry，再算当前的</p>
+</li>
+</ol>
+<h3 id="字符串"><a href="#字符串" class="headerlink" title="字符串"></a>字符串</h3><ol start="17">
+<li><p>如何打印字符串中重复的字符？<br>解决方案：<a target="_blank" rel="noopener" href="http://java67.blogspot.sg/2014/03/how-to-find-duplicate-characters-in-String-Java-program.html">http://java67.blogspot.sg/2014/03/how-to-find-duplicate-characters-in-String-Java-program.html</a></p>
+</li>
+<li><p>如何检查两个字符串是否互为逆序？<br>解决方案：<a target="_blank" rel="noopener" href="http://javarevisited.blogspot.sg/2013/03/Anagram-how-to-check-if-two-string-are-anagrams-example-tutorial.html">http://javarevisited.blogspot.sg/2013/03/Anagram-how-to-check-if-two-string-are-anagrams-example-tutorial.html</a></p>
+</li>
+<li><p>如何打印字符串中首个非重复字符？<br>解决方案：<a target="_blank" rel="noopener" href="http://javarevisited.blogspot.sg/2014/03/3-ways-to-find-first-non-repeated-character-String-programming-problem.html">http://javarevisited.blogspot.sg/2014/03/3-ways-to-find-first-non-repeated-character-String-programming-problem.html</a></p>
+</li>
+<li><p>如何使用递归反转给定字符串？<br>解决方案：<a target="_blank" rel="noopener" href="http://javarevisited.blogspot.sg/2012/01/how-to-reverse-string-in-java-using.html">http://javarevisited.blogspot.sg/2012/01/how-to-reverse-string-in-java-using.html</a></p>
+</li>
+<li><p>如何检查一个字符串是否仅包含数字？<br>解决方案：<a target="_blank" rel="noopener" href="http://javarevisited.blogspot.sg/2012/10/regular-expression-example-in-java-to-check-String-number.html">http://javarevisited.blogspot.sg/2012/10/regular-expression-example-in-java-to-check-String-number.html</a></p>
+</li>
+<li><p>如何搜索字符串中的重复字符？<br>解决方案：<a target="_blank" rel="noopener" href="http://java67.blogspot.sg/2014/03/how-to-find-duplicate-characters-in-String-Java-program.html">http://java67.blogspot.sg/2014/03/how-to-find-duplicate-characters-in-String-Java-program.html</a></p>
+</li>
+<li><p>给定一个字符串，如何统计元音数和辅音数？<br>解决方案：<a target="_blank" rel="noopener" href="http://java67.blogspot.sg/2013/11/how-to-count-vowels-and-consonants-in-Java-String-word.html">http://java67.blogspot.sg/2013/11/how-to-count-vowels-and-consonants-in-Java-String-word.html</a></p>
+</li>
+<li><p>给定一个字符，如同计算它在字符串中出现的次数？<br>解决方案：<a target="_blank" rel="noopener" href="http://javarevisited.blogspot.sg/2012/12/how-to-count-occurrence-of-character-in-String.html">http://javarevisited.blogspot.sg/2012/12/how-to-count-occurrence-of-character-in-String.html</a></p>
+</li>
+<li><p>如何搜索一个字符串的所有排列情况？<br>解决方案：<a target="_blank" rel="noopener" href="http://javarevisited.blogspot.com/2015/08/how-to-find-all-permutations-of-string-java-example.html">http://javarevisited.blogspot.com/2015/08/how-to-find-all-permutations-of-string-java-example.html</a></p>
+</li>
+<li><p>在不使用任何库的情况下，如何反转给定句子中的单词？<br>解决方案：<a target="_blank" rel="noopener" href="http://java67.blogspot.com/2015/06/how-to-reverse-words-in-string-java.html">http://java67.blogspot.com/2015/06/how-to-reverse-words-in-string-java.html</a></p>
+</li>
+<li><p>如何检查两个字符串是不是互为旋转（rotation）？<br>解决方案：<a target="_blank" rel="noopener" href="http://www.java67.com/2017/07/string-rotation-in-java-write-program.html">http://www.java67.com/2017/07/string-rotation-in-java-write-program.html</a></p>
+</li>
+<li><p>给定一个字符串，如何检查它是不是回文结构？<br>解决方案：<a target="_blank" rel="noopener" href="http://java67.blogspot.com/2015/06/how-to-check-is-string-is-palindrome-in.html">http://java67.blogspot.com/2015/06/how-to-check-is-string-is-palindrome-in.html</a></p>
+</li>
+</ol>
+<h3 id="二叉树"><a href="#二叉树" class="headerlink" title="二叉树"></a>二叉树</h3><ol start="29">
+<li><p>如何实现二叉搜索树？<br>解决方案：<a target="_blank" rel="noopener" href="http://javarevisited.blogspot.sg/2015/10/how-to-implement-binary-search-tree-in-java-example.html#axzz4wnEtnNB3">http://javarevisited.blogspot.sg/2015/10/how-to-implement-binary-search-tree-in-java-example.html#axzz4wnEtnNB3</a></p>
+</li>
+<li><p>如何对给定二叉树执行前序遍历？<br>解决方案：<a target="_blank" rel="noopener" href="http://javarevisited.blogspot.sg/2016/07/binary-tree-preorder-traversal-in-java-using-recursion-iteration-example.html#axzz5ArdIFI7y">http://javarevisited.blogspot.sg/2016/07/binary-tree-preorder-traversal-in-java-using-recursion-iteration-example.html#axzz5ArdIFI7y</a></p>
+</li>
+<li><p>如何在没有递归的情况下对给定二叉树执行前序遍历？<br>解决方案：<a target="_blank" rel="noopener" href="http://www.java67.com/2016/07/binary-tree-preorder-traversal-in-java-without-recursion.html">http://www.java67.com/2016/07/binary-tree-preorder-traversal-in-java-without-recursion.html</a></p>
+</li>
+<li><p>如何对给定二叉树执行中序遍历？<br>解决方案：<a target="_blank" rel="noopener" href="http://www.java67.com/2016/08/binary-tree-inorder-traversal-in-java.html">http://www.java67.com/2016/08/binary-tree-inorder-traversal-in-java.html</a></p>
+</li>
+<li><p>如何在没有递归的情况下通过对给定二叉树执行中序遍历来打印所有节点？<br>解决方案：<a target="_blank" rel="noopener" href="http://www.java67.com/2016/08/binary-tree-inorder-traversal-in-java.html">http://www.java67.com/2016/08/binary-tree-inorder-traversal-in-java.html</a></p>
+</li>
+<li><p>如何实现后序遍历算法？<br>解决方案：<a target="_blank" rel="noopener" href="http://www.java67.com/2016/10/binary-tree-post-order-traversal-in.html">http://www.java67.com/2016/10/binary-tree-post-order-traversal-in.html</a></p>
+</li>
+<li><p>如何在没有递归的情况下对给定二叉树执行后序遍历？<br>解决方案：<a target="_blank" rel="noopener" href="http://www.java67.com/2017/05/binary-tree-post-order-traversal-in-java-without-recursion.html">http://www.java67.com/2017/05/binary-tree-post-order-traversal-in-java-without-recursion.html</a></p>
+</li>
+<li><p>如何打印二叉搜索树的所有叶节点？<br>解决方案：<a target="_blank" rel="noopener" href="http://www.java67.com/2016/09/how-to-print-all-leaf-nodes-of-binary-tree-in-java.html">http://www.java67.com/2016/09/how-to-print-all-leaf-nodes-of-binary-tree-in-java.html</a></p>
+</li>
+<li><p>如何计算给定二叉树中叶节点的数量？<br>解决方案：<a target="_blank" rel="noopener" href="http://javarevisited.blogspot.sg/2016/12/how-to-count-number-of-leaf-nodes-in-java-recursive-iterative-algorithm.html">http://javarevisited.blogspot.sg/2016/12/how-to-count-number-of-leaf-nodes-in-java-recursive-iterative-algorithm.html</a></p>
+</li>
+<li><p>如何在给定数组中执行二元搜索？<br>解决方案：<a target="_blank" rel="noopener" href="http://javarevisited.blogspot.sg/2015/10/how-to-implement-binary-search-tree-in-java-example.html#axzz4wnEtnNB3">http://javarevisited.blogspot.sg/2015/10/how-to-implement-binary-search-tree-in-java-example.html#axzz4wnEtnNB3</a></p>
+</li>
+</ol>
+<h3 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h3><ol start="39">
+<li><p>如何实现冒泡排序算法（bubble sort algorithm）？<br>解决方案：<a target="_blank" rel="noopener" href="http://javarevisited.blogspot.sg/2014/08/bubble-sort-algorithm-in-java-with.html#axzz5ArdIFI7y">http://javarevisited.blogspot.sg/2014/08/bubble-sort-algorithm-in-java-with.html#axzz5ArdIFI7y</a><br>两两比较</p>
+</li>
+<li><p>如何实现迭代快速排序算法（iterative quicksort algorithm）？<br>解决方案：<a target="_blank" rel="noopener" href="http://javarevisited.blogspot.sg/2016/09iterative-quicksort-example-in-java-without-recursion.html#axzz5ArdIFI7y">http://javarevisited.blogspot.sg/2016/09iterative-quicksort-example-in-java-without-recursion.html#axzz5ArdIFI7y</a></p>
+</li>
+<li><p>如何实现插入排序算法（insertion sort algorithm）？<br>解决方案：<a target="_blank" rel="noopener" href="http://www.java67.com/2014/09/insertion-sort-in-java-with-example.html">http://www.java67.com/2014/09/insertion-sort-in-java-with-example.html</a></p>
+</li>
+<li><p>如何实现归并排序算法（merge sort algorithm）？<br>解决方案：<a target="_blank" rel="noopener" href="http://www.java67.com/2018/03/mergesort-in-java-algorithm-example-and.html">http://www.java67.com/2018/03/mergesort-in-java-algorithm-example-and.html</a></p>
+</li>
+<li><p>如何实现桶排序算法（bucket sort algorithm）？<br>解决方案：<a target="_blank" rel="noopener" href="http://javarevisited.blogspot.sg/2017/01/bucket-sort-in-java-with-example.html">http://javarevisited.blogspot.sg/2017/01/bucket-sort-in-java-with-example.html</a><br>根据数据的最值分桶，将数据放到对应范围的桶中(根据数据的大小放)，然后排序每个桶<br>是计数排序的改进，不用那么大的空间</p>
+</li>
+<li><p>如何实现计数排序算法（counting sort algorithm）？<br>解决方案：<a target="_blank" rel="noopener" href="http://www.java67.com/2017/06/counting-sort-in-java-example.html">http://www.java67.com/2017/06/counting-sort-in-java-example.html</a><br>统计每个元素的数目，再反向放回去即可，适合范围小的算法</p>
+</li>
+<li><p>如何实现基数排序算法（radix sort algorithm）？<br>解决方案：<a target="_blank" rel="noopener" href="http://www.java67.com/2018/03/how-to-implement-radix-sort-in-java.html">http://www.java67.com/2018/03/how-to-implement-radix-sort-in-java.html</a><br>有0~9 10个桶，从低到高遍历位，根据当前位的值放入桶，形成新的序列</p>
+</li>
+<li><p>如何在不使用第三个变量的前提下交换两个数字？<br>解决方案：<a target="_blank" rel="noopener" href="http://www.java67.com/2015/08/how-to-swap-two-integers-without-using.html">http://www.java67.com/2015/08/how-to-swap-two-integers-without-using.html</a><br>异或，但是不能原地，原地特殊处理就行</p>
+</li>
+<li><p>如何确认两个矩形是否重叠？<br>解决方案：<a target="_blank" rel="noopener" href="http://javarevisited.blogspot.sg/2016/10/how-to-check-if-two-rectangle-overlap-in-java-algorithm.html">http://javarevisited.blogspot.sg/2016/10/how-to-check-if-two-rectangle-overlap-in-java-algorithm.html</a><br>逆向思考，判断不相交，只要有一个最大值小于等于另一个的最小值即可<br>获取交集，只要交集的左边小于右边，则重叠，需要同时满足所有轴</p>
+</li>
+<li><p>如何设计自动贩卖机？<br>解决方案：<a target="_blank" rel="noopener" href="http://javarevisited.blogspot.sg/2016/06/design-vending-machine-in-java.html">http://javarevisited.blogspot.sg/2016/06/design-vending-machine-in-java.html</a></p>
+</li>
+</ol>
+<h2 id="C-必坑必会"><a href="#C-必坑必会" class="headerlink" title="C++必坑必会"></a>C++必坑必会</h2><p>2、编译器为什么不给局部变量和成员变量做默认初始化？</p>
+<p>C++被设计为系统级的编程语言，效率是优先考虑的方向，c++秉持的一个设计哲学是不为不必要的操作付出任何额外的代价，所以它有别于java，不给成员变量和局部变量做默认初始化，如果需要赋初值，那就由程序员自己去保证。</p>
+<p>结论：从安全的角度出发，定义变量的时候赋初值是一个好的习惯，很多错误皆因未正确初始化而起，成员变量尽量在成员初始化列表里初始化，且要按定义的顺序初始化。</p>
+<p>4、注意操作符短路</p>
+<p>5、理解std::vector的底层实现</p>
+<p>(a) vector是动态扩容的，2的次方往上翻，为了确保数据保存在连续空间，每次扩充，会将原member悉数拷贝到新的内存块； 不要保存vector内对象的指针，扩容会导致其失效 ；可以通过保存其下标index替代。<br>验证代码：<br>vector<int> v(10);<br>cout &lt;&lt; v.capacity() &lt;&lt; ‘ ‘;<br>for(int i &#x3D; 0; i &lt; 11; i++) {<br>    v.push_back(i);<br>    cout &lt;&lt; v.capacity() &lt;&lt; ‘ ‘;<br>}<br>capacity: 10 -&gt; 20 -&gt; 40</int></p>
+<p>(b) 运行过程中需要动态增删的vector，不宜存放大的对象本身 ，因为扩容会导致所有成员拷贝构造，消耗较大，可以通过保存对象指针替代。</p>
+<p>(c)resize()是重置大小，但不改变容量；reserve()是预留空间，并未改变size()，可避免多次扩容； clear()并不会导致空间收缩 ，如果需要释放空间，可以跟空的vector交换，std::vector <t>.swap(v)，c++11里shrink_to_fit()也能收缩内存。</t></p>
+<p>(d) 理解at()和operator[]的区别 ：at()会做下标越界检查，operator[]提供数组索引级的访问，在release版本下不会检查下标，VC会在Debug版本会检查；c++标准规定:operator[]不提供下标安全性检查。</p>
+<p>(e)C++标准规定了std::vector的底层用数组实现，认清这一点并利用这一点。</p>
+<p>6、用c标准库的安全版本（带n标识）替换非安全版本 ，比如用strncpy替代strcpy，用snprintf替代sprintf，用strncat代替strcat，用strncmp代替strcmp，memcpy(dst, src, n)要确保[dst，dst+n]和[src, src+n]都有有效的虚拟内存地址空间。；多线程环境下，要用系统调用或者库函数的安全版本代替非安全版本（_r版本），谨记strtok，gmtime等标准c函数都不是线程安全的。</p>
+<p>7、理解函数调用的性能开销（栈帧建立和销毁，参数传递，控制转移），性能敏感函数考虑inline。</p>
+<p>X86_64体系结构因为通用寄存器数目增加到16个，所以64位系统下参数数目不多的函数调用，将会由寄存器传递代替压栈方式传递参数，但栈帧建立、撤销和控制转移依然会对性能有所影响。</p>
+<p>8、理解user stack空间很有限，不能在栈上定义过大的临时对象，递归函数要有退出条件且不能递归过深。</p>
+<p>一般而言，用户栈只有几兆（典型大小是4M，8M），所以栈上创建的对象不能太大；虽然递归函数能简化程序编写，但也常常带来运行速度变慢的问题，所以需要预估好递归深度，优先考虑非递归实现版本。</p>
+<p>9、内存拷贝小心内存越界；memcpy，memset有很强的限制，仅能用于POD结构，不能作用于stl容器或者带有虚函数的类。</p>
+<p>带虚函数的类对象会有一个虚函数表的指针，memcpy将破坏该指针指向。</p>
+<p>对非POD执行memset&#x2F;memcpy，免费送你四个字：自求多福。<br>POD类型：<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/45545035">https://zhuanlan.zhihu.com/p/45545035</a></p>
+<p>10、用sprintf格式化字符串的时候，类型和格式化符号要严格匹配，因为sprintf的函数实现里是按格式化串从栈上取参数，任何不一致，都有可能引起不可预知的错误； &#x2F;usr&#x2F;include&#x2F;inttypes.h里定义了跨平台的格式化符号，比如PRId64用于格式化int64_t</p>
+<p>11、stl容器的遍历删除要小心迭代器失效，vector,list,map,set等各有不同的写法。<br>vector删除后会自动将数组前移，此时it++就会跳过一个元素；map, set不受影响<br>    &#x2F;&#x2F;vector遍历删除<br>    std::vector<int> v(8);<br>    std::generate(v.begin(), v.end(), std::rand);<br>    std::cout &lt;&lt; “after vector generate…………………………………..\n”;<br>    std::copy(v.begin(), v.end(), std::ostream_iterator<int>(std::cout, “\n”));<br>    for (auto x &#x3D; v.begin(); x !&#x3D; v.end(); )<br>    {<br>        if (*x % 2)<br>            x &#x3D; v.erase(x);<br>        else<br>            ++x;<br>    }<br>    std::cout &lt;&lt; “after vector erase…………………………………..\n”;<br>    std::copy(v.begin(), v.end(), std::ostream_iterator<int>(std::cout, “\n”));</int></int></int></p>
+<pre><code class="hljs">//map遍历删除
+std::map&lt;int, int&gt; m = &#123;&#123;1,2&#125;, &#123;8,4&#125;, &#123;5,6&#125;, &#123;6,7&#125;&#125;;
+for (auto x = m.begin(); x != m.end(); )
+&#123;
+    if (x-&gt;first % 2)
+        m.erase(x++);
+    else
+        ++x;
+&#125;
+</code></pre>
+<p>12、积极的使用const，理解const不仅仅是一种语法层面的保护机制，也会影响程序的编译和运行。</p>
+<p>const常量会被编码到机器指令。</p>
+<p>13、理解四种转型的含义和区别，避免用错，尽量少用向下转型（可以通过设计加以改进）。</p>
+<p>static_cast, dynamic_cast,const_cast,reinterpret_cast，傻傻分不清？</p>
+<p>C++砖家说：一句话，尽量少用转型。不管您信不信，我反正是信了</p>
+<p>14、打开的句柄要关闭，加锁&#x2F;解锁，new&#x2F;delete，new[]&#x2F;delete[]，malloc&#x2F;free要配对，可以使用RAII技术防止资源泄露，编写符合规范的代码。</p>
+<p>Valgrind对程序的内存使用方式有期望，需要干净的释放，所以规范编程才能写出valgrind干净的代码，不然再好的工具碰到不按规划写的代码也是武功尽废啊。</p>
+<p>15、理解多继承潜在的问题，慎用多继承。</p>
+<p>多继承会存在菱形继承的问题，多个基类有相同成员变量会有问题，需要谨慎对待。</p>
+<p>16、有多态用法抽象基类的析构函数要加virtual关键字。</p>
+<p>主要是为了基类的析构函数能得到正确的调用。</p>
+<p>virtual dtor跟普通虚函数一样，基类指针指向子类对象的时候，delete ptr，根据虚函数特征，如果析构函数是普通函数，那么就调用ptr显式（基类）类型的析构函数；如果析构函数是virtual，则会调用子类的析构函数，然后再调用基类析构函数。</p>
+<p>17、避免在构造函数和析构函数里调用虚函数。</p>
+<p>构造函数里，对象并没有完全构建好，此时调用虚函数不一定能正确绑定，析构亦如此。</p>
+<p>18、从输入流获取数据，要做好数据不够的处理，要加try catch；没有被吞咽的exception，会被传播。</p>
+<p>从网络数据流读取数据，从数据库恢复数据都需要注意这个问题。</p>
+<p>19、协议尽量不要传float，如果传float要了解NaN的概念，要做好检查，避免恶意传播。</p>
+<p>20、定义宏要遵循常规，要对每个变量加括弧，有时候需要加do {} while(0)或者{}，以便能将一条宏当成一个语句。要理解宏在预处理阶段被替换，不用的时候要#undef，要防止污染别人的代码。</p>
+<p>21、了解智能指针，理解基于引用计数法的智能指针实现方式，了解所有权转移的概念。</p>
+<p>考虑用std::shared_ptr管理动态分配的对象。</p>
+<p>22、了解c++高阶特性：模板和泛型编程，union，bitfield，指向成员的指针，placement new，显式析构，异常机制，nested class，local class，namespace，多继承、虚继承，volatile，extern “C”等。</p>
+<p>有些高级特性只有在特定情况下才会被用到，但技多不压身，平时还是需要积累和了解，这样在需求出现时，才能从自己的知识库里拿出工具来对付它。</p>
+<p>23、了解C++新标准，关注新技术，c++11&#x2F;14&#x2F;17、lambda，右值引用，move语义，多线程库等。</p>
+<p>c++98&#x2F;03标准到c++11标准的推出历经13年，13年来程序设计语言的思想得到了很大的发展，c++11新标准吸收了很多其他语言的新特性，虽然c++11新标准主要是靠引入新的库来支持新特征，核心语言的变化较少，但新标准还是引入了move语义等核心语法层面的修改，每个CPPer都应该了解新标准。</p>
+<p>24、OOP设计原则并不是胡扯</p>
+<p>设计模式六大原则（1）：单一职责原则</p>
+<p>设计模式六大原则（2）：里氏替换原则</p>
+<p>设计模式六大原则（3）：依赖倒置原则</p>
+<p>设计模式六大原则（4）：接口隔离原则</p>
+<p>设计模式六大原则（5）：迪米特法则</p>
+<p>设计模式六大原则（6）：开闭原则 </p>
+<p>25、熟悉常用设计模式，活学活用，不生搬硬套。</p>
+<p>神化设计模式和反设计模式，都不是科学的态度，设计模式是软件设计的经验总结，有一定的价值；GOF书上对每一个设计模式，都用专门的段落讲它的应用场景和适用性，限制和缺陷，在正确评估得失的情况下，是鼓励使用的，但显然，你首先需要准确get到她。</p>
+<p>26、了解延迟计算和分散计算</p>
+<p>比如游戏服务器端玩家的战力，由属性a,b决定，也就是说属性a，b任何一个变化，都需要重算战力；但如果ModifyPropertyA(),ModifyPropertyB()之后，都重算战力却并非真正必要，因为修改属性A之后有可能马上修改B，两次重算战力，显然第一次重算的结果会很快被第二次的重算覆盖。</p>
+<p>而且很多情况下，我们可能需要在心跳里，把最新的战力值推送给客户端，这样的话，ModifyPropertyA(),ModifyPropertyB()里，我们其实只需要把战力置脏，延迟计算，这样就能避免不必要的计算。</p>
+<p>在GetFightValue()里判断FightValueDirtyFlag，如果脏，则重算，清脏标记；如果不脏，直接返回之前计算的结果。</p>
+<p>分散计算是把任务分散，打碎，避免一次大计算量，卡住程序。</p>
+<p>延迟计算和分散计算都是常见的套路。</p>
+<p>27、理解字节对齐</p>
+<p>字节对齐能让存储器访问速度更快。<br>字节对齐跟cpu架构相关，有些cpu访问特定类型的数据必须在一定地址对齐的储存器位置，否则会触发异常。</p>
+<p>字节对齐的另一个影响是调整结构体成员变量的定义顺序，有可能减少结构体大小，这在某些情况下，能节省内存。</p>
+<p>28、牢记3rules和5rules</p>
+<p>只在需要接管的时候才自定义operator&#x3D;和copy constructor，如果编译器提供的默认版本工作的很好，不要去自找麻烦，自定义的版本勿忘拷贝每一个成分，如果要接管就要处理好。</p>
+<p>29、组合优先于继承，继承是一种最强的类间关系。</p>
+<p>30、减少依赖</p>
+<p>最大限度的减少文件间的依赖关系，用前向声明拆解相互依赖。</p>
+<p>了解pimpl技术。</p>
+<p>头文件要自给自足，不要包含不必要的头文件，也不要把该包含的头文件推给user去包含，一句话，头文件包含要不多不少刚刚好。</p>
+<p>31、别让循环停不下来</p>
+<p>for (unsigned int i &#x3D; 5; i &gt;&#x3D;0; –i)</p>
+<p>{…}</p>
+<p>程序跑到这，纳尼？根本停不下来啊？问题很简单，unsigned永远&gt;&#x3D;0，是不是心中一万只马奔腾？</p>
+<p>解决这个问题很简单，但是有时候这一类的错误却没这么明显，你需要罩子放亮点，多个心眼。</p>
+<p>32、size_t到底是个什么鬼？我该用有符号还是无符号整数？</p>
+<p>size_t类型是被设计来保存系统存储器上能保存的对象的最大个数。</p>
+<p>32位系统，一个对象最小的单位是一个字节，那2的32次方内存，最多能保存的对象数目就是4G&#x2F;1字节，正好一个unsigned int能保存下来（typedef unsigned int size_t）。</p>
+<p>同样，64位系统，unsigned long是8字节，所以size_t就是unsigned long的类型别名。</p>
+<p>对于像索引，位置这样的变量，是用有符号还是无符号呢？像money这样的属性呢？</p>
+<p>33、对于在启动时加载好，运行中不变化的查询结构，可以考虑用sorted array替代map，hash表等。</p>
+<p>因为有序数组支持二分查找，效率跟map差不多。对于只需要在程序启动的时候构建（排序）一次的查询结构，有序数组相比map和hash可能有更好的内存命中性（局部命中性）。</p>
+<p>运行过程中，稳定的查询结构（比如配置表，需要根据id查找配置表项，运行过程中不增删），有序数组是个不错的选择；如果不稳定，则有序数组的插入删除效率比map，hashtable差，所以选用有序数组需要注意适用场合。</p>
+<p>34、std::map还是std::unorder_map，我真的很纠结？</p>
+<p>想清楚他们的利弊，map是用红黑树做的，unorder_map底层是hash表做的，hash表相对于红黑树有更高的查找性能。hash表的效率取决于hash算法和冲突解决方法（一般是拉链法，hash桶），以及数据分布，如果负载因子高，就会降低命中率，为了提高命中率，就需要扩容，重新hash，而重新hash是很慢的，相当于卡一下。</p>
+<p>而红黑树有更好的平均复杂度，所以如果数据量不是特别大，map是胜任的。</p>
+<p>35、整型一般用int，long就很好，用short，char需要很仔细，要防止溢出。</p>
+<p>大多数情况下，用int，long就很好，long一般等于机器字长，long能直接放到寄存器，硬件处理起来速度也更快。</p>
+<p>很多时候，我们希望用short，char达到减少结构体大小的目的。但是由于字节对齐，可能并不能真正减少，而且1,2个字节的整型位数太少，一不小心就溢出了，需要特别注意。</p>
+<p>所以，除非在db、网络这些对存储大小非常敏感的场合，我们才需要考虑是否以short，char替代int，long。</p>
+<h2 id="面试题备用"><a href="#面试题备用" class="headerlink" title="面试题备用"></a>面试题备用</h2><p>1、C++虚函数实现机制<br>     一个拥有virtual成员函数的类拥有一个虚函数表，而该类的每个对象都拥有一个虚指针，指向该类的虚函数表。运行时，通过对象自己的虚指针去索引正确的虚函数来运行。若基类中的virtual函数返回类型为基类型的引用或者指针，则派生类中重写该函数，需要将返回类型改为派生类类型的引用或者指针。</p>
+<pre><code class="hljs"> 在C++的标准规格说明书中说到，编译器必需要保证虚函数表的指针存在于对象实例中最前面的位置（这是为了保证正确取到虚函数的偏移量）。这意味着我们通过对象实例的地址得到这张虚函数表，然后就可以遍历其中函数指针，并调用相应的函数。
+</code></pre>
+<p>2、有了malloc&#x2F;free为什么还要new&#x2F;delete？<br>malloc与free是C++&#x2F;C语言的标准库函数，new&#x2F;delete是C++的运算符。它们都可用于申请动态内存和释放内存。对于非内部数据类型的对象而言，光用maloc&#x2F;free无法满足动态对象的要求。对象在创建的同时要自动执行构造函数，对象在消亡之前要自动执行析构函数。由于malloc&#x2F;free是库函数而不是运算符，不在编译器控制权限之内，不能够把执行构造函数和析构函数的任务强加于malloc&#x2F;free。因此C++语言需要一个能完成动态内存分配和初始化工作的运算符new，以及一个能完成清理与释放内存工作的运算符delete。注意new&#x2F;delete不是库函数。既然new&#x2F;delete的功能完全覆盖了malloc&#x2F;free，为什么C++不把malloc&#x2F;free淘汰出局呢？这是因为C++程序经常要调用C函数，而C程序只能用malloc&#x2F;free管理动态内存。</p>
+<p>3、类成员函数的重载、覆盖和隐藏区别？<br>a.成员函数被重载的特征：</p>
+<p>（1）相同的范围（在同一个类中）；</p>
+<p>（2）函数名字相同；</p>
+<p>（3）参数不同；</p>
+<p>（4）virtual关键字可有可无。</p>
+<p>b.覆盖是指派生类函数覆盖基类函数，特征是：</p>
+<p>（1）不同的范围（分别位于派生类与基类）；</p>
+<p>（2）函数名字相同；</p>
+<p>（3）参数相同；</p>
+<p>（4）基类函数必须有virtual关键字。</p>
+<p>c.“隐藏”是指派生类的函数屏蔽了与其同名的基类函数，规则如下：</p>
+<p>（1）如果派生类的函数与基类的函数同名，但是参数不同。此时，不论有无virtual关键字，基类的函数将被隐藏（注意别与重载混淆）。</p>
+<p>（2）如果派生类的函数与基类的函数同名，并且参数也相同，但是基类函数没有virtual关键字。此时，基类的函数被隐藏（注意别与覆盖混淆）</p>
+<p>4、简述数组与指针的区别？<br>数组要么在静态存储区被创建（如全局数组），要么在栈上被创建。指针可以随时指向任意类型的内存块。</p>
+<p>(1)修改内容上的差别</p>
+<p>(2)用运算符sizeof可以计算出数组的容量（字节数）。sizeof(p),p为指针得到的是一个指针变量的字节数，而不是p所指的内存容量</p>
+<p>5、构造函数为什么不能是虚函数？<br>（1）从存储空间角度</p>
+<p>虚函数对应一个vtable，这大家都知道，可是这个vtable其实是存储在对象的内存空间的。问题出来了，如果构造函数是虚的，就需要通过vtable来调用，可是对象还没有实例化，也就是内存空间还没有，怎么找vtable呢？所以构造函数不能是虚函数。</p>
+<p>（2）从使用角度</p>
+<p>虚函数主要用于在信息不全的情况下，能使重载的函数得到对应的调用。构造函数本身就是要初始化实例，那使用虚函数也没有实际意义呀。所以构造函数没有必要是虚函数。</p>
+<p>（3）从虚函数的作用（重点）</p>
+<p>虚函数的作用是在于通过父类的指针或者引用来调用它的时候能够变成调用子类的那个成员函数。而构造函数是在创建对象时自动调用的，不可能通过父类的指针或者引用去调用，因此也就规定构造函数不能是虚函数。</p>
+<p>6、智能指针实现原理<br>当类中有指针成员时，一般有两种方式来管理指针成员：一是采用值型的方式管理，每个类对象都保留一份指针指向的对象的拷贝；另一种更优雅的方式是使用智能指针，从而实现指针指向的对象的共享。</p>
+<p>智能指针(smart pointer)的一种通用实现技术是使用引用计数(reference count)。智能指针类将一个计数器与类指向的对象相关联，引用计数跟踪该类有多少个对象共享同一指针。每次创建类的新对象时，初始化指针并将引用计数置为1；当对象作为另一对象的副本而创建时，拷贝构造函数拷贝指针并增加与之相应的引用计数；对一个对象进行赋值时，赋值操作符减少左操作数所指对象的引用计数（如果引用计数为减至0，则删除对象），并增加右操作数所指对象的引用计数；调用析构函数时，构造函数减少引用计数（如果引用计数减至0，则删除基础对象）。</p>
+<p>7、为什么内存对齐可以提高访问内存的速度？<br>一个周期存取一个字长（32位机就是32位），但是这个字长，是对齐的，就是只能从00－01等等，所以要是一个单位跨了两个这样的单元，就要多读一次。</p>
+<p>例如：大家都知道一个byte是8个bit，而现在流行的32位机指的是一次可以存取32个bit，也就是4个byte，在这种情况下，最有效率的作法当然是一次读4个byte。也就是即便你只取一个byte的内容，实际上，机器一次也是取了4个byte，然后把其中的一个byte给你。当然取4个byte并不是随机组合的，而是按照一定的次序，比如一次取0、1、2、3四个单元的内容，下次访问就是4、5、6、7。由此，如果你的数据恰好在0、1、2、3，则机器只需访问一次，就可以把所有的内容取出来，然而，如果你的数据跨越了这个边界，比如在2、3、4、5，机器在第一次访问的时候，只能取出2、3的内容，还需要进行一次访问才能将4、5的内容取出。如此一来，必须进行两次访问才能取出，所以效率当然会降低。如果读一个数据值(32bit)要读两次cache或者要读两个页，甚至引发缺页中断，是非常划不来的,计算机系统的设计中要尽量避免可能导致执行时间不确定的情况。</p>
+<p>8、以下三条输出语句分别输出什么？<br>char str1[]       &#x3D; “abc”;</p>
+<p>char str2[]       &#x3D; “abc”;</p>
+<p>const char str3[] &#x3D; “abc”;</p>
+<p>const char str4[] &#x3D; “abc”;</p>
+<p>const char* str5  &#x3D; “abc”;</p>
+<p>const char* str6  &#x3D; “abc”;</p>
+<p>cout &lt;&lt; boolalpha &lt;&lt; ( str1&#x3D;&#x3D;str2 ) &lt;&lt; endl; &#x2F;&#x2F;输出什么？</p>
+<p>cout &lt;&lt; boolalpha &lt;&lt; ( str3&#x3D;&#x3D;str4 ) &lt;&lt; endl; &#x2F;&#x2F;输出什么？</p>
+<p>cout &lt;&lt; boolalpha &lt;&lt; ( str5&#x3D;&#x3D;str6 ) &lt;&lt; endl; &#x2F;&#x2F;输出什么？<br>答： 分别输出false,false,true。str1和str2都是字符数组，每个都有其自己的存储区，它们的值则是各存储区首地址，不等；str3和str4同上，只是按const语义，它们所指向的数据区不能修改。str5和str6并非数组而是字符指针，并不分配存储区，其后的“abc”以常量形 式存于静态数据区，而它们自己仅是指向该区首地址的指针，相等。</p>
+<p>9、宏与枚举的区别<br>宏定义字符常量，不分配内存空间，而枚举是定义变量的一种方式。</p>
+<p>宏和枚举之间的差别主要在作用的时期和存储的形式不同，宏是在预处理的阶段进行替换工作的，它替换代码段的文本，程序运行的过程中宏已不存在了。而枚举是在程序运行之后才起作用的，枚举常量存储在数据段的静态存储区里。宏占用代码段的空间，而枚举除了占用空间，还消耗CPU资源。但也不能就此说宏比枚举好，如果需要定义非常多的常量，用一条enum   {…..}明显比一大堆define更清晰，枚举也可以用来定义一些特殊类型，比如Bool，如：type   enum   {FALSE,TRUE}   Bool;</p>
+<p>10、在什么时候需要使用“常引用”？<br>如果既要利用引用提高程序的效率，又要保护传递给函数的数据不在函数中被改变，就应使用常引用。</p>
+<p>11、如何判断一段程序是由C编译程序还是由C++编译程序编译的？<br>#ifdef __cplusplus&#x2F;&#x2F;C++编译器定义了-cplusplus</p>
+<p>cout&lt;&lt;”c++”;</p>
+<p>#else</p>
+<p>printf(“c”);</p>
+<p>#endif&#x2F;&#x2F;</p>
+<p>12、C++的类和C里面的struct有什么区别？</p>
+<p>从语法上，在C++中（只讨论C++中）。class和struct做类型定义时只有两点区别：</p>
+<p>（一）默认继承权限。如果不明确指定，来自class的继承按照private继承处理，来自struct的继承按照public继承处理；</p>
+<p>（二）成员的默认访问权限。class的成员默认是private权限，struct默认是public权限。</p>
+<p>除了这两点，class和struct基本就是一个东西。语法上没有任何其它区别</p>
+<p>（1）都可以有成员函数；包括各类构造函数，析构函数，重载的运算符，友元类，友元结构，友元函数，虚函数，纯虚函数，静态函数；</p>
+<p>（2）都可以有一大堆public&#x2F;private&#x2F;protected修饰符在里边；</p>
+<p>（3）虽然这种风格不再被提倡，但语法上二者都可以使用大括号的方式初始化：A a &#x3D; {1, 2, 3};不管A是个struct还是个class，前提是这个类&#x2F;结构足够简单，比如所有的成员都是public的，所有的成员都是简单类型，没有显式声明的构造函数。</p>
+<p>（4）都可以进行复杂的继承甚至多重继承，一个struct可以继承自一个class，反之亦可；一个struct可以同时继承5个class和5个struct，虽然这样做不太好。</p>
+<p>（5）如果说class的设计需要注意OO的原则和风格，那么没任何理由说设计struct就不需要注意。</p>
+<p>（6）再次说明，以上所有说法都是指在C++语言中，至于在C里的情况，C里是根本没有“class”，而C的struct从根本上也只是个包装数据的语法机制。struct属性访问权限只有public，没有数据封装功能，也就没有实现信息隐藏这一面向对象的思想的机制,struct本身不含有操作函数，只有数据。<br>最后，作为语言的两个关键字，除去定义类型时有上述区别之外，另外还有一点点：“class”这个关键字还用于定义模板参数，就像“typename”。但关键字“struct”不用于定义模板参数。</p>
+<p>3、含参数的宏与函数的优缺点<br>宏优点：在预处理阶段完成，不占用编译时间，同时，省去了函数调用的开销，运行效率高</p>
+<p>宏缺点：不进行类型检查，多次宏替换会导致代码体积变大，而且由于宏本质上是字符串替换，故可能会由于一些参数的副作用导致得出错误的结果。</p>
+<p>例如：#define max(a, b)   ( ((a) &gt; (b)) ? (a) : (b) )如果程序中出现这样的调用: max(a++, b);将导致a被计算2次,从而可能得到错误的结果,而函数调用不会出现这种问题.<br>函数优点：没有带参数宏可能导致的副作用，进行类型检查，计算的正确性更有保证。</p>
+<p>函数缺点：函数调用需要参数、返回地址等的入栈、出栈开销，效率没有带参数宏高。</p>
+<p>14、全局变量和局部变量<br>一个程序将操作系统分配给其运行的内存块分为4个区域：</p>
+<p>程序内存空间示意<br>(1)代码区，存放程序的代码，即程序中的各个函数代码块。</p>
+<p>(2)全局数据区，存放程序的全局数据和静态数据。</p>
+<p>(3)堆区，存放程序的动态数据。</p>
+<p>(4)栈区，存放程序的局部数据，即各个函数中的数据。</p>
+<p>全局变量是整个程序都可访问的变量，谁都可以访问，生存期在整个程序从运行到结束(在程序结束时所占内存释放)；而局部变量存在于模块(子程序，函数)中，只有所在模块可以访问，其他模块不可直接访问，模块结束(函数调用完毕)，局部变量消失，所占据的内存释放。操作系统和编译器，可能是通过内存分配的位置来知道的，全局变量分配在全局数据段并且在程序开始运行的时候被加载.局部变量则分配在堆栈里面。</p>
+<p>15、什么是预编译？<br>预编译又称为预处理,是做些代码文本的替换工作。处理#开头的指令,比如拷贝#include包含的文件代码，#define宏定义的替换,条件编译等，就是为编译做的预备工作的阶段，主要处理#开始的预编译指令，预编译指令指示了在程序正式编译前就由编译器进行的操作，可以放在程序中的任何位置。编译系统在对程序进行通常的编译之前，先进行预处理。提供的预处理功能主要有以下三种：1）宏定义2）文件包含 3）条件编译</p>
+<p>16、堆栈溢出一般是什么原因导致的？<br>1、没有对数组进行边界检查，数组越界访问；</p>
+<p>2、没有回收垃圾资源导致内存泄露，最后内存耗尽</p>
+<p>3、循环的递归调用或者太深层次的递归调用</p>
+<p>4、如果使用占用内存过大的数据结构的局部变量，导致堆栈溢出</p>
+<p>17、堆与栈的去区别<br>A.申请方式不同</p>
+<p>Stack由系统自动分配，而heap需要程序员自己申请，并指明大小。<br>B.申请后系统的响应不同</p>
+<p>栈：只要栈的剩余空间大于申请空间，系统就为程序提供内存，否则将抛出栈溢出异常。堆：当系统收到程序申请时，先遍历操作系统中记录空闲内存地址的链表，寻找第一个大于所申请空间的堆结点，然后将该结点从空间结点链表中删除，并将该结点的空间分配给程序。另外，大多数系统还会在这块内存空间中的首地址处记录本次分配的大小，以便于delete语句正确释放空间。而且，由于找到的堆结点的大小不一定正好等于申请的大小，系统会自动将多余的那部分重新放入空闲链表。<br>C.申请大小限制的不同</p>
+<p>Stack：在windows下，栈的大小是2M（也可能是1M它是一个编译时就确定的常数），如果申请的空间超过栈的剩余空间时，将提示overflow。因此，能从栈获得的空间较小。堆：堆是向高地址扩展的数据结构，是不连续的内存区域。这是由于系统是用链表来存储的空闲内存地址的，自然是不连续的，而链表的遍历方向是由低地址向高地址。堆的大小受限于计算机系统中有效的虚拟内存。由此可见，堆获得的空间比较灵活，也比较大。<br>D.申请效率的比较：</p>
+<p>栈由系统自动分配，速度较快。但程序员是无法控制的。堆是由new分配的内存，一般速度比较慢，而且容易产生内存碎片,不过用起来最方便。另外，在WINDOWS下，最好的方式是用VirtualAlloc分配内存，他不是在堆，也不是在栈是直接在进程的地址空间中保留一快内存，虽然用起来最不方便。但是速度快，也最灵活。<br>E.堆和栈中的存储内容</p>
+<p>栈：在函数调用时，第一个进栈的是主函数中后的下一条指令（函数调用语句的下一条可执行语句）的地址，然后是函数的各个参数，在大多数的C编译器中，参数是由右往左入栈的，然后是函数中的局部变量。注意静态变量是不入栈的。当本次函数调用结束后，局部变量先出栈，然后是参数，最后栈顶指针指向最开始存的地址，也就是主函数中的下一条指令，程序由该点继续运行。堆：一般是在堆的头部用一个字节存放堆的大小。堆中的具体内容由程序员安排。</p>
+<h2 id="招聘面试题系列-1-：算法与数据结构基础"><a href="#招聘面试题系列-1-：算法与数据结构基础" class="headerlink" title="招聘面试题系列(1)：算法与数据结构基础"></a>招聘面试题系列(1)：算法与数据结构基础</h2><p>栈的应用：浏览器前进与后退，括号匹配，表达式求值</p>
+<p>知识点<br>栈具有后进先出的特性<br>这三个场景，都符合后进先出<br>解法：使用两个栈即可解决这三个问题</p>
+<p>如何快速找到一个链表的中间结点</p>
+<p>知识点<br>链表与数组最大的区别之一就是链表内存空间不连续，不可以随机访问。<br>数组相比链表的优劣：数组连续空间更利于CPU缓存；链表可充分利用内存碎片<br>解法：快慢指针遍历法。A指针每次移动一个节点，B指针每次移动两个节点。当B到达end的时候，A的位置即为中点。奇数和偶数的情况略有不同，不是关键，不在这里讨论</p>
+<p>LRU算法如何使用链表实现</p>
+<p>知识点<br>LRU：Least Recently Used 最近最少使用<br>解法<br>有序链表，按照访问时间倒序，头部时间戳&gt;尾部时间戳<br>元素A被访问，遍历链表，如果此数据在原链表中，将其从原来位置删除，然后插入到头部<br>如果A不在原链表中，则判断链表是否已满；如果未满，插入到头部；如果已满，删除一个尾部元素，然后将A插入到头部<br>归并排序与快速排序的异同点是什么？</p>
+<p>解法<br>都使用了分而治之的算法思想：大问题划分为子问题<br>归并排序是先解决子问题，然后归并起来解决大问题，从下而上<br>快速排序是从上而下</p>
+<p>散列</p>
+<p>知识点<br>散列是用来做什么的？O(1)时间查找数据；散列函数<br>散列冲突的解决方案：开放寻址法(有冲突时继续顺序找，找到空位为止)；链表法<br>开放寻址法更费内存，且扩容时需要搬迁数据</p>
+<p>redis zset的实现</p>
+<p>知识点<br>redis zset支持的一般操作：插入，删除，查找数据；按照区间查找数据range等等<br>跳表：多级链表，以空间换时间，有序<br>解法：散列 + 跳表实现。散列用于查找key，调表用于range score</p>
+<p>哈希算法与一致性哈希</p>
+<p>应用场景<br>有状态路由<br>数据分片<br>二叉树</p>
+<p>知识点<br>完全二叉树：数组实现可以没有任何内存空洞。代表：堆<br>散列与二叉查找树的区别</p>
+<p>知识点<br>散列无序，二叉查找树可以有序遍历<br>二叉查找树为什么需要平衡，极端情况下时间复杂度会怎样？一棵只有左节点的二叉树，查找的时间复杂度会退化成O(n)，所以二叉树需要平衡</p>
+<p>平衡二叉查找树</p>
+<p>知识点<br>红黑树是近似平衡，AVL树是高度平衡，所以AVL虽然查找稳定O(logn)，但是插入，删除时需要保持高度平衡，性能会更差<br>红黑树的性能更稳定，更平均，很多工业级数据结构的实现都是红黑树<br>如何求解Top N问题</p>
+<p>知识点<br>大顶堆，小顶堆<br>堆是一种完全二叉树。无内存空洞<br>堆的insert：将新元素放在最后，然后不断跟父节点替换即可<br>堆的Pop：将顶节点删除后，将最后一个节点放到堆顶，再不断与子节点替换即可<br>堆排序<br>解法：<br>维护size为N的小顶堆<br>遍历所有数据，跟堆顶元素A比大小：如果比A小，continue；如果比A大，则将A从堆顶删除，同时插入新元素，再次形成小顶堆<br>变种题：求解一个动态数组的中位数：一个大顶堆，一个小顶堆， 在插入数据的同时保持两个堆的数据为总数的一半左右(总数为奇数或偶数)</p>
+<p>关于动态数组的中位数，可以使用如下方法求解：<br><a target="_blank" rel="noopener" href="http://www.moye.me/2018/06/29/dynamic-median-in-golang/">http://www.moye.me/2018/06/29/dynamic-median-in-golang/</a><br>在C++中，heap可以使用priority_queue来代替，该算法只能支持插入O(logn)和获取中位数O(1)的操作<br>如果使用multiset，则算法可以支持任意值的插入O(logn)、删除O(logn)，以及获取中位数O(1)的操作<br>可以参考PAT&#x2F;tools&#x2F;DynamicMedian.h</p>
+<h2 id="C-学习建议"><a href="#C-学习建议" class="headerlink" title="C++学习建议"></a>C++学习建议</h2><p>C++ Primer</p>
+<p>Effective C++<br>More Effective C++<br>Effective STL</p>
+<p>深入探索C++对象模型<br>STL源码剖析</p>
+<h2 id="UE学习资料整理"><a href="#UE学习资料整理" class="headerlink" title="UE学习资料整理"></a>UE学习资料整理</h2><p>途径</p>
+<p>官方文档、论坛</p>
+<p>文档：<a target="_blank" rel="noopener" href="https://docs.unrealengine.com/4.26/zh-CN/Basics/">https://docs.unrealengine.com/4.26/zh-CN/Basics/</a></p>
+<p>论坛：<a target="_blank" rel="noopener" href="https://forums.unrealengine.com/c/development-discussion/11/l/latest">https://forums.unrealengine.com/c/development-discussion/11/l/latest</a></p>
+<p>视频教程</p>
+<p>虚幻官方视频教程 <a target="_blank" rel="noopener" href="https://www.unrealengine.com/zh-CN/onlinelearning-courses">https://www.unrealengine.com/zh-CN/onlinelearning-courses</a></p>
+<p>B站 <a target="_blank" rel="noopener" href="https://space.bilibili.com/138827797">https://space.bilibili.com/138827797</a></p>
+<p>YouTube <a target="_blank" rel="noopener" href="https://www.youtube.com/c/UnrealEngine">https://www.youtube.com/c/UnrealEngine</a></p>
+<p>虚幻引擎学习资源汇总</p>
+<p>虚幻官方知乎置顶帖<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/245768949">https://zhuanlan.zhihu.com/p/245768949</a></p>
+<p>UE从入门到入坟 <a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/196363738">https://zhuanlan.zhihu.com/p/196363738</a></p>
+<p>jerish推荐的UE4资料<a target="_blank" rel="noopener" href="https://jerish.blog.csdn.net/article/details/107096741">https://jerish.blog.csdn.net/article/details/107096741</a></p>
+<p>虚幻社区知识库 <a target="_blank" rel="noopener" href="https://ue5wiki.com/">https://ue5wiki.com/</a></p>
+<p>知乎、博客</p>
+<p>大钊，Epic中国社区经理 <a target="_blank" rel="noopener" href="https://www.zhihu.com/column/insideue4">https://www.zhihu.com/column/insideue4</a></p>
+<p>虚幻官方知乎账号，周报里经常有新鲜好文 <a target="_blank" rel="noopener" href="https://www.zhihu.com/org/xu-huan-yin-qing-24">https://www.zhihu.com/org/xu-huan-yin-qing-24</a></p>
+<p>向阳大佬 <a target="_blank" rel="noopener" href="https://www.cnblogs.com/timlly/">https://www.cnblogs.com/timlly/</a></p>
+<p>jerish的《Exploring in UE4》<a target="_blank" rel="noopener" href="https://www.zhihu.com/column/c_164452593">https://www.zhihu.com/column/c_164452593</a></p>
+<p>UE4随笔<a target="_blank" rel="noopener" href="https://www.zhihu.com/column/c_1093468071653646336">https://www.zhihu.com/column/c_1093468071653646336</a></p>
+<p>UE源码</p>
+<p><a target="_blank" rel="noopener" href="https://www.unrealengine.com/en-US/ue4-on-github">https://www.unrealengine.com/en-US/ue4-on-github</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/EpicGames/UnrealEngine">https://github.com/EpicGames/UnrealEngine</a></p>
+<p>个人知乎账号的关注和收藏</p>
+<p>关注的知乎大V们 <a target="_blank" rel="noopener" href="https://www.zhihu.com/people/jiang-hu-fei-32/following">https://www.zhihu.com/people/jiang-hu-fei-32/following</a></p>
+<p>UE收藏夹 <a target="_blank" rel="noopener" href="https://www.zhihu.com/collection/593546022">https://www.zhihu.com/collection/593546022</a></p>
+<p>图形渲染收藏夹 <a target="_blank" rel="noopener" href="https://www.zhihu.com/collection/593543973">https://www.zhihu.com/collection/593543973</a></p>
+<p>书籍</p>
+<p>《unreal-engine-4x-scripting-c-cookbook-2nd》</p>
+<p>《大象无形：虚幻引擎程序设计浅析》</p>
+<p>主题</p>
+<p>GamePlay核心类</p>
+<p>大钊的《InsideUE》<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/22813908%EF%BC%8C%E5%BC%BA%E7%83%88%E5%BB%BA%E8%AE%AE%E5%88%9A%E5%85%A5%E9%97%A8%E7%9A%84%E6%97%B6%E5%80%99%E5%85%88%E7%9C%8B%E8%BF%99%E4%B8%AA%E7%B3%BB%E5%88%97">https://zhuanlan.zhihu.com/p/22813908，强烈建议刚入门的时候先看这个系列</a></p>
+<p>生命周期、启动流程、渲染流程</p>
+<p>Actor 生命周期（官方文档）</p>
+<p>GamePlay启动流程（官方文档）</p>
+<p>youtube: The Unreal Engine Game Framework: From int main() to BeginPlay<br><a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=IaU2Hue-ApI">https://www.youtube.com/watch?v=IaU2Hue-ApI</a></p>
+<p>UE4 关于主循环的资料<br><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/225465983">https://zhuanlan.zhihu.com/p/225465983</a></p>
+<p>Lua</p>
+<p>Lua官方手册</p>
+<p>参考手册<a target="_blank" rel="noopener" href="https://www.codingnow.com/2000/download/lua_manual.html">https://www.codingnow.com/2000/download/lua_manual.html</a></p>
+<p>UnLua的github<br><a target="_blank" rel="noopener" href="https://github.com/Tencent/UnLua">https://github.com/Tencent/UnLua</a></p>
+<p>Lua调试<br><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/396831309">https://zhuanlan.zhihu.com/p/396831309</a></p>
+<p>基于 UnLua 的 Lua 编程指南<br><a target="_blank" rel="noopener" href="https://ue5wiki.com/wiki/36659/">https://ue5wiki.com/wiki/36659/</a></p>
+<p>C++</p>
+<p>经典C++书籍《C++ Primer》 《Inside the C++ Object Model》《The Design and Evolution of C++》</p>
+<p><a target="_blank" rel="noopener" href="https://www.zhihu.com/question/268297447/answer/339624785">https://www.zhihu.com/question/268297447/answer/339624785</a></p>
+<p>蓝图和C++ <a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/450520990">https://zhuanlan.zhihu.com/p/450520990</a></p>
+<p>网络同步</p>
+<p>UE4_Network_Compendium_by_Cedric_eXi_Neukirchen<br><a target="_blank" rel="noopener" href="https://cedric-neukirchen.net/Downloads/Compendium/UE4_Network_Compendium_by_Cedric_eXi_Neukirchen.pdf">https://cedric-neukirchen.net/Downloads/Compendium/UE4_Network_Compendium_by_Cedric_eXi_Neukirchen.pdf</a></p>
+<p>《Exploring in UE4》关于网络同步的理解与思考[概念理解]<br><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/34721113">https://zhuanlan.zhihu.com/p/34721113</a></p>
+<p>使用虚幻引擎4年，我想再谈谈他的网络架构【经验总结】<br><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/105040792">https://zhuanlan.zhihu.com/p/105040792</a></p>
+<p>《Exploring in UE4》网络同步原理深入（上）[原理分析]<br><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/34723199">https://zhuanlan.zhihu.com/p/34723199</a></p>
+<p>《Exploring in UE4》网络同步原理深入（下）[原理分析]<br><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/55596030">https://zhuanlan.zhihu.com/p/55596030</a></p>
+<p>角色移动网络同步</p>
+<p>官方文档：角色移动组件的详细说明</p>
+<p>UE4的移动碰撞<br><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/33529865">https://zhuanlan.zhihu.com/p/33529865</a></p>
+<p>《Exploring in UE4》移动组件详解<br><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/34257208">https://zhuanlan.zhihu.com/p/34257208</a></p>
+<p>UE4移动的网络同步<br><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/114341957">https://zhuanlan.zhihu.com/p/114341957</a></p>
+<p>UE4 物体位置同步相关源码分析浅谈<br><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/68343945">https://zhuanlan.zhihu.com/p/68343945</a></p>
+<p>动画</p>
+<p>文章</p>
+<p>动画蓝图官方文档</p>
+<p>UE4动画系统的那些事（一）：UE4动画系统基础<br><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/62401630">https://zhuanlan.zhihu.com/p/62401630</a></p>
+<p>骨骼动画系统——UE4动画蓝图的使用和图元基础原理(二)<br><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/463171975">https://zhuanlan.zhihu.com/p/463171975</a></p>
+<p>UE4 高级运动系统（Advanced Locomotion System V4）解构<br><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/339422628">https://zhuanlan.zhihu.com/p/339422628</a></p>
+<p>UE4 动画节点- Layered blend per bone<br><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/343826476">https://zhuanlan.zhihu.com/p/343826476</a></p>
+<p>玩转UE4&#x2F;UE5动画系统<br><a target="_blank" rel="noopener" href="https://www.zhihu.com/column/c_1368817227106471936">https://www.zhihu.com/column/c_1368817227106471936</a></p>
+<p>视频</p>
+<p>08.游戏引擎的动画技术基础(上) | GAMES104-现代游戏引擎：从入门到实践<br><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1jr4y1t7WR/">https://www.bilibili.com/video/BV1jr4y1t7WR/</a></p>
+<p>08.游戏引擎的动画技术基础(下) | GAMES104-现代游戏引擎：从入门到实践<br><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1fF411j7hA/">https://www.bilibili.com/video/BV1fF411j7hA/</a></p>
+<p>09.高级动画技术：动画树、IK和表情动画 | GAMES104-现代游戏引擎：从入门到实践<br><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1pY411F7pA/">https://www.bilibili.com/video/BV1pY411F7pA/</a></p>
+<p>UE4入门系列之动画入门<br><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV114411f7gR?p=6&spm_id_from=pageDriver">https://www.bilibili.com/video/BV114411f7gR?p=6&amp;spm_id_from=pageDriver</a></p>
+<p>UE4 Animation Montage (蒙太奇)<br><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1q7411d7xb?p=1">https://www.bilibili.com/video/BV1q7411d7xb?p=1</a></p>
+<p>虚幻4（UE4） 动画技术 深入浅出 高级运动系统<br><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV12f4y1r71N?spm_id_from=333.999.0.0">https://www.bilibili.com/video/BV12f4y1r71N?spm_id_from=333.999.0.0</a></p>
+<p>UE4-高级运动系统中文-解构(Advanced Locomotion System V4)<br><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1sV411b7x6">https://www.bilibili.com/video/BV1sV411b7x6</a></p>
+<p>Animation Blueprint Setup &amp; Walkthrough<br><a target="_blank" rel="noopener" href="https://www.youtube.com/playlist?list=PLCYUI4mIdqDdxG1oat5uXS6P-U2nR_bNY">https://www.youtube.com/playlist?list=PLCYUI4mIdqDdxG1oat5uXS6P-U2nR_bNY</a></p>
+<p>AI</p>
+<p>UE4行为树详解（持续更新）<br><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/143298443">https://zhuanlan.zhihu.com/p/143298443</a></p>
+<p>浅析UE4-BehaviorTree的特性<br><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/139514376">https://zhuanlan.zhihu.com/p/139514376</a></p>
+<p>UE4学习笔记–AI行为树架构<br><a target="_blank" rel="noopener" href="https://blog.csdn.net/gzy252050968/article/details/87275524">https://blog.csdn.net/gzy252050968/article/details/87275524</a></p>
+<p>UE4学习笔记–AI感知系统AIPerception<br><a target="_blank" rel="noopener" href="https://blog.csdn.net/gzy252050968/article/details/103390487">https://blog.csdn.net/gzy252050968/article/details/103390487</a></p>
+<p>UE4场景询问系统浅析（EQS与行为树）<br><a target="_blank" rel="noopener" href="http://www.uejoy.com/?p=500">http://www.uejoy.com/?p=500</a></p>
+<p>Unreal Engine AI with Behavior Trees<br><a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=iY1jnFvHgbE">https://www.youtube.com/watch?v=iY1jnFvHgbE</a></p>
+<p>ue4 自定义行为树的Service， Task，Decorator节点<br><a target="_blank" rel="noopener" href="https://blog.csdn.net/u010385624/article/details/89339958">https://blog.csdn.net/u010385624/article/details/89339958</a></p>
+<p>【图解UE4源码】 其三（一）行为树系统执行任务的流程 发起执行请求<br><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/372256253">https://zhuanlan.zhihu.com/p/372256253</a></p>
+<p>【图解UE4源码】 其三（二）行为树系统执行任务的流程 处理请求<br><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/373072168">https://zhuanlan.zhihu.com/p/373072168</a></p>
+<p>GAS</p>
+<p>官方GAS文档<br><a target="_blank" rel="noopener" href="https://docs.unrealengine.com/4.26/zh-CN/InteractiveExperiences/GameplayAbilitySystem/">https://docs.unrealengine.com/4.26/zh-CN/InteractiveExperiences/GameplayAbilitySystem/</a></p>
+<p>官方ARPG例子<br><a target="_blank" rel="noopener" href="https://docs.unrealengine.com/4.26/zh-CN/Resources/SampleGames/ARPG/">https://docs.unrealengine.com/4.26/zh-CN/Resources/SampleGames/ARPG/</a></p>
+<p>GASDocumentation<br><a target="_blank" rel="noopener" href="https://github.com/tranek/GASDocumentation">https://github.com/tranek/GASDocumentation</a></p>
+<p>GASDocumentation_Chinese<br><a target="_blank" rel="noopener" href="https://github.com/BillEliot/GASDocumentation_Chinese">https://github.com/BillEliot/GASDocumentation_Chinese</a></p>
+<p>虚幻引擎游戏技能系统文档<br><a target="_blank" rel="noopener" href="https://blog.csdn.net/pirate310/article/details/106311256">https://blog.csdn.net/pirate310/article/details/106311256</a></p>
+<p>[UnrealOpenDay2020]深入GAS架构设计 | EpicGames 大钊<br><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1zD4y1X77M">https://www.bilibili.com/video/BV1zD4y1X77M</a></p>
+<p>[中文直播]第31期｜GAS插件介绍（入门篇） | 伍德 大钊<br><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1X5411V7jh">https://www.bilibili.com/video/BV1X5411V7jh</a></p>
+<p>[英文直播]Gameplay Abilities框架介绍 | A Guided Tour of Gameplay Abilities(官方字幕)<br><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1Wy4y1j7RB?share_source=copy_web">https://www.bilibili.com/video/BV1Wy4y1j7RB?share_source=copy_web</a></p>
+<p>UE4的GAS探究三：弱网延迟与预测Prediction<br><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/458192589">https://zhuanlan.zhihu.com/p/458192589</a></p>
+<p>Overview of Gameplay Ability Prediction<br><a target="_blank" rel="noopener" href="https://docs.unrealengine.com/4.26/en-US/API/Plugins/GameplayAbilities/FPredictionKey/">https://docs.unrealengine.com/4.26/en-US/API/Plugins/GameplayAbilities/FPredictionKey/</a></p>
+<p>UE-GAS架构分析（三）（GameplayEffect）<br><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/464329488">https://zhuanlan.zhihu.com/p/464329488</a></p>
+<p>虚幻四Gameplay Ability System入门(6)-Gameplay Effect详解(1)Modifier<br><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/b4f784733007">https://www.jianshu.com/p/b4f784733007</a></p>
+<p>虚幻插件GAS分析10 所有AbilityTask原生类盘点<br><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/431081292">https://zhuanlan.zhihu.com/p/431081292</a></p>
+<p>材质</p>
+<p>安宁老师的材质系列</p>
+<p><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1TA411B7qH">https://www.bilibili.com/video/BV1TA411B7qH</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1kz411i7QN">https://www.bilibili.com/video/BV1kz411i7QN</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1iv411B73c">https://www.bilibili.com/video/BV1iv411B73c</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1Ap4y1q7L9">https://www.bilibili.com/video/BV1Ap4y1q7L9</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1uD4y1U7Nz">https://www.bilibili.com/video/BV1uD4y1U7Nz</a></p>
+<p>音频插件 Wwise</p>
+<p>官方文档</p>
+<p>官方视频频道</p>
+<p>官方B站：Wwise 101 教学视频、Wwise 201 教学视频</p>
+<p>课程PDF、课程在线文档</p>
+<p>Wwise音频解决方案概述</p>
+<p>Wwise101 中文教程合集【完更】</p>
+<p>UE 集成 WWise：概念与代码分析</p>
+<p>RootMotion</p>
+<p>《Exploring in UE4》RootMotion详解<br><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/74554876">https://zhuanlan.zhihu.com/p/74554876</a></p>
+<p>RootMotion官方文档<br><a target="_blank" rel="noopener" href="https://docs.unrealengine.com/4.27/zh-CN/AnimatingObjects/SkeletalMeshAnimation/RootMotion/">https://docs.unrealengine.com/4.27/zh-CN/AnimatingObjects/SkeletalMeshAnimation/RootMotion/</a></p>
+<p>热更新</p>
+<p>物理</p>
+<p>10.游戏引擎中物理系统的基础理论和算法 | GAMES104-现代游戏引擎：从入门到实践<br><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV16U4y117VU">https://www.bilibili.com/video/BV16U4y117VU</a></p>
+<p>11.物理系统：高级应用 | GAMES104-现代游戏引擎：从入门到实践<br><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1Ya411j7ds">https://www.bilibili.com/video/BV1Ya411j7ds</a></p>
+<p>载具</p>
+<p>UMG</p>
+<p>相机</p>
+<p>《Exploring in UE4》摄像机系统解析<br><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/34897458">https://zhuanlan.zhihu.com/p/34897458</a></p>
+<p>ue4资源管理 <a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/357904199">https://zhuanlan.zhihu.com/p/357904199</a></p>
+<p>GC</p>
+<p>UE4 垃圾回收 by南京周润发<br><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/67055774">https://zhuanlan.zhihu.com/p/67055774</a></p>
+<p>UE4 垃圾回收（二）GC Cluster by南京周润发<br><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/133293284">https://zhuanlan.zhihu.com/p/133293284</a></p>
+<p>UObject</p>
+<p>大钊的UObject系列</p>
+<p>《InsideUE4》UObject（一）开篇<br><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/24319968">https://zhuanlan.zhihu.com/p/24319968</a></p>
+<p>《InsideUE4》UObject（三）类型系统设定和结构<br><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/24790386">https://zhuanlan.zhihu.com/p/24790386</a></p>
+<p>《InsideUE4》UObject（六）类型系统代码生成重构-UE4CodeGen_Private<br><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/34059049">https://zhuanlan.zhihu.com/p/34059049</a></p>
+<p>《InsideUE4》UObject（九）类型系统注册-InitUObject<br><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/58244447">https://zhuanlan.zhihu.com/p/58244447</a></p>
+<p>《InsideUE4》UObject（十一）类型系统构造-构造绑定链接<br><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/59553490">https://zhuanlan.zhihu.com/p/59553490</a></p>
+<p>Ue4关于uobject优秀文摘<br><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/435484362">https://zhuanlan.zhihu.com/p/435484362</a></p>
+<p>UE4 UObject 对象概念<br><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/419769230">https://zhuanlan.zhihu.com/p/419769230</a></p>
+<p>反射</p>
+<p>UE 反射实现分析：基础概念<br><a target="_blank" rel="noopener" href="https://ue5wiki.com/wiki/12624/">https://ue5wiki.com/wiki/12624/</a></p>
+<p>UE 反射实现分析：反射代码生成（一）<br><a target="_blank" rel="noopener" href="https://ue5wiki.com/wiki/9780/">https://ue5wiki.com/wiki/9780/</a></p>
+<p>属性反射实现分析<br><a target="_blank" rel="noopener" href="https://ue5wiki.com/wiki/34497/">https://ue5wiki.com/wiki/34497/</a></p>
+<p>Tim Sweeney演讲</p>
+<p>Classic Tools Retrospective: Tim Sweeney on the first version of the Unreal Editor<br><a target="_blank" rel="noopener" href="https://www.gamedeveloper.com/design/classic-tools-retrospective-tim-sweeney-on-the-first-version-of-the-unreal-editor">https://www.gamedeveloper.com/design/classic-tools-retrospective-tim-sweeney-on-the-first-version-of-the-unreal-editor</a></p>
+<p>On Netcode in Unreal Engine (historical) by Tim Sweeney:<br><a target="_blank" rel="noopener" href="https://docs.google.com/document/d/1KGLbEfHsWANTTgUqfK6rkpFYDGvnZYj-BN18sxq6LPY/edit">https://docs.google.com/document/d/1KGLbEfHsWANTTgUqfK6rkpFYDGvnZYj-BN18sxq6LPY/edit</a></p>
+<p>THE END OF THE GPU ROADMAP<br><a target="_blank" rel="noopener" href="https://disruptiveludens.files.wordpress.com/2018/02/timhpg2009.pdf">https://disruptiveludens.files.wordpress.com/2018/02/timhpg2009.pdf</a></p>
+<p>Tim Sweeney Archive - Interviews<br><a target="_blank" rel="noopener" href="http://docshare01.docshare.tips/files/9/93932.pdf">http://docshare01.docshare.tips/files/9/93932.pdf</a></p>
+<p>图形渲染</p>
+<p>图形学经典教程</p>
+<p>LearnOpenGL英文、LearnOpenGL中文</p>
+<p>闫令琪101、202 GAMES101-现代计算机图形学入门、GAMES202-高质量实时渲染</p>
+<p>渲染基础概念</p>
+<p>Gamma &amp; Linear Color Space<br><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/321f39b7fa93">https://www.jianshu.com/p/321f39b7fa93</a></p>
+<p>彻底看懂PBR&#x2F;BRDF方程<br><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/158025828">https://zhuanlan.zhihu.com/p/158025828</a></p>
+<p>GPU</p>
+<p>深入GPU硬件架构及运行机制<br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/timlly/p/11471507.html">https://www.cnblogs.com/timlly/p/11471507.html</a></p>
+<p>Unreal</p>
+<p>HOW UNREAL RENDERS A FRAME<br><a target="_blank" rel="noopener" href="https://interplayoflight.wordpress.com/2017/10/25/how-unreal-renders-a-frame/">https://interplayoflight.wordpress.com/2017/10/25/how-unreal-renders-a-frame/</a></p>
+<p>技术分享</p>
+<p>米哈游技术总监首次分享：移动端高品质卡通渲染的实现与优化方案<br><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/2ObPsPQGPkvPyiLD33wqWQ">https://mp.weixin.qq.com/s/2ObPsPQGPkvPyiLD33wqWQ</a></p>
+<p>UE知识树<br><a target="_blank" rel="noopener" href="https://app.yinxiang.com/fx/b8036eb6-dddd-4d4e-af8b-2e33abcaf135">https://app.yinxiang.com/fx/b8036eb6-dddd-4d4e-af8b-2e33abcaf135</a></p>
+<h2 id="Exploring-in-UE4系列"><a href="#Exploring-in-UE4系列" class="headerlink" title="Exploring in UE4系列"></a>Exploring in UE4系列</h2><p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/35686607">https://zhuanlan.zhihu.com/p/35686607</a></p>
+<h2 id="HZB遮挡剔除技术"><a href="#HZB遮挡剔除技术" class="headerlink" title="HZB遮挡剔除技术"></a>HZB遮挡剔除技术</h2>
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div></div>
+      <div>http://example.com/2023/01/10/interview/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Chen Shuwen</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年1月10日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

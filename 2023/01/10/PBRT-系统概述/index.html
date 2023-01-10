@@ -1,0 +1,849 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Chen Shuwen">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="PBRT-系统概述pbrt的执行阶段主要分为2个阶段：参数解析阶段和渲染循环阶段 参数解析解析用户提供的场景描述文件.pbrt。该文件指定：  场景的几何形状 材质属性 光照 虚拟相机位置 所有单独算法的参数  该文件的编写规则见官方网址： https:&#x2F;&#x2F;pbrt.org&#x2F;fileformat-v4 解析完成后会产生一系列选项(options), 并调用方法： 12&#x2F;&#x2F; Initialize p">
+<meta property="og:type" content="article">
+<meta property="og:title" content="PBRT-系统概述">
+<meta property="og:url" content="http://example.com/2023/01/10/PBRT-%E7%B3%BB%E7%BB%9F%E6%A6%82%E8%BF%B0/index.html">
+<meta property="og:site_name" content="Chen Shuwen&#39;s Tech Site">
+<meta property="og:description" content="PBRT-系统概述pbrt的执行阶段主要分为2个阶段：参数解析阶段和渲染循环阶段 参数解析解析用户提供的场景描述文件.pbrt。该文件指定：  场景的几何形状 材质属性 光照 虚拟相机位置 所有单独算法的参数  该文件的编写规则见官方网址： https:&#x2F;&#x2F;pbrt.org&#x2F;fileformat-v4 解析完成后会产生一系列选项(options), 并调用方法： 12&#x2F;&#x2F; Initialize p">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2023/01/10/PBRT-%E7%B3%BB%E7%BB%9F%E6%A6%82%E8%BF%B0/image-20220702150356806.png">
+<meta property="og:image" content="http://example.com/2023/01/10/PBRT-%E7%B3%BB%E7%BB%9F%E6%A6%82%E8%BF%B0/image-20220702161044062.png">
+<meta property="og:image" content="http://example.com/2023/01/10/PBRT-%E7%B3%BB%E7%BB%9F%E6%A6%82%E8%BF%B0/image-20220702163535696.png">
+<meta property="article:published_time" content="2023-01-10T04:09:31.685Z">
+<meta property="article:modified_time" content="2023-01-10T13:13:33.186Z">
+<meta property="article:author" content="Chen Shuwen">
+<meta property="article:tag" content="CG">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://example.com/2023/01/10/PBRT-%E7%B3%BB%E7%BB%9F%E6%A6%82%E8%BF%B0/image-20220702150356806.png">
+  
+  
+  
+  <title>PBRT-系统概述 - Chen Shuwen&#39;s Tech Site</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Chen Shuwen&#39;s Tech Site</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="PBRT-系统概述"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-01-10 12:09" pubdate>
+          2023年1月10日 中午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          4.4k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          37 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">PBRT-系统概述</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="PBRT-系统概述"><a href="#PBRT-系统概述" class="headerlink" title="PBRT-系统概述"></a>PBRT-系统概述</h1><p>pbrt的执行阶段主要分为2个阶段：参数解析阶段和渲染循环阶段</p>
+<h2 id="参数解析"><a href="#参数解析" class="headerlink" title="参数解析"></a>参数解析</h2><p>解析用户提供的场景描述文件.pbrt。该文件指定：</p>
+<ul>
+<li>场景的几何形状</li>
+<li>材质属性</li>
+<li>光照</li>
+<li>虚拟相机位置</li>
+<li>所有单独算法的参数</li>
+</ul>
+<p>该文件的编写规则见官方网址：</p>
+<p><a target="_blank" rel="noopener" href="https://pbrt.org/fileformat-v4">https://pbrt.org/fileformat-v4</a></p>
+<p>解析完成后会产生一系列选项(options), 并调用方法：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-comment">// Initialize pbrt</span><br><span class="hljs-built_in">InitPBRT</span>(options);<br></code></pre></td></tr></table></figure>
+
+<p>该方法会依次初始化必要组件，如三角形、颜色空间、内存分配器等</p>
+<p>紧接着构建场景：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-function">BasicSceneBuilder <span class="hljs-title">builder</span><span class="hljs-params">(&amp;scene)</span></span>;<br><span class="hljs-built_in">ParseFiles</span>(&amp;builder, filenames);<br></code></pre></td></tr></table></figure>
+
+<p>Scene实例：包含场景内容，如几何物体，光源等</p>
+<p>假设使用CPU对场景进行渲染，则调用方法：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-built_in">RenderCPU</span>(scene);<br></code></pre></td></tr></table></figure>
+
+<p>该方法首先对如下实体进行构建：</p>
+<table>
+<thead>
+<tr>
+<th>实体名称</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>textures</td>
+<td></td>
+</tr>
+<tr>
+<td>lights</td>
+<td></td>
+</tr>
+<tr>
+<td>materials</td>
+<td></td>
+</tr>
+<tr>
+<td>primitives</td>
+<td></td>
+</tr>
+<tr>
+<td>camera</td>
+<td></td>
+</tr>
+<tr>
+<td>film</td>
+<td></td>
+</tr>
+<tr>
+<td>sampler</td>
+<td></td>
+</tr>
+<tr>
+<td>integrator</td>
+<td>实现渲染算法进行积分计算</td>
+</tr>
+</tbody></table>
+<p>至此，各类主要实体和组件的初始化工作完成，可以进入渲染循环</p>
+<h2 id="渲染循环"><a href="#渲染循环" class="headerlink" title="渲染循环"></a>渲染循环</h2><h3 id="流程概述"><a href="#流程概述" class="headerlink" title="流程概述"></a>流程概述</h3><p>主渲染循环开始执行。主要是执行方法：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c++">integrator-&gt;<span class="hljs-built_in">Render</span>();<br></code></pre></td></tr></table></figure>
+
+<p>该方法使用Camera和Sampler生成光线进入场景中，然后调用<code>Li()</code>方法计算沿着这条光线到达图像上的辐射度</p>
+<p>其主要过程如下图所示：</p>
+<p><img src="/2023/01/10/PBRT-%E7%B3%BB%E7%BB%9F%E6%A6%82%E8%BF%B0/image-20220702150356806.png" srcset="/img/loading.gif" lazyload alt="image-20220702150356806"></p>
+<p>Sampler提供一系列样本值，每个样本值对应一个待采集的图像样本。Camera将采样值转换为从Film平面发出的射线，<code>Li()</code>方法计算沿着这条射线到达Film的辐射度。样本和辐射度被传递给Film，Film将其贡献存储在图像中。这个过程重复进行，直到Sampler提供了足够多的样本来生成最终图像</p>
+<p>这里以SimplePathIntegrator为例来介绍流程</p>
+<p>Integrator将图像划分成多个tiles进行并行渲染</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">ParallelFor2D</span><span class="hljs-params">(<span class="hljs-type">const</span> Bounds2i &amp;extent, std::function&lt;<span class="hljs-type">void</span>(Bounds2i)&gt; func)</span></span>;<br></code></pre></td></tr></table></figure>
+
+<p>extent: 像素边界</p>
+<p>func：对每个tile进行计算，参数为tile的边界</p>
+<p><code>ParallerFor2D</code>方法会根据根据tileSize将extent划分成多个tile，然后创建线程，每个线程拿到一个tile并使用func函数对其进行光照计算</p>
+<p>在tile中，每个像素点被依次遍历，Sampler对其进行1次或多次采样</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c++">sampler.<span class="hljs-built_in">StartPixelSample</span>(pPixel, sampleIndex);<br></code></pre></td></tr></table></figure>
+
+
+
+<p>然后求解这个采样点的辐射度，并将其贡献添加到图像中</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-built_in">EvaluatePixelSample</span>(pPixel, sampleIndex, sampler, scratchBuffer);<br></code></pre></td></tr></table></figure>
+
+<p>在该方法中，首先创建CameraSample实例</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c++">CameraSample cameraSample = <span class="hljs-built_in">GetCameraSample</span>(sampler, pPixel, filter);<br></code></pre></td></tr></table></figure>
+
+<p>该实例记录相机产生的光线对应在Film上的位置，它还存储时间和镜头位置的采样值，分别被用来渲染带有移动对象的场景和模拟非针孔光圈的相机模型</p>
+<p>Camera提供两种生成光线的方法：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-function">PBRT_CPU_GPU <span class="hljs-keyword">inline</span> pstd::optional&lt;CameraRay&gt; <span class="hljs-title">GenerateRay</span><span class="hljs-params">(</span></span><br><span class="hljs-params"><span class="hljs-function">   CameraSample sample, SampledWavelengths &amp;lambda)</span> <span class="hljs-type">const</span></span>;<br></code></pre></td></tr></table></figure>
+
+<p>返回给定图像采样位置的光线</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-function">PBRT_CPU_GPU</span><br><span class="hljs-function">pstd::optional&lt;CameraRayDifferential&gt; <span class="hljs-title">GenerateRayDifferential</span><span class="hljs-params">(</span></span><br><span class="hljs-params"><span class="hljs-function">    CameraSample sample, SampledWavelengths &amp;lambda)</span> <span class="hljs-type">const</span></span>;<br></code></pre></td></tr></table></figure>
+
+<p>返回光线微分，包含相机在x, y平面方向上生成的对于相距1像素样本的射线信息(见Chapter 10)，光线微分可用于从一些纹理函数中获得更好的效果，从而可以计算纹理相对于像素间距的变化速度，像素间距是纹理抗锯齿的关键组成部分</p>
+<p>在返回光线微分后，可以对微分光线进行缩放</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">ScaleDifferentials</span><span class="hljs-params">(Float s)</span></span>;<br></code></pre></td></tr></table></figure>
+
+<p>该方法得到每个像素采集多个样本的情况下Film平面上样本之间的实际间距</p>
+<p>相机还可以返回与光线关联的权重，贡献不同的光线可以模拟渐晕效果，该情况下，到达Film边缘的光线比到达中心的光线要少</p>
+<p>假设使用光线微分生成光线</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-comment">// Generate camera ray for current sample</span><br>pstd::optional&lt;CameraRayDifferential&gt; cameraRay =<br>    camera.<span class="hljs-built_in">GenerateRayDifferential</span>(cameraSample, lambda);<br></code></pre></td></tr></table></figure>
+
+
+
+<p>下一步确定沿着该光线到达图像平面的辐射</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs c++">L = cameraRay-&gt;weight * <span class="hljs-built_in">Li</span>(cameraRay-&gt;ray, lambda, sampler, scratchBuffer,<br>                           initializeVisibleSurface ? &amp;visibleSurface : <span class="hljs-literal">nullptr</span>);<br></code></pre></td></tr></table></figure>
+
+<p>其中，<code>Li()</code>方法的定义如下：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-function">SampledSpectrum <span class="hljs-title">Li</span><span class="hljs-params">(RayDifferential ray, SampledWavelengths &amp;lambda,</span></span><br><span class="hljs-params"><span class="hljs-function">                               Sampler sampler, ScratchBuffer &amp;scratchBuffer,</span></span><br><span class="hljs-params"><span class="hljs-function">                               VisibleSurface *visibleSurface)</span> <span class="hljs-type">const</span></span>;<br></code></pre></td></tr></table></figure>
+
+
+
+<p>在得到光线原点的辐射度后，就可以更新图像的像素值</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-comment">// Add camera ray&#x27;s contribution to image</span><br>camera.<span class="hljs-built_in">GetFilm</span>().<span class="hljs-built_in">AddSample</span>(pPixel, L, lambda, &amp;visibleSurface,<br>                           cameraSample.filterWeight);<br></code></pre></td></tr></table></figure>
+
+
+
+<p>最后，将所有tile的计算结果合并到最终图像，并将图像写入文件，清理内存，退出程序</p>
+<h3 id="光线积分"><a href="#光线积分" class="headerlink" title="光线积分"></a>光线积分</h3><p>对光线的积分运算主要实现在<code>Li()</code>方法中，该方法返回到达给定光线原点的辐射，具体过程如下图所示：</p>
+<p><img src="/2023/01/10/PBRT-%E7%B3%BB%E7%BB%9F%E6%A6%82%E8%BF%B0/image-20220702161044062.png" srcset="/img/loading.gif" lazyload alt="image-20220702161044062"></p>
+<p>通过相机得到的光线被传递给<code>Li()</code>方法，该方法使用光线在场景中求交得到交点信息，它计算该交点处的材质属性，以<code>BSDF</code>的形式来表示它们，然后使用场景中的灯光确定那里的照明。这些一起提供了计算沿交点处的光线反射回来的辐射度所需的信息。</p>
+<p>第一步是找到光线与场景中的第一个交点</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c++">pstd::optional&lt;ShapeIntersection&gt; si = <span class="hljs-built_in">Intersect</span>(ray);<br></code></pre></td></tr></table></figure>
+
+<p>若返回空，表示没有交点，由于没有相关的几何体光源，辐射可能沿着光线继续传播，这种光的例子是InfiniteAreaLight，它表示来自天空的照明，<code>Light::Le()</code>方法允许这些灯光沿着给定的光线返回它们的辐射度</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-comment">// Account for infinite lights if ray has no intersection</span><br><span class="hljs-keyword">if</span> (!si) &#123;<br>    <span class="hljs-keyword">if</span> (!sampleLights || specularBounce)<br>        <span class="hljs-keyword">for</span> (<span class="hljs-type">const</span> <span class="hljs-keyword">auto</span> &amp;light : infiniteLights)<br>            L += beta * light.<span class="hljs-built_in">Le</span>(ray, lambda);<br>    <span class="hljs-keyword">break</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+
+<p>如果找到交点，Integrator必须确定光如何在交点处被该形状的表面散射，确定从光源出发到达该点的照明度(illumination)，并对等式1.1应用近似来计算沿着视角方向离开表面的光线的量，等式1.1的定义如下：</p>
+<p><img src="/2023/01/10/PBRT-%E7%B3%BB%E7%BB%9F%E6%A6%82%E8%BF%B0/image-20220702163535696.png" srcset="/img/loading.gif" lazyload alt="image-20220702163535696"></p>
+<p>如果光线击中自发光的几何体，则Integrator通过调用<code>SurfaceInteaction::Le()</code>方法来计算任何发出的辐射，这给出光传输方程1.1的第一项，如果对象不发光，则此方法返回黑色光谱</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-comment">// Account for emissive surface if light was not sampled</span><br>SurfaceInteraction &amp;isect = si-&gt;intr;<br><span class="hljs-keyword">if</span> (!sampleLights || specularBounce)<br>    L += beta * isect.<span class="hljs-built_in">Le</span>(-ray.d, lambda);<br></code></pre></td></tr></table></figure>
+
+
+
+<p>下一步检查当前的递归深度，如果到达最大深度则结束沿着该光线的辐射度计算</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-comment">// End path if maximum depth reached</span><br><span class="hljs-keyword">if</span> (depth++ == maxDepth)<br>    <span class="hljs-keyword">break</span>;<br></code></pre></td></tr></table></figure>
+
+
+
+<p>否则继续考虑汇聚到该交点的其他方向的光线，先计算该点表面材质的BSDF</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c++">BSDF bsdf = isect.<span class="hljs-built_in">GetBSDF</span>(ray, lambda, camera, scratchBuffer, sampler);<br></code></pre></td></tr></table></figure>
+
+
+
+<p>若对光源进行采样，Integrator调用<code>Light::SampleLi()</code>方法和bsdf来计算该光源落在被着色点的表面上的辐射</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs c++">pstd::optional&lt;LightLiSample&gt; ls =<br>    sampledLight-&gt;light.<span class="hljs-built_in">SampleLi</span>(isect, uLight, lambda);<br>...<br>SampledSpectrum f = bsdf.<span class="hljs-built_in">f</span>(wo, wi) * <span class="hljs-built_in">AbsDot</span>(wi, isect.shading.n);<br>...<br>L += beta * f * ls-&gt;L / (sampledLight-&gt;p * ls-&gt;pdf);<br></code></pre></td></tr></table></figure>
+
+<p>其中L是累计的辐射度</p>
+<p>若对表面材质进行采样，则需要进一步计算入射方向，得到新的入射光线，然后重复以上操作，直到达到最大深度或其它终止条件</p>
+<p>可以使用BSDF采样、半球采样等方法来获得新的路径方向，详细内容见具体章节的介绍</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-comment">// Sample BSDF for new path direction</span><br>...<br>pstd::optional&lt;BSDFSample&gt; bs = bsdf.<span class="hljs-built_in">Sample_f</span>(wo, u, sampler.<span class="hljs-built_in">Get2D</span>());<br>...<br>ray = isect.<span class="hljs-built_in">SpawnRay</span>(bs-&gt;wi);<br><span class="hljs-comment">// next loop...</span><br><br><span class="hljs-comment">// or</span><br><span class="hljs-comment">// Uniformly sample sphere or hemisphere to get new path direction</span><br>...<br>wi = <span class="hljs-built_in">SampleUniformHemisphere</span>(sampler.<span class="hljs-built_in">Get2D</span>());<br>...<br>ray = isect.<span class="hljs-built_in">SpawnRay</span>(wi);<br><span class="hljs-comment">// next loop...</span><br></code></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/CG/" class="category-chain-item">CG</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/CG/">#CG</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>PBRT-系统概述</div>
+      <div>http://example.com/2023/01/10/PBRT-系统概述/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Chen Shuwen</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年1月10日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

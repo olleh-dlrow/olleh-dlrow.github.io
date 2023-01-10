@@ -1,0 +1,777 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Chen Shuwen">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="PBRT-采样前置知识[TOC] 复数直角坐标表示复数的基本单位是$i &#x3D; \sqrt{-1} $，复数空间的每个数可以表示为$a + bi$的形式，其中，a是实部，b是虚部 复数可以在复平面上表示，复平面的横纵坐标分别为实部和虚部，例如：  极坐标表示复数使用极坐标可以表示为$(r, \theta)$，其中$r &#x3D; \sqrt{a^2 + b^2}$，也称为强度，$\thet">
+<meta property="og:type" content="article">
+<meta property="og:title" content="PBRT-采样前置知识">
+<meta property="og:url" content="http://example.com/2022/07/14/PBRT-%E9%87%87%E6%A0%B7%E5%89%8D%E7%BD%AE%E7%9F%A5%E8%AF%86/index.html">
+<meta property="og:site_name" content="Chen Shuwen&#39;s Tech Site">
+<meta property="og:description" content="PBRT-采样前置知识[TOC] 复数直角坐标表示复数的基本单位是$i &#x3D; \sqrt{-1} $，复数空间的每个数可以表示为$a + bi$的形式，其中，a是实部，b是虚部 复数可以在复平面上表示，复平面的横纵坐标分别为实部和虚部，例如：  极坐标表示复数使用极坐标可以表示为$(r, \theta)$，其中$r &#x3D; \sqrt{a^2 + b^2}$，也称为强度，$\thet">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2022/07/14/PBRT-%E9%87%87%E6%A0%B7%E5%89%8D%E7%BD%AE%E7%9F%A5%E8%AF%86/image-20220710144921937.png">
+<meta property="og:image" content="http://example.com/2022/07/14/PBRT-%E9%87%87%E6%A0%B7%E5%89%8D%E7%BD%AE%E7%9F%A5%E8%AF%86/image-20220710145314702.png">
+<meta property="og:image" content="http://example.com/2022/07/14/PBRT-%E9%87%87%E6%A0%B7%E5%89%8D%E7%BD%AE%E7%9F%A5%E8%AF%86/image-20220710150202363.png">
+<meta property="og:image" content="http://example.com/2022/07/14/PBRT-%E9%87%87%E6%A0%B7%E5%89%8D%E7%BD%AE%E7%9F%A5%E8%AF%86/image-20220710175530363.png">
+<meta property="og:image" content="http://example.com/2022/07/14/PBRT-%E9%87%87%E6%A0%B7%E5%89%8D%E7%BD%AE%E7%9F%A5%E8%AF%86/image-20220710175835803.png">
+<meta property="og:image" content="http://example.com/2022/07/14/PBRT-%E9%87%87%E6%A0%B7%E5%89%8D%E7%BD%AE%E7%9F%A5%E8%AF%86/image-20220710180108618.png">
+<meta property="og:image" content="http://example.com/2022/07/14/PBRT-%E9%87%87%E6%A0%B7%E5%89%8D%E7%BD%AE%E7%9F%A5%E8%AF%86/image-20220710180052505.png">
+<meta property="og:image" content="http://example.com/2022/07/14/PBRT-%E9%87%87%E6%A0%B7%E5%89%8D%E7%BD%AE%E7%9F%A5%E8%AF%86/image-20220710180156518.png">
+<meta property="og:image" content="http://example.com/2022/07/14/PBRT-%E9%87%87%E6%A0%B7%E5%89%8D%E7%BD%AE%E7%9F%A5%E8%AF%86/image-20220710180220745.png">
+<meta property="og:image" content="http://example.com/2022/07/14/PBRT-%E9%87%87%E6%A0%B7%E5%89%8D%E7%BD%AE%E7%9F%A5%E8%AF%86/image-20220710163937597.png">
+<meta property="og:image" content="http://example.com/2022/07/14/PBRT-%E9%87%87%E6%A0%B7%E5%89%8D%E7%BD%AE%E7%9F%A5%E8%AF%86/image-20220710164537300.png">
+<meta property="og:image" content="http://example.com/2022/07/14/PBRT-%E9%87%87%E6%A0%B7%E5%89%8D%E7%BD%AE%E7%9F%A5%E8%AF%86/image-20220710171809580.png">
+<meta property="og:image" content="http://example.com/2022/07/14/PBRT-%E9%87%87%E6%A0%B7%E5%89%8D%E7%BD%AE%E7%9F%A5%E8%AF%86/image-20220710173455221.png">
+<meta property="og:image" content="http://example.com/2022/07/14/PBRT-%E9%87%87%E6%A0%B7%E5%89%8D%E7%BD%AE%E7%9F%A5%E8%AF%86/image-20220710173514585.png">
+<meta property="og:image" content="http://example.com/2022/07/14/PBRT-%E9%87%87%E6%A0%B7%E5%89%8D%E7%BD%AE%E7%9F%A5%E8%AF%86/image-20220710174315904.png">
+<meta property="og:image" content="http://example.com/2022/07/14/PBRT-%E9%87%87%E6%A0%B7%E5%89%8D%E7%BD%AE%E7%9F%A5%E8%AF%86/image-20220710174408866.png">
+<meta property="og:image" content="http://example.com/2022/07/14/PBRT-%E9%87%87%E6%A0%B7%E5%89%8D%E7%BD%AE%E7%9F%A5%E8%AF%86/image-20220710174430090.png">
+<meta property="og:image" content="http://example.com/2022/07/14/PBRT-%E9%87%87%E6%A0%B7%E5%89%8D%E7%BD%AE%E7%9F%A5%E8%AF%86/image-20220710174508729.png">
+<meta property="og:image" content="http://example.com/2022/07/14/PBRT-%E9%87%87%E6%A0%B7%E5%89%8D%E7%BD%AE%E7%9F%A5%E8%AF%86/image-20220710174605514.png">
+<meta property="article:published_time" content="2022-07-13T16:00:00.000Z">
+<meta property="article:modified_time" content="2023-01-10T13:13:53.886Z">
+<meta property="article:author" content="Chen Shuwen">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://example.com/2022/07/14/PBRT-%E9%87%87%E6%A0%B7%E5%89%8D%E7%BD%AE%E7%9F%A5%E8%AF%86/image-20220710144921937.png">
+  
+  
+  
+  <title>PBRT-采样前置知识 - Chen Shuwen&#39;s Tech Site</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Chen Shuwen&#39;s Tech Site</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="PBRT-采样前置知识"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2022-07-14 00:00" pubdate>
+          2022年7月14日 凌晨
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          4.5k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          38 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">PBRT-采样前置知识</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="PBRT-采样前置知识"><a href="#PBRT-采样前置知识" class="headerlink" title="PBRT-采样前置知识"></a>PBRT-采样前置知识</h1><p>[TOC]</p>
+<h2 id="复数"><a href="#复数" class="headerlink" title="复数"></a>复数</h2><h3 id="直角坐标表示"><a href="#直角坐标表示" class="headerlink" title="直角坐标表示"></a>直角坐标表示</h3><p>复数的基本单位是$i &#x3D; \sqrt{-1} $，复数空间的每个数可以表示为$a + bi$的形式，其中，a是实部，b是虚部</p>
+<p>复数可以在复平面上表示，复平面的横纵坐标分别为实部和虚部，例如：</p>
+<p><img src="/2022/07/14/PBRT-%E9%87%87%E6%A0%B7%E5%89%8D%E7%BD%AE%E7%9F%A5%E8%AF%86/image-20220710144921937.png" srcset="/img/loading.gif" lazyload alt="image-20220710144921937"></p>
+<h3 id="极坐标表示"><a href="#极坐标表示" class="headerlink" title="极坐标表示"></a>极坐标表示</h3><p>复数使用极坐标可以表示为$(r, \theta)$，其中$r &#x3D; \sqrt{a^2 + b^2}$，也称为强度，$\theta &#x3D; arctan(\frac{b}{a})$，也称为相位</p>
+<p>例如，复数$4 + 3i$的直角坐标为$(4, 3)$，极坐标为$(5, arctan(\frac{3}{4}))$</p>
+<p><img src="/2022/07/14/PBRT-%E9%87%87%E6%A0%B7%E5%89%8D%E7%BD%AE%E7%9F%A5%E8%AF%86/image-20220710145314702.png" srcset="/img/loading.gif" lazyload alt="image-20220710145314702"></p>
+<p>极坐标转直角坐标：</p>
+<p>令复数的极坐标为$(r, \theta)$，则直角坐标为$(rcos\theta, rsin\theta)$</p>
+<h3 id="复数波和实数波"><a href="#复数波和实数波" class="headerlink" title="复数波和实数波"></a>复数波和实数波</h3><p>实数波表示为$cos\theta$和$sin\theta$的形式，复数波使用$e^{i\theta}$表示，且有：<br>$$<br>e^{i\theta} &#x3D; cos\theta + i\ sin\theta<br>$$<br>当$\theta &#x3D; \pi$时，有欧拉公式：<br>$$<br>e^{i\pi} &#x3D; -1<br>$$<br>两者的示意图如下：</p>
+<p><img src="/2022/07/14/PBRT-%E9%87%87%E6%A0%B7%E5%89%8D%E7%BD%AE%E7%9F%A5%E8%AF%86/image-20220710150202363.png" srcset="/img/loading.gif" lazyload alt="image-20220710150202363"></p>
+<p>可以通过组合复数波得到实数波：<br>$$<br>cos\theta &#x3D; \frac{e^{i\theta} + e^{-i\theta}}{2} \<br>sin\theta &#x3D; \frac{e^{i\theta} - e^{-i\theta}}{2i}<br>$$</p>
+<h2 id="正弦信号"><a href="#正弦信号" class="headerlink" title="正弦信号"></a>正弦信号</h2><h3 id="连续时间"><a href="#连续时间" class="headerlink" title="连续时间"></a>连续时间</h3><p>$$<br>x(t) &#x3D; Acos(w_0t + \phi)<br>$$</p>
+<p><img src="/2022/07/14/PBRT-%E9%87%87%E6%A0%B7%E5%89%8D%E7%BD%AE%E7%9F%A5%E8%AF%86/image-20220710175530363.png" srcset="/img/loading.gif" lazyload alt="image-20220710175530363"></p>
+<p><strong>性质</strong></p>
+<p><strong>周期性</strong><br>$$<br>x(t) &#x3D; x(t + T_0), period &#x3D; smallest\ \ T_0<br>$$<br><strong>相变和时移等价</strong><br>$$<br>Acos[w_0(t + t_0)] &#x3D; Acos[w_0t + w_0 t_0] \<br>Acos[w_0(t + t_0) + \phi] &#x3D; Acos[w_0 t + w_0 t + \phi]<br>$$<br><strong>频率不具有周期性</strong></p>
+<p>假设有2个信号：<br>$$<br>x_1(t) &#x3D; Acos(w_1 t + \phi) \<br>x_2(t) &#x3D; Acos(w_2 t + \phi)<br>$$<br>如果$w_1 \neq w_2$，则$x_1(t) \neq x_2(t)$</p>
+<h3 id="离散时间"><a href="#离散时间" class="headerlink" title="离散时间"></a>离散时间</h3><p>$$<br>x[n] &#x3D; Acos(\Omega_0n + \phi)<br>$$</p>
+<p><img src="/2022/07/14/PBRT-%E9%87%87%E6%A0%B7%E5%89%8D%E7%BD%AE%E7%9F%A5%E8%AF%86/image-20220710175835803.png" srcset="/img/loading.gif" lazyload alt="image-20220710175835803"></p>
+<p><strong>性质</strong></p>
+<p><strong>特定条件下具有周期</strong></p>
+<p>假设有：<br>$$<br>x[n] &#x3D; x[n + N]<br>$$<br>将式子展开：<br>$$<br>Acos[\Omega_0 (n + N) + \phi] &#x3D; Acos[\Omega_0 n + \Omega_0 N + \phi]<br>$$<br>如果具有周期性，需要满足：<br>$$<br>\Omega_0 N &#x3D; 2\pi m \<br>N &#x3D; \frac{2\pi m}{\Omega_0}<br>$$<br>其中$N, m$都是整数，此时周期为最小的$N$</p>
+<p><strong>时移等于相变</strong><br>$$<br>Acos[\Omega_0(n + n_0)] &#x3D; Acos[\Omega_0 n + \Omega_0 n_0]<br>$$<br><strong>相变不一定等于时移</strong></p>
+<p>对于式子：<br>$$<br>x[n] &#x3D; Acos[\Omega_0 n + \phi]<br>$$<br>当且仅当$\phi &#x3D; n_0\Omega_0$时，有：<br>$$<br>Acos[\Omega_0 n + \phi] &#x3D; Acos[\Omega_0(n + n_0)]<br>$$<br>否则，相变无法转换成时移</p>
+<p><strong>频率具有周期性</strong></p>
+<p>假设有两个信号：<br>$$<br>x_1[n] &#x3D; Acos[\Omega_1 n + \phi] \<br>x_2[n] &#x3D; Acos[\Omega_2 n + \phi]<br>$$<br>当且仅当$\Omega_1 &#x3D; \Omega_2 + 2\pi m$时，$x_1[n] &#x3D; x_2[n]$</p>
+<h2 id="复指数信号"><a href="#复指数信号" class="headerlink" title="复指数信号"></a>复指数信号</h2><h3 id="连续时间-1"><a href="#连续时间-1" class="headerlink" title="连续时间"></a>连续时间</h3><p>$$<br>x(t)<br> &#x3D;  Ce^{at} \<br> &#x3D;  |C|e^{j\theta} e^{(r+jw_0)t} \<br> &#x3D;  |C|e^{rt} e^{j(w_0t + \theta)} \<br> &#x3D;  |C|e^{rt}cos(w_0 t + \theta) + j |C| e^{rt} sin(w_0 t + \theta)<br>$$</p>
+<h3 id="离散时间-1"><a href="#离散时间-1" class="headerlink" title="离散时间"></a>离散时间</h3><p>$$<br>x[n]<br> &#x3D;  C \alpha^n \<br> &#x3D;  |C|e^{j\theta} (|\alpha| e^{j\Omega_0})^n \<br> &#x3D;  |C||\alpha |^n e^{j(\Omega_0 n + \theta)} \<br> &#x3D;  |C||\alpha |^n cos(\Omega_0 n + \theta) + j |C||\alpha |^n sin(\Omega_0 n + \theta)<br>$$</p>
+<h2 id="单位阶跃和单位脉冲函数"><a href="#单位阶跃和单位脉冲函数" class="headerlink" title="单位阶跃和单位脉冲函数"></a>单位阶跃和单位脉冲函数</h2><h3 id="离散时间-2"><a href="#离散时间-2" class="headerlink" title="离散时间"></a>离散时间</h3><p>离散时间单位阶跃函数：<br>$$<br>u[n] &#x3D;<br>\left{<br>\begin{aligned}<br>1, &amp; n \geq 0\<br>0, &amp; n &lt; 0<br>\end{aligned}<br>\right.<br>$$<br><img src="/2022/07/14/PBRT-%E9%87%87%E6%A0%B7%E5%89%8D%E7%BD%AE%E7%9F%A5%E8%AF%86/image-20220710180108618.png" srcset="/img/loading.gif" lazyload alt="image-20220710180108618"></p>
+<p>离散时间单位脉冲函数：<br>$$<br>\delta[n] &#x3D;<br>\left{<br>\begin{aligned}<br>1, n &#x3D; 0 \<br>0, n \neq 0<br>\end{aligned}<br>\right.<br>$$<br><img src="/2022/07/14/PBRT-%E9%87%87%E6%A0%B7%E5%89%8D%E7%BD%AE%E7%9F%A5%E8%AF%86/image-20220710180052505.png" srcset="/img/loading.gif" lazyload alt="image-20220710180052505"></p>
+<p>关系：<br>$$<br>\delta [n] &#x3D; u[n] - u[n - 1]<br>$$</p>
+<p>$$<br>u[n]<br> &#x3D;  \sum_{m &#x3D; -\infty}^{n} \delta [m] \<br> &#x3D;  \sum_{k &#x3D; 0}^{+\infty} \delta[n - k]<br>$$</p>
+<h3 id="连续时间-2"><a href="#连续时间-2" class="headerlink" title="连续时间"></a>连续时间</h3><p>连续时间单位阶跃函数：<br>$$<br>u(t) &#x3D;<br>\left{<br>\begin{aligned}<br>1, &amp; t \geq 0\<br>0, &amp; t &lt; 0<br>\end{aligned}<br>\right.<br>$$<br><img src="/2022/07/14/PBRT-%E9%87%87%E6%A0%B7%E5%89%8D%E7%BD%AE%E7%9F%A5%E8%AF%86/image-20220710180156518.png" srcset="/img/loading.gif" lazyload alt="image-20220710180156518"></p>
+<p>连续时间单位脉冲函数：<br>$$<br>\delta(t) &#x3D;<br>\left{<br>\begin{aligned}<br>1, t &#x3D; 0 \<br>0, t \neq 0<br>\end{aligned}<br>\right.<br>$$<br><img src="/2022/07/14/PBRT-%E9%87%87%E6%A0%B7%E5%89%8D%E7%BD%AE%E7%9F%A5%E8%AF%86/image-20220710180220745.png" srcset="/img/loading.gif" lazyload alt="image-20220710180220745"></p>
+<p>关系：<br>$$<br>\delta (t) &#x3D; \frac{du(t)}{dt}<br>$$</p>
+<p>$$<br>u(t) &#x3D; \int_{-\infty}^{t} \delta(\tau) d\tau<br>$$</p>
+<h2 id="卷积"><a href="#卷积" class="headerlink" title="卷积"></a>卷积</h2><p>对于线性时不变系统，离散时间下的卷积公式：<br>$$<br>y[n] &#x3D; \sum_{k &#x3D; -\infty}^{+\infty} x[k]h[n - k]<br>$$<br>记为：<br>$$<br>y[n] &#x3D; x[n] * h[n]<br>$$<br>相当于把$h[n]$沿y轴翻转后向右平移n个单位，得到函数$h_1[n]$，再将$h_1[n]$与$x[n]$相乘并求线性组合，即可得到卷积结果$y[n]$</p>
+<p>当$h[n]$为脉冲序列时，卷积相当于将$x[n]$复制到每一个脉冲的位置</p>
+<p>连续时间下的卷积公式：<br>$$<br>y(t) &#x3D; \int_{-\infty}^{+\infty} x(\tau)h(t - \tau)d\tau<br>$$<br>记为：<br>$$<br>y(t) &#x3D; x(t) * h(t)<br>$$</p>
+<p>卷积的性质：</p>
+<p>交换律</p>
+<p>分配律</p>
+<p>结合律</p>
+<h2 id="傅里叶级数"><a href="#傅里叶级数" class="headerlink" title="傅里叶级数"></a>傅里叶级数</h2><p>傅里叶级数可以理解为复指数的线性组合</p>
+<h3 id="连续时间-3"><a href="#连续时间-3" class="headerlink" title="连续时间"></a>连续时间</h3><p>连续时间傅里叶级数：<br>$$<br>x(t) &#x3D; \sum_{-\infty}^{+\infty}a^k e^{jkw_0t}<br>$$</p>
+<p>傅里叶级数系数：<br>$$<br>a_k &#x3D; \frac{1}{T} \int_{T} x(t) e^{-jkw_0t} dt<br>$$<br>该系数又称为频谱系数</p>
+<p>需要注意，傅里叶级数的求和范围是负无穷大到正无穷大，而傅里叶级数系数的积分范围是一个周期</p>
+<p>性质：</p>
+<p><img src="/2022/07/14/PBRT-%E9%87%87%E6%A0%B7%E5%89%8D%E7%BD%AE%E7%9F%A5%E8%AF%86/image-20220710163937597.png" srcset="/img/loading.gif" lazyload alt="image-20220710163937597"></p>
+<h3 id="离散时间-3"><a href="#离散时间-3" class="headerlink" title="离散时间"></a>离散时间</h3><p>离散时间傅里叶级数：<br>$$<br>x[n] &#x3D; \sum_{k&#x3D;<N>}a_k e^{jkw_0n}<br>$$<br>傅里叶级数系数：<br>$$<br>a_k &#x3D; \frac{1}{N} \sum_{k&#x3D;<N>} x[n] e^{-jkw_0n}<br>$$<br>离散时间傅里叶级数只对1个周期内的复指数做线性组合，这是因为$(k + N)w_0 &#x3D; kw_0 + 2\pi$，即此时的复指数具有周期性</N></N></p>
+<p>性质：</p>
+<p><img src="/2022/07/14/PBRT-%E9%87%87%E6%A0%B7%E5%89%8D%E7%BD%AE%E7%9F%A5%E8%AF%86/image-20220710164537300.png" srcset="/img/loading.gif" lazyload alt="image-20220710164537300"></p>
+<h2 id="傅里叶变换"><a href="#傅里叶变换" class="headerlink" title="傅里叶变换"></a>傅里叶变换</h2><h3 id="连续时间-4"><a href="#连续时间-4" class="headerlink" title="连续时间"></a>连续时间</h3><p>连续时间非周期信号的傅里叶变换：<br>$$<br>x(t) &#x3D; \frac{1}{2\pi} \int_{-\infty}^{+\infty} X(jw)e^{jwt} dw<br>$$</p>
+<p>$$<br>X(jw) &#x3D; \int_{-\infty}^{+\infty} x(t) e^{-jwt} dt<br>$$</p>
+<p>可记为：<br>$$<br>x(t) \overset{\mathscr{F}}{\longleftrightarrow} X(jw)<br>$$</p>
+<p>其中，$X(jw)$是$x(t)$的傅里叶变换，它告诉我们将$x(t)$表示为不同频率正弦信号的线性组合所需要的信息，即信号的<strong>频域</strong></p>
+<p>这里的思想是，将信号的周期设为无穷大，则频率趋近于0，周期信号就近似地变为非周期信号。同时，组成信号的复指数成分之间的频率差异也趋近于0，$w &#x3D; kw_0$可视为连续</p>
+<p>对于周期信号而言，其傅里叶级数系数为非周期傅里叶变换的一个样本，因为此时的频率$w_0$为一固定的值，对应的$w &#x3D; kw_0$是离散的点</p>
+<p>同时，一个傅里叶级数系数为$a_k$的周期信号的傅里叶变换，可以看成是出现在谐波关系的频率上的一串冲激函数，发生于第$k$次谐波频率$w_0$的冲激函数的面积是第$k$个傅里叶级数系数$a_k$的$2\pi$倍，用公式表述为：<br>$$<br>X(jw) &#x3D; \sum_{-\infty}^{+\infty} 2\pi a_k \delta(w - kw_0)<br>$$</p>
+<p>连续时间傅里叶变换的性质：</p>
+<p><img src="/2022/07/14/PBRT-%E9%87%87%E6%A0%B7%E5%89%8D%E7%BD%AE%E7%9F%A5%E8%AF%86/image-20220710171809580.png" srcset="/img/loading.gif" lazyload alt="image-20220710171809580"></p>
+<p>利用微分和积分的性质，可以将线性常系数微分方程先进行傅里叶变换，求解后在进行逆变换，还原成方程的最终解</p>
+<p>在时域下做卷积等价于在频域下做乘积，该性质常用于滤波，如低通滤波器、高通滤波器</p>
+<p>在时域下做乘积等价于在频域下做卷积，相当于位移信号的频率，该性质常用于调制，如复指数调制、正弦调制，频分多路复用</p>
+<p>连续时间基本傅里叶变换对：</p>
+<p><img src="/2022/07/14/PBRT-%E9%87%87%E6%A0%B7%E5%89%8D%E7%BD%AE%E7%9F%A5%E8%AF%86/image-20220710173455221.png" srcset="/img/loading.gif" lazyload alt="image-20220710173455221"></p>
+<p><img src="/2022/07/14/PBRT-%E9%87%87%E6%A0%B7%E5%89%8D%E7%BD%AE%E7%9F%A5%E8%AF%86/image-20220710173514585.png" srcset="/img/loading.gif" lazyload alt="image-20220710173514585"></p>
+<h3 id="离散时间-4"><a href="#离散时间-4" class="headerlink" title="离散时间"></a>离散时间</h3><p>离散时间非周期信号的傅里叶变换：<br>$$<br>x[n] &#x3D; \frac{1}{2\pi} \int_{2\pi} X(e^{jw})e^{jwn}dw<br>$$</p>
+<p>$$<br>X(e^{jw}) &#x3D; \sum_{m &#x3D; -\infty}^{+\infty} x[n] e^{-jwt}<br>$$</p>
+<p>在离散时间下，傅里叶变换具有周期性</p>
+<p>周期信号的傅里叶级数系数同样是非周期信号傅里叶变换的一个样本</p>
+<p>离散时间傅里叶变换的性质：</p>
+<p><img src="/2022/07/14/PBRT-%E9%87%87%E6%A0%B7%E5%89%8D%E7%BD%AE%E7%9F%A5%E8%AF%86/image-20220710174315904.png" srcset="/img/loading.gif" lazyload alt="image-20220710174315904"></p>
+<p>离散时间基本傅里叶变换对：</p>
+<p><img src="/2022/07/14/PBRT-%E9%87%87%E6%A0%B7%E5%89%8D%E7%BD%AE%E7%9F%A5%E8%AF%86/image-20220710174408866.png" srcset="/img/loading.gif" lazyload alt="image-20220710174408866"></p>
+<p><img src="/2022/07/14/PBRT-%E9%87%87%E6%A0%B7%E5%89%8D%E7%BD%AE%E7%9F%A5%E8%AF%86/image-20220710174430090.png" srcset="/img/loading.gif" lazyload alt="image-20220710174430090"></p>
+<p><img src="/2022/07/14/PBRT-%E9%87%87%E6%A0%B7%E5%89%8D%E7%BD%AE%E7%9F%A5%E8%AF%86/image-20220710174508729.png" srcset="/img/loading.gif" lazyload alt="image-20220710174508729"></p>
+<h3 id="对偶关系"><a href="#对偶关系" class="headerlink" title="对偶关系"></a>对偶关系</h3><p><img src="/2022/07/14/PBRT-%E9%87%87%E6%A0%B7%E5%89%8D%E7%BD%AE%E7%9F%A5%E8%AF%86/image-20220710174605514.png" srcset="/img/loading.gif" lazyload alt="image-20220710174605514"></p>
+<h2 id="采样定理"><a href="#采样定理" class="headerlink" title="采样定理"></a>采样定理</h2><p>在一定条件下，一个连续时间信号完全可以用该信号在等时间间隔点上的值或样本来表示，并且可以用这些样本值把信号全部恢复出来</p>
+<p>采样混叠（aliasing)</p>
+<p>如果采样频率$w$小于信号最大频率$w_m$的两倍，则会发生频率混叠，导致高频的成分变成低频。因此，只有受限带宽才可能不发生混叠</p>
+<p>采样和重建的一般步骤：</p>
+<ol>
+<li>使用脉冲串采样，在频域中得到周期性的频率变化</li>
+<li>使用低通滤波器重建，在频域中截取频率</li>
+</ol>
+<p>采样率转换：</p>
+<p>抽取(降采样)：降低采样周期，去掉中间的0值</p>
+<p>内插(升采样)：提高采样周期，在中间添加0值</p>
+<p>离散时间采样：</p>
+<p>$x[n]$ -&gt; 采样 -&gt; $x_p[n]$ -&gt; 抽取 -&gt; $x_d[n]$ -&gt; 内插 -&gt; $x_p[n]$ -&gt; 滤波重建 -&gt; $x[n]$ </p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>PBRT-采样前置知识</div>
+      <div>http://example.com/2022/07/14/PBRT-采样前置知识/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Chen Shuwen</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2022年7月14日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2022/07/15/PBRT-%E9%87%87%E6%A0%B7%E5%92%8C%E9%87%8D%E5%BB%BA/" title="PBRT-采样和重建">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">PBRT-采样和重建</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2022/07/13/PBRT-%E8%BE%90%E5%B0%84%E5%BA%A6%E9%87%8F%E5%AD%A6/" title="PBRT-辐射度量学">
+                        <span class="hidden-mobile">PBRT-辐射度量学</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

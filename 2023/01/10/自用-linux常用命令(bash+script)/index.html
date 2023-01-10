@@ -1,0 +1,1185 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Chen Shuwen">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="自用-linux常用命令(bash+script) 自从接触了linux以后，发现有大量需要记忆的指令，尽管我能够通过man或者info来查询这些指令的信息，但是如果我不知道这些指令的名字也是没有办法的事情，因此这里把一些常用的指令名称记录下来。    linux的文件权限与目录配置-rw——-  1 shuwen shuwen    29957 8月   2 09:35 .bash_histor">
+<meta property="og:type" content="article">
+<meta property="og:title" content="自用-linux常用命令(bash+script)">
+<meta property="og:url" content="http://example.com/2023/01/10/%E8%87%AA%E7%94%A8-linux%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4(bash+script)/index.html">
+<meta property="og:site_name" content="Chen Shuwen&#39;s Tech Site">
+<meta property="og:description" content="自用-linux常用命令(bash+script) 自从接触了linux以后，发现有大量需要记忆的指令，尽管我能够通过man或者info来查询这些指令的信息，但是如果我不知道这些指令的名字也是没有办法的事情，因此这里把一些常用的指令名称记录下来。    linux的文件权限与目录配置-rw——-  1 shuwen shuwen    29957 8月   2 09:35 .bash_histor">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-01-10T04:10:03.493Z">
+<meta property="article:modified_time" content="2023-01-10T04:10:03.493Z">
+<meta property="article:author" content="Chen Shuwen">
+<meta property="article:tag" content="linux">
+<meta property="article:tag" content="vim">
+<meta property="article:tag" content="bash">
+<meta property="article:tag" content="script">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>自用-linux常用命令(bash+script) - Chen Shuwen&#39;s Tech Site</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Chen Shuwen&#39;s Tech Site</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="自用-linux常用命令(bash+script)"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-01-10 12:10" pubdate>
+          2023年1月10日 中午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          10k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          85 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">自用-linux常用命令(bash+script)</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="自用-linux常用命令-bash-script"><a href="#自用-linux常用命令-bash-script" class="headerlink" title="自用-linux常用命令(bash+script)"></a>自用-linux常用命令(bash+script)</h1><blockquote>
+<p>自从接触了linux以后，发现有大量需要记忆的指令，尽管我能够通过man或者info来查询这些指令的信息，但是如果我不知道这些指令的名字也是没有办法的事情，因此这里把一些常用的指令名称记录下来。</p>
+</blockquote>
+<br>
+
+<h2 id="linux的文件权限与目录配置"><a href="#linux的文件权限与目录配置" class="headerlink" title="linux的文件权限与目录配置"></a>linux的文件权限与目录配置</h2><p>-rw——-  1 shuwen shuwen    29957 8月   2 09:35 .bash_history</p>
+<p>解读：</p>
+<ol>
+<li>代表文件类型，常见的有：[d], [-], [l] (link file), [b] (装置文件里可供储存的接口设备，<em>可随机存取装置</em>，<em>block device</em> ), [c] (装置文件里串行端口设备，如键盘，鼠标，<em>一次性读取装置</em>  <em>character device</em> ) , [s] (数据接口文件 ，资料接口文件 ，<em>sockets</em> ), [p] (数据输送文件 ，<em>FIFO, pip</em> )</li>
+<li>剩下三组分别表示文件拥有者，群组，其他人的权限</li>
+<li>第二栏表示有多少档名连结到此节点（i-node），包括hard-link 和 Sympolic-link</li>
+<li>第三，四栏表示拥有者和群组</li>
+<li>第五栏表示文件容量大小（bytes）</li>
+<li>第六栏表示建档日期或者最近修改日期</li>
+<li>第七栏为档名</li>
+</ol>
+<br>
+
+<p><strong>更改文件属性与权限</strong></p>
+<p>chgrp, chown, chmod (改变文件权限，SUID, SGID, SBIT等特性)</p>
+<p>eg: chmod u&#x3D;rwx, go&#x3D;rx  .bashrc</p>
+<p>eg: chmod 777 .bashrc</p>
+<p>eg: chmod a+x .bashrc</p>
+<p>note : 区分文件夹和文件的x属性（前者是可工作权限，后者是可执行权限）</p>
+<h2 id="linux文件与目录管理"><a href="#linux文件与目录管理" class="headerlink" title="linux文件与目录管理"></a>linux文件与目录管理</h2><p>cd , pwd , mkdir , rmdir</p>
+<p>$PATH</p>
+<p>cp , rm , mv , rename, </p>
+<p>取得路径的文件名与目录名称：basename , dirname</p>
+<br>
+
+<p><strong>文件内容查阅</strong></p>
+<p>cat , tac(cat倒过来写，即从最后一行显示), nl(显示并输出行号) , more , less , head, tail , od(以二进制的方式读取文件内容)</p>
+<p><strong>修改文件时间或建置新档</strong></p>
+<p>touch </p>
+<p>mtime: modification time, 文件内容（不是属性或者权限）改变时更新</p>
+<p>ctime: status time, 状态改变（属性或者权限）</p>
+<p>atime: access time, 访问后更新，如cat就能改变</p>
+<p><strong>文件与目录的默认权限与隐藏权限</strong></p>
+<p>chattr, lsattr：改变，查看隐藏权限</p>
+<p>umask: 文件预设权限（显示被剪掉的权限）</p>
+<p><strong>文件特殊权限</strong></p>
+<p>SUID(4): 执行者将暂时具有该程序拥有者的权限，eg: passwd指令执行后，user将暂时拥有root权限，可以修改密码（因为密码文件对外人是不可修改的）。</p>
+<p>SGID(2): 对文件：执行者暂时获得群组的支持；对目录：若user在此目录下拥有w权限，则user建立的文件，其群组与此目录群组相同</p>
+<p>SBIT(1): 只对目录有效，当user具有wx权限，并且在该目录下建立文件或者目录时，仅自己和root才有权力删除该文件(即使对方有w权限也不能删我的文件)</p>
+<blockquote>
+<p>可见，后两个权限可以大大提高群组合作的效率和安全性</p>
+</blockquote>
+<p><strong>观察文件类型</strong></p>
+<p>file</p>
+<p><strong>指令与文件搜寻</strong></p>
+<p>which: 脚本文件名搜寻，（根据PATH环境变量搜寻）</p>
+<p><strong>文件档名搜寻</strong></p>
+<p>whereis</p>
+<p>locate&#x2F;updatedb</p>
+<p>find</p>
+<br>
+
+<h2 id="vim程序编辑器"><a href="#vim程序编辑器" class="headerlink" title="vim程序编辑器"></a>vim程序编辑器</h2><p>常用快捷键：</p>
+<p>nG: 跳转到第n行</p>
+<p>0, $: 移动到这一行的第1(最后)列。</p>
+<p>&#x2F;word ?word: 向下（上）查找，使用（n ，N上下查询）</p>
+<p>:n1, n2 s&#x2F;word1&#x2F;word2&#x2F;g(c): 在两行之间寻找并替代字符串，加c确认</p>
+<p>ndd: 删除向下n行</p>
+<p>dG: 删除到最后一行的所有数据（d1G: 到第一行）</p>
+<p>d$: 删到这行最后一个字符(d0: … )</p>
+<p>nyy: 复制几行</p>
+<p>y1G, yG, y0, y$: 同理dd</p>
+<p>p, P: 粘贴在下（上）一行</p>
+<p>u: 撤销</p>
+<p>ctrl + r: 重复上个动作(等价于按键[<strong>.</strong>])</p>
+<p>a, i, o(A, I, O): 都是插入</p>
+<p>r, R: 小写取代一次，大写进入取代模式，esc退出</p>
+<br>
+
+<p>:w ! 强制保存</p>
+<p>:w filename 另存为</p>
+<p>:r filename 将文件内容添加到光标的后面</p>
+<p>:! command 暂时离开vi界面，执行command</p>
+<br>
+
+<p><strong>区块选择</strong></p>
+<p>v: 字符选择，将光标经过的地方反白选择</p>
+<p>V: 行选择，</p>
+<p>ctrl + v: 区块选择</p>
+<p>y: 复制</p>
+<p>d: 删除</p>
+<p>p: 将刚刚复制的区块粘贴到游标所在处</p>
+<p><strong>多文件编辑</strong></p>
+<p>:n N 编辑下（上）个文件</p>
+<p>:files 列出目前这个vim开启的所有文件</p>
+<p><strong>多窗口功能</strong></p>
+<p>:sp filename 文件分区显示（默认为当前文件）</p>
+<p>ctrl + w + 方向： 上下翻页 </p>
+<p><strong>挑字补全功能</strong></p>
+<p>ctrl + x -&gt; ctrl + n, f, o: 补齐方式：文件的内容文字，文件名，vim内建关键词</p>
+<br>
+
+<h2 id="BASH相关"><a href="#BASH相关" class="headerlink" title="BASH相关"></a>BASH相关</h2><p>type: 显示指令类型</p>
+<p><strong>变量</strong></p>
+<p>echo : 打印到屏幕，取用变量</p>
+<p>unset: 取消设定变量</p>
+<p>env: 观察环境变量</p>
+<p>set: 观察所有变量</p>
+<p>$: shell 的PID变量</p>
+<p>?: 上一个指令的回传值变量</p>
+<p>export: 自定义变量转环境变量</p>
+<p>locale: 影响显示结果的语系变量</p>
+<p>read: 读取变量</p>
+<p>declare&#x2F;typeset: 宣告变量类型</p>
+<p>ulimit: 与文件系统及程序的限制关系（可以查看栈空间大小）</p>
+<p><strong>变量的删除、取代和替换</strong></p>
+<p>echo ${path#&#x2F;*local&#x2F;bin:} : 从变量最前面开始向右删除，并且删除最短的那个</p>
+<p>eg: &#x2F;usr&#x2F;local&#x2F;sbin:&#x2F;usr&#x2F;local&#x2F;bin:&#x2F;usr&#x2F;sbin:&#x2F;usr&#x2F;bin:&#x2F;sbin:&#x2F;bin:&#x2F;usr&#x2F;games:&#x2F;usr&#x2F;local&#x2F;games:&#x2F;snap&#x2F;bin</p>
+<p>变成 <del>&#x2F;usr&#x2F;local&#x2F;sbin:&#x2F;usr&#x2F;local&#x2F;bin:</del>&#x2F;usr&#x2F;sbin:&#x2F;usr&#x2F;bin:&#x2F;sbin:&#x2F;bin:&#x2F;usr&#x2F;games:&#x2F;usr&#x2F;local&#x2F;games:&#x2F;snap&#x2F;bin</p>
+<p>echo ${path##&#x2F;*:} : 删除最长的那个</p>
+<p>eg: <del>&#x2F;usr&#x2F;local&#x2F;sbin:&#x2F;usr&#x2F;local&#x2F;bin:&#x2F;usr&#x2F;sbin:&#x2F;usr&#x2F;bin:&#x2F;sbin:&#x2F;bin:&#x2F;usr&#x2F;games:&#x2F;usr&#x2F;local&#x2F;games:</del>&#x2F;snap&#x2F;bin</p>
+<p>echo ${path%:*bin} : 从后向前删除（%，%%规则与上同理）</p>
+<p>echo ${path&#x2F;sbin&#x2F;SBIN} : 取代第一个遇到的</p>
+<p>echo ${path&#x2F;&#x2F;sbin&#x2F;SBIN} : 取代所有</p>
+<blockquote>
+<p>有种憨憨办法，把变量内容输出到一个临时文件里修改，在把它拷贝回来，就不用记这么多指令了，不过，如果要写shell script的话，这些指令还是很有必要记忆的。</p>
+</blockquote>
+<p><strong>变量的测试和内容替换</strong></p>
+<p>username&#x3D;${username:-default} : 如果username为空或者未设定，则设定default，否则设定为username(常和read连用以避免用户输入为空)</p>
+<p>var&#x3D;${str:?expr} : 当str为空或者未设定时，expr输出至stderr，否则var&#x3D;$str</p>
+<p><strong>命名别名设定</strong></p>
+<p>alias, unalias</p>
+<p><strong>历史命令</strong></p>
+<p>history</p>
+<p><strong>终端机环境设定</strong></p>
+<p>stty -a: 显示所有stty参数</p>
+<p>set: 设定整个指令的输出&#x2F;输入环境（eg: set -u 当使用未设定变量时，会显示错误讯息）</p>
+<p>ctrl + C: 终止目前指令</p>
+<p>ctrl + D: 输入结束</p>
+<p>ctrl + S: 暂停屏幕输出</p>
+<p>ctrl + Z: 暂停目前命令</p>
+<p><strong>通配符与特殊符号</strong></p>
+<p>*: 0~无穷多个任意字符</p>
+<p>?: 一定有一个任意字符</p>
+<p>[]: 一定有一个在括号内的字符，eg: [abcd]代表一定有a~d 中的一个</p>
+<p>[-] : 在编码顺序内的所有字符，eg: [0-9]</p>
+<p>[^] : 反向选择，一定无括号内的字符</p>
+<p><strong>数据流重导向</strong></p>
+<p>2&gt;&amp;1 : 将错误信息和正确信息都输出到指定位置并且不会发生混乱</p>
+<p>cat &gt; catfile ：利用cat来建立一个文件的简单流程，ctrl + D 终止</p>
+<p>cat &gt; catfile &lt; ~&#x2F;.bashrc : 将.bashrc中的数据输出到catfile中</p>
+<p>cat &gt; catfile &lt;&lt; “eof” : 将输入信息输出到catfile中，遇到eof 结束</p>
+<p><strong>命令执行的判断依据</strong></p>
+<p>; , &amp;&amp; , || </p>
+<p>| ：管线命令，仅能处理经由前面一个指令传来的正确信息，对standard error没有直接处理的能力。</p>
+<p><strong>撷取命令</strong></p>
+<p>cut : 取出一行信息中想要的</p>
+<p>cut -d ‘分隔符’ -f 分割区间</p>
+<p>cut -c 12-14 取出字符在12-14之间的数据</p>
+<br>
+
+<p>grep: 分析某一行的信息</p>
+<p><strong>排序命令</strong></p>
+<p>sort: 依据某种方式排序</p>
+<p>sort - t ‘:’ -k 3   以某个区间进行排序</p>
+<br>
+
+<p>uniq: 将重复资料仅一行显示</p>
+<p>uniq -c 进行计数</p>
+<br>
+
+<p>wc: 计算文件里的字，行和字符数目</p>
+<p><strong>双向重导向</strong></p>
+<p>tee: 将标准输出到指定文件和屏幕上</p>
+<p>tee [-a] filename (-a 以累加的方式进行)</p>
+<p><strong>字符转换命令</strong></p>
+<p>tr: 删除一段讯息当中的文字，或者进行文字讯息的替换</p>
+<p>tr [-ds] set1 …</p>
+<p>-d : 删除set1字符串</p>
+<p>-s : 替换重复字符串</p>
+<p>eg: 将小写转大写 last | tr ‘[a-z]’ ‘[A-Z]’</p>
+<br>
+
+<p>col : col -x 将tab转space</p>
+<br>
+
+<p>join : 处理两个文件，当有相同数据的一行，将他们整合到一起</p>
+<p>eg: </p>
+<p>&#x3D;&#x3D;&gt; &#x2F;etc&#x2F;passwd &lt;&#x3D;&#x3D;<br>root: x:0:0:root:&#x2F;root:&#x2F;bin&#x2F;bash<br>daemon : x:1:1:daemon:&#x2F;usr&#x2F;sbin:&#x2F;usr&#x2F;sbin&#x2F;nologin<br>bin: x:2:2:bin:&#x2F;bin:&#x2F;usr&#x2F;sbin&#x2F;nologin</p>
+<p>&#x3D;&#x3D;&gt; &#x2F;etc&#x2F;group &lt;&#x3D;&#x3D;<br>root: x:0:<br>daemon: x:1:<br>bin: x:2:</p>
+<p>&gt;&gt; join -t ‘:’ -1 4 &#x2F;etc&#x2F;passwd -2 3 &#x2F;etc&#x2F;group | head -n 3</p>
+<p>join: &#x2F;etc&#x2F;passwd:6: is not sorted: games: x:5:60:games:&#x2F;usr&#x2F;games:&#x2F;usr&#x2F;sbin&#x2F;nologin<br>join: &#x2F;etc&#x2F;group:11: is not sorted: uucp: x:10:<br>0:root: x:0:root:&#x2F;root:&#x2F;bin&#x2F;bash:root: x:<br>1:daemon: x:1:daemon:&#x2F;usr&#x2F;sbin:&#x2F;usr&#x2F;sbin&#x2F;nologin:daemon: x:<br>2:bin: x:2:bin:&#x2F;bin:&#x2F;usr&#x2F;sbin&#x2F;nologin:bin: x:</p>
+<br>
+
+<p>paste: 将两行贴在一起，中间以tab（默认）分开</p>
+<p>expand: 将tab 转换成space</p>
+<p><strong>分区命令</strong></p>
+<p>split: 将大文件分成小文件</p>
+<p>eg : cd &#x2F;tmp; split -b 300k &#x2F;etc&#x2F;services services</p>
+<p>再合并起来: cat services* &gt;&gt; servicesback</p>
+<p><strong>参数代换</strong></p>
+<p>xargs: 将stdin的资料分割成为args</p>
+<p>eg: 将&#x2F;etc&#x2F;passwd 内的第一栏取出，仅取三行，使用id将每个账号内容显示出来</p>
+<p>cut -d ‘:’ -f 1 &#x2F;etc&#x2F;passwd | head -n 3 | xargs -n 1 id</p>
+<p>eg: 将所有&#x2F;etc&#x2F;passwd内账号都用id查找，但查到sync就结束</p>
+<p>cut -d ‘:’ -f 1 &#x2F;etc&#x2F;passwd | xargs -e ‘sync’ -n 1 id</p>
+<br>
+
+<h2 id="正规表示法与文件格式化处理"><a href="#正规表示法与文件格式化处理" class="headerlink" title="正规表示法与文件格式化处理"></a>正规表示法与文件格式化处理</h2><p>用途：处理字符串</p>
+<br>
+
+<p><strong>基础正规表示法字符汇整</strong></p>
+<p>^word : 待搜寻字符串在行首</p>
+<p>word$: … 在行尾</p>
+<p>. : 代表一定有一个任意字符</p>
+<p>: 跳脱符</p>
+<p>* : 重复0到无穷多个前一个字符(任意字符表示为.*)</p>
+<p>[list] : 字符集合，里面列出想要撷取的字符</p>
+<p>eg: a[afl]y -&gt; aay, afy, aly</p>
+<p>[n1-n2] : 列出想要撷取的字符范围</p>
+<p>[^list] : 不想要的</p>
+<p>\{n, m\} : 连续n-m个前一个字符</p>
+<p>eg: grep -n ‘go\{2, 3\}g’ filename 找出含有goo或gooog的行</p>
+<br>
+
+<p>sed: 将数据进行取代、删除、新增、撷取（倾向于一整行处理）</p>
+<p>eg: sed ‘s&#x2F;要被取代的字符串&#x2F;新的字符串&#x2F;g’</p>
+<br>
+
+<p><strong>文件的格式化与相关处理</strong></p>
+<p>printf: 格式化打印</p>
+<p>awwk: 一行当中分成数个字段来处理</p>
+<p>eg: 显示last中的账号与ip</p>
+<p>last -n 5 | awk ‘{print $1 “\t” $3}’</p>
+<p>awk内建变量：</p>
+<p>NF: 每一行拥有的字段总数</p>
+<p>NR: 目前awk所处理的是第几行的数据</p>
+<p>FS: 目前的分隔字符，默认空格</p>
+<p>eg: 查阅&#x2F;etc&#x2F;passwd中第三栏小于10的数据，并且列出账号与第三栏</p>
+<p>cat &#x2F;etc&#x2F;passwd | awk ‘BEGIN {FS&#x3D;”:”} $3 &lt; 10 {print $1 “\t” $3}’</p>
+<br>
+
+<p><strong>文件比对工具</strong></p>
+<p>diff, cmp</p>
+<p>patch: 将旧文件升为新文件，-R可以还原(git 原理)</p>
+<br>
+
+<h2 id="Shell-Scripts"><a href="#Shell-Scripts" class="headerlink" title="Shell Scripts"></a>Shell Scripts</h2><p>#!&#x2F;bin&#x2F;bash： 声明使用的shell 名称</p>
+<p>var&#x3D;$((运算内容))：进行数值运算的格式</p>
+<p>bash(sh) script: 直接执行方式，会创建一个新的bash 环境来执行脚本内的命令</p>
+<p>source script: 在父程序中执行</p>
+<p><strong>利用test指令的测试功能</strong></p>
+<p>文件类型判断: -e -f -d </p>
+<p>文件权限侦测：-r -w -x -u(SUID) -g(SGID) -k(SBIT) -s(是否为空白文件)</p>
+<p>文件比较：-nt (newer than)file1 比 file2 新 ，-ot(older than) -ef</p>
+<p>整数判定：-eq -ne -gt -lt -ge -le</p>
+<p>判定字符串：-z string , &#x3D;&#x3D; , !&#x3D; ,</p>
+<p>多重条件判定: -a -o !</p>
+<p>[] : 判断符号</p>
+<p>$0, $1, $2 … : args</p>
+<p>$#: 后接的参数个数</p>
+<p>$@: 所有非首个args</p>
+<p>$*: 代表$1c$2c$3c… ，默认c为空格</p>
+<p><strong>条件判断和函数</strong></p>
+<p>if [ .. ] ;then </p>
+<p>elif [ ..  ] ; then</p>
+<p>else</p>
+<p>fi </p>
+<br>
+
+<p>case $变量名称 in</p>
+<p>“第一个变量内容”)</p>
+<p>​	程序段</p>
+<p>​	;;</p>
+<p>…</p>
+<p>*) 其他值</p>
+<p>​	;;</p>
+<p>esac</p>
+<br>
+
+<p>function fname() {</p>
+<p>​	程序段</p>
+<p>}</p>
+<p><strong>循环</strong></p>
+<p>while []</p>
+<p>do</p>
+<p>…</p>
+<p>done</p>
+<br>
+
+<p>until []</p>
+<p>do</p>
+<p>…</p>
+<p>done</p>
+<br>
+
+<p>for var in con1 con2 con3 …</p>
+<p>do</p>
+<p>…</p>
+<p>done</p>
+<p>for((初始值; 限制值; 执行步阶))</p>
+<p>do</p>
+<p>…</p>
+<p>done</p>
+<p>eg: for((i &#x3D; 1; i &lt;&#x3D;${nu} ;i&#x3D;i+1))</p>
+<p>do</p>
+<p>…</p>
+<p>done</p>
+<p><strong>shell script的追踪与debug</strong></p>
+<br>
+
+<h2 id="硬件，操作系统问题汇总"><a href="#硬件，操作系统问题汇总" class="headerlink" title="硬件，操作系统问题汇总"></a>硬件，操作系统问题汇总</h2><p><strong>CPU：</strong></p>
+<p>CPU的工作频率：内频，外频，倍频，超频</p>
+<ul>
+<li>内频：每秒工作次数</li>
+<li>外频：CPU与外部组件的数据传输速度</li>
+<li>倍频：CPU内部加速工作效能的倍数</li>
+<li>外频*倍频&#x3D;CPU频率速度</li>
+<li>超频：强行提高外频或者倍频</li>
+</ul>
+<p>大概相当于，在一个车间内，零件的运输速度和加工速度相同时效率才能最高，而一般情况下，内频的速度会快很多，因此为了减少时间的浪费，需要主动给外频增加倍数。</p>
+<p>CPU的总线宽度：32,64位</p>
+<p>CPU对主存储器的工作频率 * 位数 &#x3D; CPU从内存中取得的最快带宽</p>
+<p>一般来说，CPU的运算速度是很高的，所以可以一次执行多个任务（多线程），这就仿佛一个人的能力远远大于他需要处理的工作量，这当然是资本家最欣慰的事情。</p>
+<br>
+
+<p><strong>内存：</strong></p>
+<p>主存储器为动态随机存取内存（DRAM），断电以后数据全部消失</p>
+<p>DDR（双倍数据传送速度）</p>
+<p>多通道设计：增加主存储器的个数以增加宽度</p>
+<p>SRAM(静态随机存取内存)</p>
+<p>L2 cache(第二层快取)</p>
+<p>ROM（只读存储器），用来存放一些非常重要的数据（如开关机必须用到的BIOS，控制着开机时各项硬件参数的取得）</p>
+<p><strong>硬盘与存储设备：</strong></p>
+<p>硬盘：</p>
+<ul>
+<li>扇区（sector）：最小物理存储单位（一维）</li>
+<li>磁道（track）：同一个同心圆的扇区组合成的圆（二维）</li>
+<li>磁柱（cylinder）：所有磁盘盘上面的同一个磁道组成（三维）</li>
+</ul>
+<p>磁盘与主板的传输界面：</p>
+<ul>
+<li>SATA界面</li>
+<li>SAS界面：串行式SCSI，拥有更快的接口速度，SAS硬盘的磁盘盘转速与传输速度也比SATA好，但是价格贵。</li>
+<li>USB界面</li>
+</ul>
+<p>固态硬盘（SSD）：</p>
+<p>区别于传统的机械磁盘（HDD），没有马达不需要转动，而是通过内存直接读写</p>
+<p>CMOS与BIOS：</p>
+<p>CMOS：记录主板上面的重要参数</p>
+<p>BIOS：写入到主板上的某一块flash挥着EEPROM的程序，它可以在开机的时候执行，加载CMOS当中的数据。</p>
+<p><strong>操作系统：</strong></p>
+<p>通常由核心和系统呼叫接口组成，其中核心将硬件联系起来，不同的硬件需要设计不同的核心，而用户又通过接口来运作核心，核心调度硬件进行数据的存储和运算。不同的操作系统有不同的开发接口，因此针对其开发的应用程序也是专一性的。</p>
+<p>核心功能：</p>
+<p>系统呼叫接口：方便程序开发者与核心沟通。</p>
+<p>程序管理：CPU安排任务的运作顺序</p>
+<p>内存管理：分配，释放内存</p>
+<p>文件系统管理：如数据的I&#x2F;O工作，不同文件格式的支持</p>
+<p>装置驱动：由核心管理。</p>
+<br>
+
+<h2 id="Linux磁盘与文件系统管理"><a href="#Linux磁盘与文件系统管理" class="headerlink" title="Linux磁盘与文件系统管理"></a>Linux磁盘与文件系统管理</h2><p><strong>文件系统</strong>Ext2&#x2F;3&#x2F;4:</p>
+<p>superblock: 记录filesystem 的整体信息，包括inode&#x2F;block的总量，使用量，剩余量，以及文件系统的格式和相关信息。</p>
+<p>inode: 记录文件的属性和block号码（在一个filesystem下，一个文件对应一个inode）</p>
+<p>block: 实际记录文件内容，文件太大时会占用多个block，一个block只能最多放置一个文件的数据</p>
+<p>格式化以后，inode和block的编号和空间就不再发生改变。</p>
+<p><strong>数据读取方式</strong>：</p>
+<ul>
+<li>索引式文件系统：inode直接记录下block的号码，能够实现快速查找</li>
+<li>FAT文件系统（FAT是win的一种filesystem): 通过链表的方式记录block的位置，类似于1-&gt;7-&gt;4-&gt;15，因此如果数据太离散，磁盘可能需要转很多圈才能读取到文件的全部数据。</li>
+</ul>
+<br>
+
+<p>inode table:</p>
+<ul>
+<li><p>该文件的存取模式（rwx）</p>
+</li>
+<li><p>该文件的拥有者和群组（owner&#x2F;group）</p>
+</li>
+<li><p>该文件的容量</p>
+</li>
+<li><p>该文件建立和状态改变的时间（ctime），最近一次读取时间（atime），修改时间（mtime）</p>
+</li>
+<li><p>该文件真正内容的指向（pointer）</p>
+</li>
+</ul>
+<p>如果文件太大，inode存不下所有block的编号（inode只有128bytes), 就会间接拿一个block来记录</p>
+<br>
+
+<p>dumpe2fs： 查询Ext家族superblock信息的指令</p>
+<p>Usage: dumpe2fs [-bh] device_name</p>
+<br>
+
+<p>缓存快取：有些文件经常读取，可以放在内存的缓冲区中</p>
+<p>目录树：建立目录时，文件系统会分配一个inode与至少一块block给该目录，而该block中会记录文件的inode</p>
+<p>挂载：将文件系统与目录树结合，即设定挂载点一定是目录，该目录为文件系统的入口</p>
+<p>VFS（Virtual Filesystem Switch）: 用来管理所有的文件系统</p>
+<p>示意：</p>
+<p>user process -&gt; (kernel)systemcall -&gt; VFS-&gt; XFS,DOS,Ext4…filesystem -&gt;缓存快取-&gt;驱动程序-&gt;磁盘装置控制器</p>
+<p><strong>文件系统的简单操作</strong>：</p>
+<p>df: 列出文件系统的整体磁盘使用量</p>
+<p>du: 评估文件系统的磁盘使用量（常用在推测目录所占用容量）</p>
+<p><strong>实体链接与符号链接：ln</strong></p>
+<p>hard link: 实体链接，多个档名对应到同一个inode号码，因此可以使用不同的名称访问到相同的存储空间，即使不小心将档名删除了，inode和block还是存在的。不能跨filesystem, 不能link目录。</p>
+<p>Symbolic Link: 快捷方式，如果删除原档名此文件将失效！</p>
+<p>ln: ln [-sf] source goal </p>
+<p>-s symbolic link</p>
+<p>-f 如果目标文件存在，就主动将目标文件移除后再建立</p>
+<p>当新建一个目录时，新的目录link数为2（dir&#x2F;, dir&#x2F;.), 上层目录的link数会增加1(dir&#x2F;..), 这就是为什么总能回到上级目录。</p>
+<p><strong>磁盘的分区、格式化、检验与挂载</strong>：略过，需要的时候再baidu，常用指令：gdisk, fdisk, mkfs, mount</p>
+<br>
+
+<p>Ext4文件系统主要有：boot sector, superblock, inode bitmap, block bitmap, inode table, date block</p>
+<p>文件block记录文件实际数据，目录的block则爱记录该目录底下文件名与其inode号码对照表</p>
+<p>日志文件系统会多处一块记录区，随时记载文件系统的主要活动，可加快系统复原时间</p>
+<br>
+
+<h2 id="压缩，打包"><a href="#压缩，打包" class="headerlink" title="压缩，打包"></a>压缩，打包</h2><p>常见扩展名：*.tar, *.tar.gz, *.tgz, *.gz, *Z, *bz2, *xz</p>
+<p>tar: 将多个文件打包成一个文件，便于压缩</p>
+<h2 id="账号管理-与ACL权限设定"><a href="#账号管理-与ACL权限设定" class="headerlink" title="账号管理 与ACL权限设定"></a>账号管理 与ACL权限设定</h2><p>UID: User ID</p>
+<p>GID: Group ID</p>
+<p><strong>&#x2F;etc&#x2F;passwd</strong>:</p>
+<p>每行代表一个账号，结构如下：</p>
+<p><strong>root</strong>: x :<strong>​1</strong>:<strong>1</strong>: root : <strong>&#x2F;root</strong> : <strong>&#x2F;bin&#x2F;bash</strong></p>
+<ol>
+<li>账号名称</li>
+<li>代表密码，放在shadow中</li>
+<li>UID: 0(管理员)，1<del>999(系统账号)(1</del>200:由distributions自行建立的系统账号, 201<del>999: 若用户有系统账号需求时，可以使用的账号UID)，1000</del>60000(给一般使用者使用)</li>
+<li>GID: 同UID</li>
+<li>用户信息说明栏（使用finger时有用）</li>
+<li>家目录</li>
+<li>Shell</li>
+</ol>
+<br>
+
+<p><strong>&#x2F;etc&#x2F;shadow</strong>:</p>
+<p>root : $6$wtb… … YLP3fsF3t : 16559 : 0 : 99999 : 7 :::</p>
+<ol>
+<li>账号名称</li>
+<li>密码（加密）</li>
+<li>最近更动密码的日期（以1970.1.1为1往上累加日期，如1971.1.1 为366）</li>
+<li>密码不可被更动的天数（与第3字段相比）：0表示随时可以更改</li>
+<li>密码需要重新变更的天数（与第3字段相比）：99999（273年）表示除非你是DIO,否则不必强制更改:)</li>
+<li>密码需要变更期限前的警告天数（与第5字段相比）：prompt:再过n天密码就要过期了，请尽快重置密码！</li>
+<li>密码过期后的账号宽限时间（密码失效日）（与第5字段相比）：一般情况下，密码过期后系统会强制重设密码，但失效后就 再也无法登陆了</li>
+<li>账号失效日期：使用自1970年来的总日数设定，在此日期之后，将无法使用。</li>
+<li>保留功能</li>
+</ol>
+<p><strong>&#x2F;etc&#x2F;group</strong>:</p>
+<p>root : x : 0 :</p>
+<ol>
+<li>组名</li>
+<li>群组密码（放在gshadow中，没什么卵用）</li>
+<li>GID</li>
+<li>此群组支持的账号名称，eg: root : x : 0 : dmtsai, alex</li>
+</ol>
+<br>
+
+<p>初始群组：默认为与账号名称相同的群组</p>
+<p>有效群组：新建文件或者目录时赋予的群组</p>
+<p>groups: 查看当前账号所属的群组，第一个为有效群组</p>
+<p>newgrp: 有效群组的切换，eg: newgrp users, 但只能切换为支持你的群组</p>
+<br>
+
+<p><strong>&#x2F;etc&#x2F;gshadow</strong>:</p>
+<p>root:::</p>
+<ol>
+<li>组名</li>
+<li>密码栏，为空或!表示无合法密码，无群组管理员</li>
+<li>群组管理员账号</li>
+<li>有加入该群组支持的所属账号（与&#x2F;etc&#x2F;group相同）</li>
+</ol>
+<br>
+
+<p><strong>账号管理</strong></p>
+<p>useradd : 添加账号，默认直接添加输入的用户名</p>
+<p>useradd参考档：&#x2F;etc&#x2F;default&#x2F;useradd, &#x2F;etc&#x2F;login.defs, &#x2F;etc&#x2F;skel&#x2F;*</p>
+<p>passwd: 为特定用户修改密码</p>
+<p>chage: 详细的密码参数显示功能，显示最近修改日期，失效日期等等</p>
+<p>usermod: 修改账号信息（类似于useradd）</p>
+<p>userdel: 删除用户数据</p>
+<br>
+
+<p>id: 查询某人或自己的相关UID&#x2F;GID等等的信息</p>
+<p>finger: 查询&#x2F;etc&#x2F;passwd文件内的信息</p>
+<p>chsh: 改变shell</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/linux/" class="category-chain-item">linux</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/linux/">#linux</a>
+      
+        <a href="/tags/vim/">#vim</a>
+      
+        <a href="/tags/bash/">#bash</a>
+      
+        <a href="/tags/script/">#script</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>自用-linux常用命令(bash+script)</div>
+      <div>http://example.com/2023/01/10/自用-linux常用命令(bash+script)/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Chen Shuwen</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年1月10日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2023/01/10/%E8%87%AA%E7%94%A8-python%E5%B8%B8%E7%94%A8%E8%AF%AD%E6%B3%95%E5%92%8C%E6%B3%A8%E6%84%8F%E7%82%B9/" title="Python常用语法和注意点">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Python常用语法和注意点</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/01/10/%E8%A3%85%E7%AE%B1%E5%92%8C%E6%8B%86%E7%AE%B1/" title="C#--装箱和拆箱">
+                        <span class="hidden-mobile">C#--装箱和拆箱</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

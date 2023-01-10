@@ -1,0 +1,802 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Chen Shuwen">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="栈&amp;递归&amp;深度优先搜索栈栈是一种支持先进后出的数据存储结构，也是一种最常见的数据结构。对于一个栈来说，我们只能每次从栈顶压入元素，或者从栈顶取出元素，而内部的其他数据对外是不可访问的。栈一般分为顺序栈和链式栈。 一般用法是，栈最初是空的，栈顶指向NULL或者-1, 当需要有元素压入栈时，则开辟一片新的空间（顺序栈就是当前栈顶的下一个位置），然后将栈顶指之；出栈时，先将该元素赋给其他">
+<meta property="og:type" content="article">
+<meta property="og:title" content="栈&amp;递归&amp;深度优先搜索">
+<meta property="og:url" content="http://example.com/2023/01/10/%E6%A0%88&%E9%80%92%E5%BD%92&%E6%B7%B1%E5%BA%A6%E4%BC%98%E5%85%88%E6%90%9C%E7%B4%A2/index.html">
+<meta property="og:site_name" content="Chen Shuwen&#39;s Tech Site">
+<meta property="og:description" content="栈&amp;递归&amp;深度优先搜索栈栈是一种支持先进后出的数据存储结构，也是一种最常见的数据结构。对于一个栈来说，我们只能每次从栈顶压入元素，或者从栈顶取出元素，而内部的其他数据对外是不可访问的。栈一般分为顺序栈和链式栈。 一般用法是，栈最初是空的，栈顶指向NULL或者-1, 当需要有元素压入栈时，则开辟一片新的空间（顺序栈就是当前栈顶的下一个位置），然后将栈顶指之；出栈时，先将该元素赋给其他">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2023/01/10/%E6%A0%88&%E9%80%92%E5%BD%92&%E6%B7%B1%E5%BA%A6%E4%BC%98%E5%85%88%E6%90%9C%E7%B4%A2/link_stack.png">
+<meta property="og:image" content="http://example.com/2023/01/10/%E6%A0%88&%E9%80%92%E5%BD%92&%E6%B7%B1%E5%BA%A6%E4%BC%98%E5%85%88%E6%90%9C%E7%B4%A2/dfs_flow.png">
+<meta property="article:published_time" content="2023-01-10T04:10:01.944Z">
+<meta property="article:modified_time" content="2023-01-10T04:10:01.944Z">
+<meta property="article:author" content="Chen Shuwen">
+<meta property="article:tag" content="DFS">
+<meta property="article:tag" content="栈">
+<meta property="article:tag" content="递归">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://example.com/2023/01/10/%E6%A0%88&%E9%80%92%E5%BD%92&%E6%B7%B1%E5%BA%A6%E4%BC%98%E5%85%88%E6%90%9C%E7%B4%A2/link_stack.png">
+  
+  
+  
+  <title>栈&amp;递归&amp;深度优先搜索 - Chen Shuwen&#39;s Tech Site</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Chen Shuwen&#39;s Tech Site</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="栈&amp;递归&amp;深度优先搜索"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-01-10 12:10" pubdate>
+          2023年1月10日 中午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          6.5k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          55 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">栈&amp;递归&amp;深度优先搜索</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="栈-amp-递归-amp-深度优先搜索"><a href="#栈-amp-递归-amp-深度优先搜索" class="headerlink" title="栈&amp;递归&amp;深度优先搜索"></a>栈&amp;递归&amp;深度优先搜索</h1><h2 id="栈"><a href="#栈" class="headerlink" title="栈"></a>栈</h2><p>栈是一种支持先进后出的数据存储结构，也是一种最常见的数据结构。对于一个栈来说，我们只能每次从栈顶压入元素，或者从栈顶取出元素，而内部的其他数据对外是不可访问的。栈一般分为顺序栈和链式栈。</p>
+<p>一般用法是，栈最初是空的，栈顶指向NULL或者-1, 当需要有元素压入栈时，则开辟一片新的空间（顺序栈就是当前栈顶的下一个位置），然后将栈顶指之；出栈时，先将该元素赋给其他的值或者销毁（顺序栈可略过），然后移动栈顶指针至前一个元素。</p>
+<p><strong>注意</strong>：只有栈不满时才能入栈，只有栈不空时才能出栈。在解决实际问题时，如果push 和pop的算法并没有检查栈顶的位置，很容易造成越界！</p>
+<h3 id="顺序栈"><a href="#顺序栈" class="headerlink" title="顺序栈"></a>顺序栈</h3><blockquote>
+<p>以数组的形式存储数据的栈，除了方便查找以外并没有其他优点（但是一般情况下栈结构是不允许查找栈顶以外元素的），但是如果临时使用栈的话，顺序栈写起来不会十分麻烦，一般常用于小规模使用。缺点就是栈的空间具有限制。</p>
+</blockquote>
+<h4 id="顺序栈的实现"><a href="#顺序栈的实现" class="headerlink" title="顺序栈的实现"></a>顺序栈的实现</h4><blockquote>
+<p>一般情况下，顺序栈只需要一个数组和一个记录栈顶下标的变量就能实现，比较规范的写法如下。</p>
+</blockquote>
+<p><strong>文件：sq_stack.h</strong></p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-comment">//从顺序栈开始写起</span><br><span class="hljs-comment">//顺序栈没有别的优势，就是好写，o(╥﹏╥)o，同时如果突然改需求成链表</span><br><span class="hljs-comment">//就不用查找那么麻烦</span><br><span class="hljs-comment">//现在开始吧(*^▽^*)</span><br><br><span class="hljs-comment">//先定义基本数据类型</span><br><span class="hljs-keyword">typedef</span> <span class="hljs-type">int</span> ElemType;<br><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> MAX_SIZE 500</span><br><br><span class="hljs-keyword">typedef</span> <span class="hljs-keyword">struct</span> <span class="hljs-title class_">node</span>&#123;<br>    <span class="hljs-type">int</span> top;<br>    ElemType stack[MAX_SIZE];<br>&#125;Stack;<br><br><span class="hljs-comment">//基本操作</span><br><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">init_sq_stack</span><span class="hljs-params">(Stack **st)</span></span>;<br><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">is_empty</span><span class="hljs-params">(Stack *st)</span></span>;<br><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">push</span><span class="hljs-params">(Stack *st, ElemType *x)</span></span>;<br><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">pop</span><span class="hljs-params">(Stack *st)</span></span>;<br><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">get_top</span><span class="hljs-params">(Stack *st,ElemType *x)</span></span>;<br><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">destory_sq_stack</span><span class="hljs-params">(Stack **st)</span></span>;<br></code></pre></td></tr></table></figure>
+
+<br>
+
+<p><strong>文件：sq_stack.c</strong></p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdio.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;string.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdlib.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&quot;sq_stack.h&quot;</span></span><br><br><span class="hljs-comment">//基本操作</span><br><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">init_sq_stack</span><span class="hljs-params">(Stack **st)</span></span>&#123;<br>    *st = (Stack*)<span class="hljs-built_in">malloc</span>(<span class="hljs-built_in">sizeof</span>(Stack));<br>    (*st)-&gt;top = <span class="hljs-number">-1</span>;<br>    <span class="hljs-built_in">memset</span>((*st)-&gt;stack, <span class="hljs-number">0</span>, <span class="hljs-built_in">sizeof</span>((*st)-&gt;stack));<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;<br>&#125;<br><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">is_empty</span><span class="hljs-params">(Stack *st)</span></span>&#123;<br>    <span class="hljs-keyword">return</span> st-&gt;top == <span class="hljs-number">-1</span>;<br>&#125;<br><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">push</span><span class="hljs-params">(Stack *st, ElemType *x)</span></span>&#123;<br>    <span class="hljs-keyword">if</span>(st-&gt;top == MAX_SIZE - <span class="hljs-number">1</span>)&#123;<br>        <span class="hljs-built_in">perror</span>(<span class="hljs-string">&quot;The stack is full!\n&quot;</span>);<br>        <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>    &#125;<br>    st-&gt;top++;<br>    st-&gt;stack[st-&gt;top] = (*x);<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;<br>&#125;<br><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">pop</span><span class="hljs-params">(Stack *st)</span></span>&#123;<br>    <span class="hljs-keyword">if</span>(<span class="hljs-built_in">is_empty</span>(st))&#123;<br>        <span class="hljs-built_in">perror</span>(<span class="hljs-string">&quot;The stack is empty!\n&quot;</span>);<br>        <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>    &#125;<br>    st-&gt;top--;<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;<br>&#125;<br><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">get_top</span><span class="hljs-params">(Stack *st,ElemType *x)</span></span>&#123;<br>    <span class="hljs-keyword">if</span>(<span class="hljs-built_in">is_empty</span>(st))&#123;<br>        <span class="hljs-built_in">perror</span>(<span class="hljs-string">&quot;The stack is empty!\n&quot;</span>);<br>        <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>    &#125;<br>    (*x) = st-&gt;stack[st-&gt;top];<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;<br>&#125;<br><br><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">destory_sq_stack</span><span class="hljs-params">(Stack **st)</span></span>&#123;<br>    <span class="hljs-built_in">free</span>(*st);<br>    (*st) = <span class="hljs-literal">NULL</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+
+<h3 id="链式栈"><a href="#链式栈" class="headerlink" title="链式栈"></a>链式栈</h3><blockquote>
+<p>链式栈是实现栈的比较理想的存储方式，它不受空间限制。为了方便出栈，链式栈中的结点一般指向它的前一个结点，而栈空时，头结点指向NULL。</p>
+</blockquote>
+<h4 id="链式栈的实现"><a href="#链式栈的实现" class="headerlink" title="链式栈的实现"></a>链式栈的实现</h4><p><img src="/2023/01/10/%E6%A0%88&%E9%80%92%E5%BD%92&%E6%B7%B1%E5%BA%A6%E4%BC%98%E5%85%88%E6%90%9C%E7%B4%A2/link_stack.png" srcset="/img/loading.gif" lazyload alt="link_stack"></p>
+<center>链式栈的基本结构</center>
+
+<p><strong>文件：link_stack.h</strong></p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><code class="hljs c++"><br><span class="hljs-comment">//链式栈不受空间的约束，是一种比较理想的栈的结构</span><br><span class="hljs-keyword">typedef</span> <span class="hljs-type">int</span> ElemType;<br><br><span class="hljs-keyword">typedef</span> <span class="hljs-keyword">struct</span> <span class="hljs-title class_">node</span>&#123;<br>    ElemType data;<br>    <span class="hljs-keyword">struct</span> <span class="hljs-title class_">node</span> *last;<br>&#125;StNode;<br><br><span class="hljs-keyword">typedef</span> <span class="hljs-keyword">struct</span> <span class="hljs-title class_">stack</span>&#123;<br>    <span class="hljs-keyword">struct</span> <span class="hljs-title class_">node</span> *top;<br>    <span class="hljs-type">int</span> size;<br>&#125;Stack;<br><br><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">init_stack</span><span class="hljs-params">(Stack **st)</span></span>;<br><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">is_empty</span><span class="hljs-params">(Stack *st)</span></span>;<br><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">push</span><span class="hljs-params">(Stack *st, ElemType *x)</span></span>;<br><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">pop</span><span class="hljs-params">(Stack *st)</span></span>;<br><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">get_top</span><span class="hljs-params">(Stack *st,ElemType *x)</span></span>;<br><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">destory_stack</span><span class="hljs-params">(Stack **st)</span></span>;<br><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">get_size</span><span class="hljs-params">(Stack *st)</span></span>;<br></code></pre></td></tr></table></figure>
+
+<br>
+
+<p><strong>文件：link_stack.c</strong></p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdio.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdlib.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdlib.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&quot;link_stack.h&quot;</span></span><br><br><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">init_stack</span><span class="hljs-params">(Stack **st)</span></span>&#123;<br>    *st = (Stack *)<span class="hljs-built_in">malloc</span>(<span class="hljs-built_in">sizeof</span>(Stack));<br>    (*st)-&gt;size = <span class="hljs-number">0</span>;<br>    (*st)-&gt;top = <span class="hljs-literal">NULL</span>;<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;<br>&#125;<br><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">is_empty</span><span class="hljs-params">(Stack *st)</span></span>&#123;<br>    <span class="hljs-keyword">return</span> st-&gt;top == <span class="hljs-literal">NULL</span>;<br>&#125;<br><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">push</span><span class="hljs-params">(Stack *st, ElemType *x)</span></span>&#123;<br>    StNode *s = (StNode *)<span class="hljs-built_in">malloc</span>(<span class="hljs-built_in">sizeof</span>(StNode));<br>    s-&gt;data = (*x);<br>    s-&gt;last = st-&gt;top;<br>    st-&gt;top = s;<br>    st-&gt;size++;<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;<br>&#125;<br><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">pop</span><span class="hljs-params">(Stack *st)</span></span>&#123;<br>    <span class="hljs-keyword">if</span>(<span class="hljs-built_in">is_empty</span>(st))&#123;<br>        <span class="hljs-built_in">perror</span>(<span class="hljs-string">&quot;The stack is empty!\n&quot;</span>);<br>        <span class="hljs-built_in">exit</span>(<span class="hljs-number">1</span>);<br>    &#125;<br>    StNode *tmp = st-&gt;top;<br>    st-&gt;top = tmp-&gt;last;<br>    <span class="hljs-built_in">free</span>(tmp);<br>    st-&gt;size--;<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;<br>&#125;<br><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">get_top</span><span class="hljs-params">(Stack *st,ElemType *x)</span></span>&#123;<br>    <span class="hljs-keyword">if</span>(<span class="hljs-built_in">is_empty</span>(st))&#123;<br>        <span class="hljs-built_in">perror</span>(<span class="hljs-string">&quot;The stack is empty!\n&quot;</span>);<br>        <span class="hljs-built_in">exit</span>(<span class="hljs-number">1</span>);<br>    &#125;<br>    (*x) = st-&gt;top-&gt;data;<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;<br>&#125;<br><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">destory_stack</span><span class="hljs-params">(Stack **st)</span></span>&#123;<br>    <span class="hljs-keyword">while</span>((*st)-&gt;top != <span class="hljs-literal">NULL</span>)&#123;<br>        <span class="hljs-built_in">pop</span>(*st);<br>    &#125;<br>    <span class="hljs-built_in">free</span>(*st);<br>    (*st) = <span class="hljs-literal">NULL</span>;<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;<br>&#125;<br><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">get_size</span><span class="hljs-params">(Stack *st)</span></span>&#123;<br>    <span class="hljs-keyword">return</span> st-&gt;size;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+
+
+
+<h2 id="递归"><a href="#递归" class="headerlink" title="递归"></a>递归</h2><h3 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h3><p>在定义一个过程或者函数时出现调用本过程或 本函数的成分称为<strong>递归</strong>，调用自身为<strong>直接递归</strong>，比如二叉树中的先序遍历，图中的深度优先搜索；调用其他函数称为<strong>间接递归</strong>，比如快速排序。</p>
+<p>如果一个递归过程或递归函数中的递归调用语句是最后一条执行语句，则称这种递归调用为<strong>尾递归</strong>，比如阶乘算法。</p>
+<p>一般情况下， 一个递归模型由<strong>递归出口</strong>和<strong>递归体</strong>两部分组成，在实际算法中也就是要解决这两个东西。</p>
+<p>举个例子，在阶乘算法中，n &#x3D;&#x3D; 1 就是递归出口，当递归深入到这一层时就需要返回，而递归体就是 $ f(n) &#x3D; n * f(n - 1) $，程序通过该递归体一步步向下递推，直到 遇到n &#x3D;&#x3D; 1的情况时返回，最后依照原先的路径一步步回归到 $ n &#x3D;&#x3D; n_0 $就完成了本次递归。</p>
+<blockquote>
+<p>递归的本质应该是广义上的数学归纳法，即结构归纳法，在知道已知条件$ K_0 $的情况下，通过假设$ Ki $成立推导出$ K_(i + 1) $成立，完成证明。递归因此也是将大问题转化成若干个小问题的过程。</p>
+</blockquote>
+<h3 id="递归与非递归的转换"><a href="#递归与非递归的转换" class="headerlink" title="递归与非递归的转换"></a>递归与非递归的转换</h3><p>​	因为递归依然是通过调用系统栈来实现的，所以本质上，只要记录下递归过程中的参数和返回值，就能够自己用栈来模拟递归过程。</p>
+<p>一般情况下，<strong>尾递归</strong>算法能够通过<strong>循环或者迭代</strong>的方式转换为等价的非递归算法，例如求Fibonacci数列的非递归算法如下：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">Fib</span><span class="hljs-params">(<span class="hljs-type">int</span> n)</span></span>&#123;<br>    <span class="hljs-type">int</span> a = <span class="hljs-number">1</span>, b = <span class="hljs-number">1</span>, i, s;<br>    <span class="hljs-keyword">if</span>(n == <span class="hljs-number">1</span> || n == <span class="hljs-number">2</span>)&#123;<br>        <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;<br>    &#125; <span class="hljs-keyword">else</span> &#123;<br>        <span class="hljs-keyword">for</span>(i = <span class="hljs-number">3</span>;i &lt;= n;i++)&#123;<br>            s = a + b;<br>            a = b;<br>            b = s;<br>        &#125;<br>        <span class="hljs-keyword">return</span> s;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<br>
+
+<p>而对于<strong>非尾递归</strong>的算法，可以通过栈来模拟递归执行过程，从而将其转化为等价的非递归算法。</p>
+<p>最典型递归算法的莫过于汉诺塔原理，几乎讲到递归就会涉及它。先贴出一份递归写法。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">Hanoi</span><span class="hljs-params">(<span class="hljs-type">int</span> n, <span class="hljs-type">char</span> X, <span class="hljs-type">char</span> Y, <span class="hljs-type">char</span> Z)</span></span>&#123;<br>    <span class="hljs-keyword">if</span>(n == <span class="hljs-number">1</span>)<span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%c -&gt; %c\n&quot;</span>,X, Z);<br>    <span class="hljs-keyword">else</span> &#123;<br>        <span class="hljs-built_in">Hanoi</span>(n - <span class="hljs-number">1</span>, X, Z, Y);<br>        <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%c -&gt; %c\n&quot;</span>, X, Z);<br>        <span class="hljs-built_in">Hanoi</span>(n - <span class="hljs-number">1</span>, Y, X, Z);<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<br>
+
+<p>​	非递归的实现：需要使用一个栈来暂时存放还不能直接移动盘片的任务&#x2F;子任务。</p>
+<p>大概的思路是，先将任务Hanoi(n, x, y, z)进栈，栈不空是循环：出栈一个任务Hanoi(n, x, y, z)，如果它是可以直接移动的， 就移动盘片；否则将该任务转化为Hanoi(n - 1, x, z, y)，move(n, x, z) , Hanoi(n - 1, y , x, z)，按相反顺序依次进栈， 其中move(n, x, z)是可以直接移动的任务，相关代码如下：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-keyword">typedef</span> <span class="hljs-keyword">struct</span>&#123;<br>    <span class="hljs-type">int</span> n;   <span class="hljs-comment">//盘片个数</span><br>    <span class="hljs-type">char</span> x, y, z;<br>    <span class="hljs-type">int</span> flag;   <span class="hljs-comment">//可直接移动时为1，否则为0</span><br>&#125;ElemType;<br><br><span class="hljs-keyword">typedef</span> <span class="hljs-keyword">struct</span>&#123;<br>	ElemType data[MaxSize];<br>    <span class="hljs-type">int</span> top;<br>&#125;StackType;<br><br><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">InitElem</span><span class="hljs-params">(ElemType *e, <span class="hljs-type">int</span> n, <span class="hljs-type">char</span> x, <span class="hljs-type">char</span> y, <span class="hljs-type">char</span> z, <span class="hljs-type">int</span> flag)</span></span>&#123;<br>    e-&gt;n = n; e-&gt;x = x; e-&gt;y = y; e-&gt;z = z; e-&gt;flag = flag;<br>    <span class="hljs-keyword">return</span>;<br>&#125;<br><br><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">Hanoi</span><span class="hljs-params">(<span class="hljs-type">int</span> n, <span class="hljs-type">char</span> x, <span class="hljs-type">char</span> y, <span class="hljs-type">char</span> z)</span></span>&#123;<br>    StackType *st;<br>    ElemType e, e1, e2, e3;<br>    <span class="hljs-keyword">if</span>(n &lt;= <span class="hljs-number">0</span>)<span class="hljs-keyword">return</span>;<br>    <span class="hljs-built_in">InitStack</span>(st);<br>    <span class="hljs-built_in">InitElem</span>(&amp;e, n, x, y, z, <span class="hljs-number">0</span>);<br>    <span class="hljs-built_in">push</span>(st, e);<br>    <span class="hljs-keyword">while</span>(!<span class="hljs-built_in">StackEmpty</span>(st))&#123;<br>        <span class="hljs-built_in">pop</span>(st, e);<br>        <span class="hljs-keyword">if</span>(e.flag == <span class="hljs-number">0</span>)&#123;<br>            <span class="hljs-built_in">InitElem</span>(&amp;e1, e.n - <span class="hljs-number">1</span>, e.y, e.x, e.z, <span class="hljs-number">0</span>);<br>            <span class="hljs-keyword">if</span>(e1.n == <span class="hljs-number">1</span>)&#123;<br>                e1.flag = <span class="hljs-number">1</span>;<br>            &#125; <span class="hljs-keyword">else</span> e1.flag = <span class="hljs-number">0</span>;<br>            <span class="hljs-built_in">push</span>(st, e1);<br>            <span class="hljs-built_in">InitElem</span>(&amp;e2, e.n, e.x ,e.y, e.z, <span class="hljs-number">1</span>);<br>            <span class="hljs-built_in">push</span>(st, e2);<br>            <span class="hljs-built_in">InitElem</span>(&amp;e3, e.n - <span class="hljs-number">1</span>, e.x, e.z, e.y, <span class="hljs-number">0</span>);<br>            <span class="hljs-keyword">if</span>(e3.n == <span class="hljs-number">1</span>)&#123;<br>                e3.flag = <span class="hljs-number">1</span>;<br>            &#125; <span class="hljs-keyword">else</span> e3.flag = <span class="hljs-number">0</span>;<br>            <span class="hljs-built_in">push</span>(st, e3);<br>        &#125; <span class="hljs-keyword">else</span> &#123;<br>            <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%c -&gt; %c\n&quot;</span>,e.x, e.z);<br>        &#125;<br>    &#125;<br>    <span class="hljs-built_in">DestroyStack</span>(st);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+
+
+
+<h2 id="深度优先搜索"><a href="#深度优先搜索" class="headerlink" title="深度优先搜索"></a>深度优先搜索</h2><h3 id="图中的DFS"><a href="#图中的DFS" class="headerlink" title="图中的DFS"></a>图中的DFS</h3><ul>
+<li><p><strong>原理</strong></p>
+<p>​	<strong>深度优先遍历</strong>的过程是从图中的某个初始点v出发，首先访问初始点v，然后选择一个与v相邻的且没有被访问过的顶点w，以w为初始顶点，再从它出发进行深度优先遍历，直到图中与顶点v邻接的所有顶点都被访问过为止，一般通过递归来实现。</p>
+<p>代码实现：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-type">int</span> visited[max] = &#123;<span class="hljs-number">0</span>&#125;;<span class="hljs-comment">//全局数组，判断结点是否被访问过</span><br><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">DFS</span><span class="hljs-params">(AdjGraph *G, <span class="hljs-type">int</span> v)</span></span>&#123;<br>    ArcNode *p;<br>    visited[v] = <span class="hljs-number">1</span>;<br>    <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;%d&quot;</span>,v);<br>    p = G-&gt;adjlist[v].firstarc;<br>    <span class="hljs-keyword">while</span>(p != <span class="hljs-literal">NULL</span>)&#123;<br>        <span class="hljs-keyword">if</span>(visited[p-&gt;adjvex] == <span class="hljs-number">0</span>)&#123;<br>            <span class="hljs-built_in">DFS</span>(G, p-&gt;adjvex);<br>        &#125; p = p-&gt;nextarc;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+</li>
+<li><p><strong>应用</strong></p>
+<blockquote>
+<ol>
+<li>判断两点之间是否有最短路径</li>
+<li>求出最大连通图的数量</li>
+<li>拓扑排序（需要借助post实现）</li>
+<li>求两点之间的所有路径（回溯）</li>
+</ol>
+</blockquote>
+</li>
+</ul>
+<h3 id="广义DFS"><a href="#广义DFS" class="headerlink" title="广义DFS"></a>广义DFS</h3><p>相较于限制在图中的DFS，广义上的DFS能够解决更多，更普遍的问题。</p>
+<p>DFS和枚举类似，都是一种很朴素自然的遍历方法。当我们遇到一种状态之后，我们开始判断它产生（或连接）的所有合理的新状态，每遇到一个新状态便递归使用DFS访问它，直到该状态下的所有情况访问完，该算法结束。</p>
+<p><img src="/2023/01/10/%E6%A0%88&%E9%80%92%E5%BD%92&%E6%B7%B1%E5%BA%A6%E4%BC%98%E5%85%88%E6%90%9C%E7%B4%A2/dfs_flow.png" srcset="/img/loading.gif" lazyload alt="dfs_flow"></p>
+<p>模板1(递归实现):</p>
+<figure class="highlight crmsh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs crmsh">DFS function(<span class="hljs-keyword">params</span>: current <span class="hljs-keyword">node</span><span class="hljs-title">, target</span> <span class="hljs-keyword">node</span><span class="hljs-title">, hash_table</span> visited):<br>	if cur == target: return <span class="hljs-literal">true</span><br>	for every suitable neighbor <span class="hljs-keyword">in</span> current <span class="hljs-keyword">node</span><span class="hljs-title">&#x27;s</span> neighbors:<br>		add each to visited<br>		if DFS(each, target, visited): return <span class="hljs-literal">true</span><br>	//if not find target<br>	return <span class="hljs-literal">false</span><br></code></pre></td></tr></table></figure>
+
+<p>模板2(栈实现):</p>
+<figure class="highlight crmsh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs crmsh">DFS function(<span class="hljs-keyword">params</span>: root <span class="hljs-keyword">node</span><span class="hljs-title">, target</span> <span class="hljs-keyword">node</span><span class="hljs-title">):</span><br><span class="hljs-title">	hash_table</span> visited<br>	init stack  //store nodes that not finished yet<br>	add root to stack<br>	while stack not empty:<br>		current <span class="hljs-keyword">node</span> <span class="hljs-title">= top</span> of stack<br>		remove top elem <span class="hljs-keyword">in</span> stack<br>		if cur == target: return <span class="hljs-literal">true</span><br>		for every suitable neighbor <span class="hljs-keyword">in</span> cur <span class="hljs-keyword">node</span><span class="hljs-title">&#x27;s</span> neighbors:<br>			add each to visited<br>			add each to stack<br>	//if not find target<br>	return <span class="hljs-literal">false</span><br></code></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/" class="category-chain-item">数据结构与算法</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/DFS/">#DFS</a>
+      
+        <a href="/tags/%E6%A0%88/">#栈</a>
+      
+        <a href="/tags/%E9%80%92%E5%BD%92/">#递归</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>栈&amp;递归&amp;深度优先搜索</div>
+      <div>http://example.com/2023/01/10/栈&amp;递归&amp;深度优先搜索/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Chen Shuwen</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年1月10日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2023/01/10/%E8%A3%85%E7%AE%B1%E5%92%8C%E6%8B%86%E7%AE%B1/" title="C#--装箱和拆箱">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">C#--装箱和拆箱</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/01/10/%E5%AF%BB%E6%89%BE%E5%94%AF%E4%B8%80%E5%80%BC/" title="寻找唯一值">
+                        <span class="hidden-mobile">寻找唯一值</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

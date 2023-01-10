@@ -1,0 +1,792 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Chen Shuwen">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="Orange OS-从0xaa55到kernel这篇文章梳理一下从启动程序到加载内核的过程，主要是为了将原书中的操作流程抽象出来，不被一些过于具体的寄存器使用和结构体定义所干扰。浅色部分为补充内容，可以跳过，具体细节参考分博客（有时间再写，鸽了o(╥﹏╥)o），有错误请指出 启动boot程序计算机在加电后，需要一个入口从硬件层面进入软件层面，该程序就是BIOS，之后，BIOS进行各种硬件自检和初始">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Orange OS-从0xaa55到kernel">
+<meta property="og:url" content="http://example.com/2023/01/10/OrangeOS-%E4%BB%8E0xaa55%E5%88%B0kernel/index.html">
+<meta property="og:site_name" content="Chen Shuwen&#39;s Tech Site">
+<meta property="og:description" content="Orange OS-从0xaa55到kernel这篇文章梳理一下从启动程序到加载内核的过程，主要是为了将原书中的操作流程抽象出来，不被一些过于具体的寄存器使用和结构体定义所干扰。浅色部分为补充内容，可以跳过，具体细节参考分博客（有时间再写，鸽了o(╥﹏╥)o），有错误请指出 启动boot程序计算机在加电后，需要一个入口从硬件层面进入软件层面，该程序就是BIOS，之后，BIOS进行各种硬件自检和初始">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-01-10T04:09:29.282Z">
+<meta property="article:modified_time" content="2023-01-10T04:09:29.282Z">
+<meta property="article:author" content="Chen Shuwen">
+<meta property="article:tag" content="操作系统">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>Orange OS-从0xaa55到kernel - Chen Shuwen&#39;s Tech Site</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Chen Shuwen&#39;s Tech Site</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Orange OS-从0xaa55到kernel"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-01-10 12:09" pubdate>
+          2023年1月10日 中午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          5.1k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          43 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">Orange OS-从0xaa55到kernel</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="Orange-OS-从0xaa55到kernel"><a href="#Orange-OS-从0xaa55到kernel" class="headerlink" title="Orange OS-从0xaa55到kernel"></a>Orange OS-从0xaa55到kernel</h1><p>这篇文章梳理一下从启动程序到加载内核的过程，主要是为了将原书中的操作流程抽象出来，不被一些过于具体的寄存器使用和结构体定义所干扰。浅色部分为补充内容，可以跳过，具体细节参考分博客（有时间再写，鸽了o(╥﹏╥)o），有错误请指出</p>
+<h2 id="启动boot程序"><a href="#启动boot程序" class="headerlink" title="启动boot程序"></a>启动boot程序</h2><p>计算机在加电后，需要一个入口从硬件层面进入软件层面，该程序就是BIOS，之后，BIOS进行各种硬件自检和初始化，最后从引导扇区载入引导程序，在Orange OS中由<code>boot.bin</code>程序模拟</p>
+<blockquote>
+<p><strong>什么是BIOS？</strong></p>
+<p><strong>BIOS</strong>是一组固化到计算机内主板上一个ROM芯片上的程序，它保存着计算机最重要的基本输入输出的程序、开机后自检程序和系统自启动程序。在真实机器上一般通过一个按键就能启动</p>
+</blockquote>
+<p>可想而知的是，boot程序需要使用底层语言去编写，这样便于和硬件交流，并且受到引导扇区的限制，该程序不会太大</p>
+<p>但是，在Orange OS中，boot程序并没有直接引导操作系统内核的加载，而是先从硬盘中加载<code>loader.bin</code>程序，该程序再加载内核。</p>
+<blockquote>
+<p><strong>为什么不直接使用boot加载内核？</strong></p>
+<p>这主要是考虑到引导扇区的大小不足以完成保护模式的准备等一系列工作，如果使用<code>loader.bin</code>程序，则程序不再受限于512字节</p>
+</blockquote>
+<p>启动boot程序很简单，将<code>boot.bin</code>装到磁盘第0个扇区，即引导扇区即可</p>
+<h2 id="加载kernel-loader"><a href="#加载kernel-loader" class="headerlink" title="加载kernel loader"></a>加载kernel loader</h2><p>接下来运行boot程序，在磁盘中寻找loader并载入到内存中</p>
+<h3 id="基本流程"><a href="#基本流程" class="headerlink" title="基本流程"></a>基本流程</h3><ol>
+<li><p>从<code>0x7c00</code>处开始执行，因为这是BIOS把引导扇区默认加载到的位置</p>
+</li>
+<li><p>在A盘的<span style="color:#5882FA; font-weight: bold">根目录区</span>寻找<code>loader.bin</code>。根目录区存储了每个文件的元数据，这里需要的是<span style="color:#5882FA; font-weight: bold">文件的名称和位置</span>（具体来说是簇号，扇区号），找到文件位置后，便可以再次读取磁盘数据，将文件加载到指定内存</p>
+<blockquote>
+<p><strong>根目录区是如何加载的？</strong></p>
+<p>通过硬件中断实现，具体来说，调用指令<code>int 13h</code>，需要设置的输入参数为柱面号，磁头号，当前柱面上的扇区号，驱动器号，要读的扇区数，输出参数为内存缓冲区地址。所有输入参数可通过从第0个扇区开始的扇区号计算。</p>
+<p><strong>如果根目录区大于一个簇怎么办，如何判断我需要加载多少个簇？</strong></p>
+<p>根目录区的大小确实不固定，它依赖于变量<code>BPB_RootEntCnt</code>，即目录条目（文件元数据）的数目，该变量存储在引导扇区的数据结构<code>BIOS ParameterBlock</code>中，该结构中有一些很重要的数据，<span style="color:#5882FA; font-weight: bold">这些数据显示了该磁盘的结构和性质</span>，如：</p>
+<ul>
+<li>每扇区字节数</li>
+<li>每簇扇区数</li>
+<li>Boot记录占用扇区数</li>
+<li>FAT表数目</li>
+<li>根目录文件数最大值，即<code>BPB_RootEntCnt</code></li>
+<li>每FAT扇区数</li>
+<li>每磁道扇区数</li>
+<li>磁头数</li>
+<li>中断13的驱动器号</li>
+</ul>
+<p><span style="color:#5882FA; font-weight: bold">利用以上信息，几乎可以从磁盘中获得任何需要的数据！</span>一般来说，该数据结构就定义在<code>boot.bin</code>的特定偏移位置，在Orange OS中，偏移0处是一个跳转到执行代码的短跳转指令，从偏移3到偏移54为该结构体的内容，之后是执行代码，512偏移处为结束标志0xAA55。结构体中的内容都是提前定义好的（Q：厂商定义还是用户定义的？）</p>
+<p><strong>如何从根目录的这些簇中找到文件名称和位置？</strong></p>
+<p>定量计算。在Orange OS中，每个簇512个字节，而一个目录条目为32字节，这样，每个簇正好包含16个目录条目，可以写出以下伪代码：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs python">&gt;<span class="hljs-keyword">for</span> 根目录区的每个扇区:<br> <span class="hljs-keyword">for</span> <span class="hljs-number">16</span>个目录条目的每个条目:<br>     <span class="hljs-keyword">if</span> 条目中的文件名称 == 寻找的文件名称:<br>         <span class="hljs-keyword">return</span> 该文件在数据区的起始簇号<br></code></pre></td></tr></table></figure>
+
+
+
+<p><strong>获得文件的起始簇号后，如何知道文件占用的其他簇？这些簇有多少个？</strong></p>
+<p>我们并不需要知道文件占用了多少簇，因为文件簇的记录类似于单向链表，知道了起始簇号便知道了链表的头结点，但是，该处的单向链表和数据结构中的稍有不同。在数据结构中，单向链表结点可以由如下定义：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs c">&gt;<span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">LinkListNode</span></span><br><span class="hljs-class">&gt;</span>&#123;<br> NodeInfo info;<br> LinkListNode next;<br>&gt;&#125;;<br></code></pre></td></tr></table></figure>
+
+<p>这种情况下，我们搜索数据的过程是，找到第一个结点，判断是否为需要的数据，之后访问<code>next</code>变量中存储的地址，到下一个结点寻找，直到遇到空结点。</p>
+<p>但是，在文件簇号的寻找过程中，并没有将数据和下一个数据地址定义在一起，即数据簇和文件中该簇对应的下一个簇号没有放在一起，而是将<code>next</code>放在一个叫做<span style="color:#5882FA; font-weight: bold">FAT12</span>的区域中，该区域类似一个数组（位图），数组索引对应当前簇号，数组内容对应下一个簇号。通过这种方式，我们同样可以像链表一样寻找数据，同时，<code>0xFF</code>簇号被定义为该链表的空结点，当FAT项为该内容时，说明文件内容结束。</p>
+<p>这种情况下，在FAT这样一个数组中查找便比较麻烦，因为一个FAT Entry项可能横跨两个扇区</p>
+<p>基本思想是，通过簇号计算出该FAT Entry在FAT中的偏移地址，然后利用该地址计算出所在扇区和相对于扇区的偏移，最后连续读取两个扇区，将该地址的12bit读取出来作为返回结果，即文件的下一个数据簇号</p>
+</blockquote>
+</li>
+<li><p>跳转到<code>loader.bin</code>对应的内存处执行</p>
+</li>
+</ol>
+<h2 id="加载内核"><a href="#加载内核" class="headerlink" title="加载内核"></a>加载内核</h2><p>接下来使用类似的方式加载kernel，但是加载之前，还需要设置环境</p>
+<h3 id="开启分段机制"><a href="#开启分段机制" class="headerlink" title="开启分段机制"></a>开启分段机制</h3><p>虽然原书花费了大段内容介绍分段机制，但是实际使用时并没有分段，所有段基址都是0，作者的理由是方便管理，但我觉得有必要讲一下该机制的现状。 分段机制主要使用在20位地址总线的CPU上，如intel奔腾处理器，但是到了x64架构下，分段机制基本被取消了，同时，现代操作系统linux和windows都采用扁平式分段，即段基址为0，程序运行时，CS,SS这些寄存器的值全都为0，导致CPU的分段机制被遗弃了。但这并不是说操作系统不再对内存访问进行限制，而是把控制权交给了分页机制和一些其他的机制。</p>
+<p>在我看来，扁平式内存也便于将可执行文件加载到指定的虚拟地址，如ELF文件中指定的虚拟地址，分页机制用起来也更加顺手</p>
+<p>回到正题，在<code>loader.bin</code>中，代码段和数据段都被定义在基址0处，只是属性不同，视频段保持默认。通过将GDTR寄存器设置为GDT地址便可以跳入保护模式，开启分段机制，当然还有一些细节上的处理，比如打开地址线，设置cr0等。</p>
+<blockquote>
+<p><strong>分段寻址是如何运作的？</strong></p>
+<p>在保护模式下，有一个全局的描述符表GDT，里面定义了若干段描述符结构体，而段描述符主要记录段基址，长度和访问权限。在开启分段机制后，指令便不能直接访问内存了，必须先访问段描述符。这时定义了一个叫做选择子的结构体，选择子类似于指针，指向段描述符，这样CPU在访问段描述符的同时也能知道你是否有权限访问该段。</p>
+<p>代码需要访问内存时，段寄存器存放选择子，通用寄存器存放偏移地址，之后的寻址过程便交给CPU去做了，CPU会帮你找到段基址，判断你的访问权限，如果能够找到有效地址则返回给你使用</p>
+<p><strong>为什么需要分段？</strong></p>
+<p>分段机制可以为每个段设置访问权限，对内存起到一定的保护作用，同时，分段机制使用了额外的内存存储段基址，这样能够访问到更大的内存空间</p>
+</blockquote>
+<h3 id="开启分页机制"><a href="#开启分页机制" class="headerlink" title="开启分页机制"></a>开启分页机制</h3><p>为了能够让CPU进行分页寻址，需要为每个进程定义页目录表和页表，但为了能够更好地划分内存页，需要先知道内存的大小信息，这可以通过ARDS结构体获得。获得内存大小后，通过定量计算出页目录表的大小和页表数目，再往页表中填充物理页的地址和属性，便完成了线性地址到物理地址的映射，最后，为了让CPU知道页目录表的位置，需要将cr3寄存器设置为页目录表基址。</p>
+<blockquote>
+<p><strong>分页机制是如何运作的？</strong></p>
+<p>在分页机制中，从CPU的角度看，程序只能看到线性地址，从操作系统的角度看，程序只能看到连续的虚拟地址（即可执行文件反汇编后显示的地址），该地址的前10bit为页目录项的索引，CPU计算该索引获得页目录表中页目录项的地址，该地址中存储了页表的基址和访问权限信息；中间10bit为页表中页表项的索引，CPU计算该索引获得该页表项的地址，该地址中存储了物理页的基址和访问权限信息；最后12bit为物理页中的偏移。这样，经过两次索引和一次偏移，如果CPU找到一个有效地址，便返回给你使用</p>
+<p><strong>为什么需要分页？</strong></p>
+<p>分页机制保证了即使一个很大的程序没有被存储在连续的物理页中，也能被映射到连续的虚拟地址上，大大方便了程序的内存访问，同时，不同的进程可以拥有同样的虚拟地址，只要这些地址通过不同的页表被映射到不同的物理页上。</p>
+<p><strong>当前内存大小是如何获得的？</strong></p>
+<p>利用中断<code>int 15h</code>获得地址范围描述符结构ARDS，该结构中存储了不同地址段的基址，长度和属性。其中只有部分内存段能够被操作系统使用。</p>
+</blockquote>
+<h3 id="加载内核文件"><a href="#加载内核文件" class="headerlink" title="加载内核文件"></a>加载内核文件</h3><p>方法类似于加载<code>loader.bin</code>，需要先在根目录区找到<code>kernel.bin</code>文件的名称和在磁盘中的位置，然后将其占用的簇依次加载到指定的内存中，该过程在实模式下进行（保护模式肯定也能做，因为之后的文件加载都是在分页机制下加载了）</p>
+<p><strong>但是，仅仅加载进来是不够的！</strong>因为<code>kernel.bin</code>的文件格式和之前的<code>loader.bin</code>，<code>boot.bin</code>都不同，该文件生成时添加了<code>-f elf</code>参数，因此是ELF格式，该格式规定必须将文件加载到指定的虚拟地址上，这个指定的虚拟地址存放在程序头表中，原则上应该从<code>kernel.bin</code>文件读取，但原书加载内核时，已经提前指定好了虚拟地址，因此使用了一个常数地址加载</p>
+<blockquote>
+<p> <strong>那么实际应该怎么加载？</strong></p>
+<p>在ELF文件中，ELF头记录了程序头表的个数、偏移、大小，而程序头表又记录了每个程序段应该放置的虚拟地址和大小，有了这些信息就能够把文件完整地加载到指定虚拟地址处了</p>
+</blockquote>
+<h2 id="扩充内核"><a href="#扩充内核" class="headerlink" title="扩充内核"></a>扩充内核</h2><p>到现在为止，已经可以在内核中运行代码了，那接下来需要将之前的一些功能转移到内核中来，如分段机制，以及添加额外的功能，如中断调用</p>
+<h3 id="切换GDT和堆栈"><a href="#切换GDT和堆栈" class="headerlink" title="切换GDT和堆栈"></a>切换GDT和堆栈</h3><p>为了方便控制，需要将loader中GDT的内容拷贝到内核新建的GDT中，同时更新选择子，<code>esp</code>寄存器也指向内核中新的栈顶</p>
+<h3 id="添加中断处理"><a href="#添加中断处理" class="headerlink" title="添加中断处理"></a>添加中断处理</h3><p>为了更好地控制进程切换和控制权转换，需要依靠中断机制。这里主要是添加硬件中断，即初始化中断处理器8259A，让内核能够接受时钟中断和键盘中断等。</p>
+<p>首先设置8259A，即为每个端口写入特定的值，之后建立中断向量表IDT，设置每个中断向量对应的中断处理程序，最后设置IDTR寄存器的值为IDT的地址，CPU就能在调用中断指令时正确跳转到中断处理程序了</p>
+<blockquote>
+<p><strong>中断机制是如何运作的？</strong></p>
+<p>首先需要建立一个中断向量表IDT，里面放着若干个中断门或者陷阱门，每个门里面有段描述符和偏移，即每个中断门知道内存中的一个地址，在调用中断指令时，会传递一个参数，该参数就是中断号，即该中断门在IDT中的索引，之后CPU解析该中断门，找到要执行的代码的位置，执行中断处理程序，最后通过<code>iretd</code>指令返回</p>
+<p><strong>为什么有些中断能自动触发，有些必须使用<code>int</code>指令主动触发？</strong></p>
+<p>绝大部分硬件中断，例如时钟中断、键盘中断，都是在硬件生产时设置好的，我们只需要根据规则配置即可，类似于该事件已经被CPU注册了，我们只需要给该事件写一个回调函数就行，在C&#x2F;C++里类似于函数指针，在C#里类似于委托。但有些软件中断是我们用户自己添加进去的，CPU当然不知道什么时候触发这些事件，所以要我们主动调用<code>int</code>指令，类似于C#中的事件。</p>
+<p><strong>中断和一般的调用有什么区别？</strong></p>
+<p>指令不同。中断使用<code>int</code>指令，调用使用<code>call</code>指令。</p>
+<p>他们使用的结构体不同。中断使用中断门存储地址信息，中断门定义在IDT中；而调用使用调用门存储地址信息，同时存储调用时用到的参数个数，调用门定义在GDT或LDT中。</p>
+<p>大部分中断调用都涉及特权级变换，因此需要切换堆栈，这时两者的方式是一样的，都需要先设置TSS中的<code>ss esp</code>寄存器为高特权级堆栈地址。但是，在调用门完成特权级变换时，CPU还会根据参数个数自动将参数内容拷贝到新的堆栈中，而中断不需要额外的参数。</p>
+<p>返回指令不同。中断使用<code>iretd</code>指令返回，该指令弹出<code>ss esp eflags cs eip </code>寄存器的内容并返回低地址，切换堆栈。调用使用<code>ret</code>指令返回，该指令能够传入一个参数，代表要弹出的参数个数，当然也可以不加参数，而是返回调用者的地址后手动<code>pop</code>。</p>
+</blockquote>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>到这里，一个简易的内核就完成了，它现在具有的基本功能是，段式寻址+页式寻址，中断调用，特权级转移。</p>
+<p>梳理之后发现没实现什么内容，这是因为每一个步骤都涉及了太多的规则和细节。我们在实现这些功能时，不仅要和CPU等硬件制定好的规则对接，例如设置各种表寄存器，设置8259A端口，还要考虑历史遗留问题，如实模式跳转到保护模式时地址总线和关闭中断的处理。同时，高级语言中大量的参数名称、变量名称、结构体定义在汇编语言中都只能以全局宏和寄存器替代，这大大增加了阅读难度、使用难度和调试难度。这也体现出发展高级语言编译器的必要性了。</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" class="category-chain-item">操作系统</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/">#操作系统</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Orange OS-从0xaa55到kernel</div>
+      <div>http://example.com/2023/01/10/OrangeOS-从0xaa55到kernel/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Chen Shuwen</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年1月10日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2023/01/10/OrangeOS-%E5%AE%9A%E4%B9%89%E9%80%9F%E6%9F%A5%E8%A1%A8/" title="OrangeOS-定义速查表">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">OrangeOS-定义速查表</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/01/10/MySQL/" title="MySQL">
+                        <span class="hidden-mobile">MySQL</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

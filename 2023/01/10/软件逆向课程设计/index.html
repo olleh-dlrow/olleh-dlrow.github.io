@@ -1,0 +1,809 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Chen Shuwen">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="逆向分析-除法优化MagicNumber算法逆向背景在汇编指令中，除法运算一般使用有符号除法指令idiv或者无符号除法指令div。但是，除法指令的执行周期较长，效率较低，因此编译器会想办法用其他执行周期短的指令来等效替代除法指令。 在C&#x2F;C++中，除法运算不会保留余数，如果要计算余数可以通过取模运算获得。对于整数除法，C&#x2F;C++只会保留整数部分，且为向0取整。 C&#x2F;C">
+<meta property="og:type" content="article">
+<meta property="og:title" content="逆向分析-除法优化MagicNumber算法逆向">
+<meta property="og:url" content="http://example.com/2023/01/10/%E8%BD%AF%E4%BB%B6%E9%80%86%E5%90%91%E8%AF%BE%E7%A8%8B%E8%AE%BE%E8%AE%A1/index.html">
+<meta property="og:site_name" content="Chen Shuwen&#39;s Tech Site">
+<meta property="og:description" content="逆向分析-除法优化MagicNumber算法逆向背景在汇编指令中，除法运算一般使用有符号除法指令idiv或者无符号除法指令div。但是，除法指令的执行周期较长，效率较低，因此编译器会想办法用其他执行周期短的指令来等效替代除法指令。 在C&#x2F;C++中，除法运算不会保留余数，如果要计算余数可以通过取模运算获得。对于整数除法，C&#x2F;C++只会保留整数部分，且为向0取整。 C&#x2F;C">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2023/01/10/%E8%BD%AF%E4%BB%B6%E9%80%86%E5%90%91%E8%AF%BE%E7%A8%8B%E8%AE%BE%E8%AE%A1/image-20220530201752343.png">
+<meta property="og:image" content="http://example.com/2023/01/10/%E8%BD%AF%E4%BB%B6%E9%80%86%E5%90%91%E8%AF%BE%E7%A8%8B%E8%AE%BE%E8%AE%A1/image-20220521145933400.png">
+<meta property="og:image" content="http://example.com/2023/01/10/%E8%BD%AF%E4%BB%B6%E9%80%86%E5%90%91%E8%AF%BE%E7%A8%8B%E8%AE%BE%E8%AE%A1/image-20220521150521087.png">
+<meta property="og:image" content="http://example.com/2023/01/10/%E8%BD%AF%E4%BB%B6%E9%80%86%E5%90%91%E8%AF%BE%E7%A8%8B%E8%AE%BE%E8%AE%A1/image-20220521150954240.png">
+<meta property="og:image" content="http://example.com/2023/01/10/%E8%BD%AF%E4%BB%B6%E9%80%86%E5%90%91%E8%AF%BE%E7%A8%8B%E8%AE%BE%E8%AE%A1/image-20220521153234287.png">
+<meta property="og:image" content="http://example.com/2023/01/10/%E8%BD%AF%E4%BB%B6%E9%80%86%E5%90%91%E8%AF%BE%E7%A8%8B%E8%AE%BE%E8%AE%A1/image-20220521153705191.png">
+<meta property="og:image" content="http://example.com/2023/01/10/%E8%BD%AF%E4%BB%B6%E9%80%86%E5%90%91%E8%AF%BE%E7%A8%8B%E8%AE%BE%E8%AE%A1/image-20220521154220862.png">
+<meta property="og:image" content="http://example.com/2023/01/10/%E8%BD%AF%E4%BB%B6%E9%80%86%E5%90%91%E8%AF%BE%E7%A8%8B%E8%AE%BE%E8%AE%A1/image-20220521180252802.png">
+<meta property="og:image" content="http://example.com/2023/01/10/%E8%BD%AF%E4%BB%B6%E9%80%86%E5%90%91%E8%AF%BE%E7%A8%8B%E8%AE%BE%E8%AE%A1/image-20220521164513642.png">
+<meta property="article:published_time" content="2023-01-10T04:09:53.650Z">
+<meta property="article:modified_time" content="2023-01-10T04:09:53.650Z">
+<meta property="article:author" content="Chen Shuwen">
+<meta property="article:tag" content="C++">
+<meta property="article:tag" content="逆向分析">
+<meta property="article:tag" content="汇编">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://example.com/2023/01/10/%E8%BD%AF%E4%BB%B6%E9%80%86%E5%90%91%E8%AF%BE%E7%A8%8B%E8%AE%BE%E8%AE%A1/image-20220530201752343.png">
+  
+  
+  
+  <title>逆向分析-除法优化MagicNumber算法逆向 - Chen Shuwen&#39;s Tech Site</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Chen Shuwen&#39;s Tech Site</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="逆向分析-除法优化MagicNumber算法逆向"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-01-10 12:09" pubdate>
+          2023年1月10日 中午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          13k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          112 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">逆向分析-除法优化MagicNumber算法逆向</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="逆向分析-除法优化MagicNumber算法逆向"><a href="#逆向分析-除法优化MagicNumber算法逆向" class="headerlink" title="逆向分析-除法优化MagicNumber算法逆向"></a>逆向分析-除法优化MagicNumber算法逆向</h1><h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>在汇编指令中，除法运算一般使用<strong>有符号除法指令idiv</strong>或者<strong>无符号除法指令div</strong>。但是，除法指令的执行周期较长，效率较低，因此编译器会想办法用其他执行周期短的指令来等效替代除法指令。</p>
+<p>在C&#x2F;C++中，除法运算不会保留余数，如果要计算余数可以通过取模运算获得。对于整数除法，C&#x2F;C++只会保留整数部分，且为<strong>向0取整</strong>。</p>
+<p>C&#x2F;C++除法规定：</p>
+<p>两个无符号整数相除，结果仍然是无符号</p>
+<p>两个有符号整数相除，结果仍然是有符号</p>
+<p>无符号和有符号混除，有符号数的最高位被当作数据位参与无符号运算，结果为无符号数</p>
+<p>当除数为常数时，编译器可以根据4种情况对除法进行优化：</p>
+<ul>
+<li>除数为正的2的幂</li>
+<li>除数为负的2的幂</li>
+<li>除数为正的非2的幂</li>
+<li>除数为负的非2的幂</li>
+</ul>
+<p>其中，后2种情况的除法优化会需要计算Magic Number，本文分析了C2.dll计算Magic Number部分的反汇编代码。C2.dll是VC++编译器下的一个动态库，其中包含了编译C&#x2F;C++文件用到的函数，用到的版本为12.0.9782.0</p>
+<h2 id="过程"><a href="#过程" class="headerlink" title="过程"></a>过程</h2><h3 id="定位代码地址"><a href="#定位代码地址" class="headerlink" title="定位代码地址"></a>定位代码地址</h3><p>使用PEView打开C2.dll文件，根据已知信息，待逆向代码的文件位置在0x1075FACE处，而.text节的PointertoRawData&#x3D;0x2000, RVA&#x3D;0x1000, 如下图所示：</p>
+<p><img src="/2023/01/10/%E8%BD%AF%E4%BB%B6%E9%80%86%E5%90%91%E8%AF%BE%E7%A8%8B%E8%AE%BE%E8%AE%A1/image-20220530201752343.png" srcset="/img/loading.gif" lazyload alt="image-20220530201752343"></p>
+<p>因此代码的虚拟地址为0x1075FACE + 0x1000 - 0x2000 &#x3D; 0x1075EACE，接下来就可以使用IDA定位到该地址进行逆向分析</p>
+<h3 id="代码行为分析"><a href="#代码行为分析" class="headerlink" title="代码行为分析"></a>代码行为分析</h3><p>函数从地址0x1075EACE处开始执行，函数的开头如下：</p>
+<p><img src="/2023/01/10/%E8%BD%AF%E4%BB%B6%E9%80%86%E5%90%91%E8%AF%BE%E7%A8%8B%E8%AE%BE%E8%AE%A1/image-20220521145933400.png" srcset="/img/loading.gif" lazyload alt="image-20220521145933400"></p>
+<p>在函数的入口，函数为两个4字节类型的局部变量申请了空间，在地址0x1075EAD1处，函数直接使用了ecx寄存器，说明函数调用约定为__fastcall, 且首个参数为4字节大小。该参数紧接着进行了2次大小比较，在最左边的分支中，函数直接返回了magic_table[ecx * 8]的地址，从该指令可以猜测函数的返回值为一个大小8字节的结构体的地址，查看magic_table处的内容，发现该地址位于全局数据区：</p>
+<p><img src="/2023/01/10/%E8%BD%AF%E4%BB%B6%E9%80%86%E5%90%91%E8%AF%BE%E7%A8%8B%E8%AE%BE%E8%AE%A1/image-20220521150521087.png" srcset="/img/loading.gif" lazyload alt="image-20220521150521087"></p>
+<p>分析该地址处的数组，发现数据确实大概按照4字节进行对齐排列，符合之前的猜测</p>
+<p>接着分析右边的分支代码，在地址0x1075EAEF处，发现类似于求绝对值的代码块</p>
+<p><img src="/2023/01/10/%E8%BD%AF%E4%BB%B6%E9%80%86%E5%90%91%E8%AF%BE%E7%A8%8B%E8%AE%BE%E8%AE%A1/image-20220521150954240.png" srcset="/img/loading.gif" lazyload alt="image-20220521150954240"></p>
+<p>之后函数进行了一些除法和取模的运算，然后进入循环体，其中，跳出循环体的代码主要在以下部分：</p>
+<p><img src="/2023/01/10/%E8%BD%AF%E4%BB%B6%E9%80%86%E5%90%91%E8%AF%BE%E7%A8%8B%E8%AE%BE%E8%AE%A1/image-20220521153234287.png" srcset="/img/loading.gif" lazyload alt="image-20220521153234287"></p>
+<p>只有满足这3处跳转指令才能够继续循环，猜测while的判断部分为比较复杂的逻辑表达式</p>
+<p>而在循环体内，代码包含一些分支结构和简单的四则运算，猜测和算法本身有关。</p>
+<p>在函数的最后，代码修改了dword_1079F090处的数据，且将其地址作为返回值：</p>
+<p><img src="/2023/01/10/%E8%BD%AF%E4%BB%B6%E9%80%86%E5%90%91%E8%AF%BE%E7%A8%8B%E8%AE%BE%E8%AE%A1/image-20220521153705191.png" srcset="/img/loading.gif" lazyload alt="image-20220521153705191"></p>
+<p>跳转到相应地址处发现，该变量为全局变量：</p>
+<p><img src="/2023/01/10/%E8%BD%AF%E4%BB%B6%E9%80%86%E5%90%91%E8%AF%BE%E7%A8%8B%E8%AE%BE%E8%AE%A1/image-20220521154220862.png" srcset="/img/loading.gif" lazyload alt="image-20220521154220862"></p>
+<p>进一步分析可知，在地址0x1075EB93处，该变量的后4个字节也被修改了，回顾函数在第一个跳转分支中同样返回了一个大小为8字节的结构体的地址，可以猜测这个全局变量的大小也为8字节</p>
+<p><strong>分析小结</strong></p>
+<p>被访问自定义结构体：包含两个4字节变量</p>
+<p>被访问全局数组：元素类型为上述结构体</p>
+<p>函数参数：1个，大小为4字节</p>
+<p>函数返回值：结构体地址</p>
+<p>推断函数行为：使用除数计算MagicNumber以及指数的幂（见算法部分），然后封装成结构体返回</p>
+<h3 id="算法逆向"><a href="#算法逆向" class="headerlink" title="算法逆向"></a>算法逆向</h3><h4 id="阶段一"><a href="#阶段一" class="headerlink" title="阶段一"></a>阶段一</h4><p>根据汇编指令，比较初步地还原出算法全过程</p>
+<p>根据代码行为还原出的MagicInfo结构：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs C++"><span class="hljs-keyword">struct</span> <span class="hljs-title class_">MagicInfo</span><br>&#123;<br>	<span class="hljs-type">int</span> magicNumber;<br>	<span class="hljs-type">int</span> expInc;<br>&#125;;<br></code></pre></td></tr></table></figure>
+
+<p>根据全局变量还原出的MagicInfo速查表，其主要用于快速计算除数较小的MagicNumber：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-keyword">struct</span> <span class="hljs-title class_">MagicInfo</span> g_MagicInfoArray[] = &#123;<br>  &#123;<span class="hljs-number">1</span>, <span class="hljs-number">1</span>&#125;,           <span class="hljs-comment">// 0 </span><br>  &#123;<span class="hljs-number">1</span>, <span class="hljs-number">1</span>&#125;,           <span class="hljs-comment">// 1</span><br>  &#123;<span class="hljs-number">1</span>, <span class="hljs-number">1</span>&#125;,           <span class="hljs-comment">// 2</span><br>  &#123;<span class="hljs-number">0x55555556</span>, <span class="hljs-number">0</span>&#125;,<br>  &#123;<span class="hljs-number">0</span>, <span class="hljs-number">0</span>&#125;,           <span class="hljs-comment">// 4</span><br>  &#123;<span class="hljs-number">0x66666667</span>, <span class="hljs-number">1</span>&#125;,<br>  &#123;<span class="hljs-number">0x2AAAAAAB</span>, <span class="hljs-number">0</span>&#125;,<br>  &#123;<span class="hljs-number">0x92492493</span>, <span class="hljs-number">2</span>&#125;,<br>  &#123;<span class="hljs-number">0</span>, <span class="hljs-number">0</span>&#125;,           <span class="hljs-comment">// 8</span><br>  &#123;<span class="hljs-number">0x38E38E39</span>, <span class="hljs-number">1</span>&#125;,<br>  &#123;<span class="hljs-number">0x66666667</span>, <span class="hljs-number">2</span>&#125;,<br>  &#123;<span class="hljs-number">0x2E8BA2E9</span>, <span class="hljs-number">1</span>&#125;,<br>  &#123;<span class="hljs-number">0x2AAAAAAB</span>, <span class="hljs-number">1</span>&#125;<br>&#125;;<br></code></pre></td></tr></table></figure>
+
+<p>对算法直接还原后得到的代码如下：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-keyword">struct</span> <span class="hljs-title class_">MagicInfo</span> g_result;<br><br><span class="hljs-keyword">struct</span> <span class="hljs-title class_">MagicInfo</span>* <span class="hljs-built_in">CalculateMagicInfoOrigin</span>(<span class="hljs-type">int</span> divisor) &#123;<br>	<span class="hljs-type">int</span> p = <span class="hljs-number">31</span>;<br>	<span class="hljs-type">int</span> var_4 = divisor;<br>	<span class="hljs-comment">// ecx: divisor</span><br>	<span class="hljs-comment">// edx: pExpInc</span><br>	<span class="hljs-keyword">if</span> (divisor &gt;= <span class="hljs-number">3</span> &amp;&amp; divisor &lt; <span class="hljs-number">13</span>) &#123;<br>		<span class="hljs-keyword">return</span> &amp;g_MagicInfoArray[divisor];<br>	&#125;<br>	<span class="hljs-comment">// loc_1075EAEA</span><br>	<span class="hljs-comment">// eax &lt;- divisor</span><br>	<span class="hljs-comment">// cdq: edx = eax &gt;&gt; 31(SIGN)</span><br>	<span class="hljs-comment">// edi &lt;- eax</span><br>	<span class="hljs-comment">// xor edi, edx</span><br>	<span class="hljs-comment">// sub edi, edx</span><br>	<span class="hljs-comment">// edi: absDivisor</span><br>	<span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> eax1;<br>	<span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> esi1;<br>	<span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> absDivisor;<br>	<span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> ebp1, ebx1, ecx1, edx1;<br><br>	absDivisor = <span class="hljs-built_in">abs</span>(divisor);<br>	esi1 = ((<span class="hljs-type">unsigned</span>)divisor &gt;&gt; <span class="hljs-number">31</span>) - EXP31;	<span class="hljs-comment">// nLargestMultiple</span><br><br>	eax1 =  esi1 / absDivisor;		<span class="hljs-comment">// div edi </span><br>	esi1 = esi1 - esi1 % absDivisor;	<span class="hljs-comment">// sub esi, edx</span><br>	esi1--;<br><br>	eax1 =  EXP31 / esi1;				<span class="hljs-comment">// div esi		// q1</span><br><br><br>	ebp1 = eax1;					<span class="hljs-comment">// mov ebp, eax	//q1</span><br>	eax1 = (<span class="hljs-type">int</span>)eax1 * (<span class="hljs-type">int</span>)esi1;					<span class="hljs-comment">// imul eax, esi</span><br>	ebx1 = EXP31;<br>	ebx1 -= eax1;						<span class="hljs-comment">// r1</span><br><br>	eax1 = EXP31 / absDivisor;					<span class="hljs-comment">// div edi	// nMagicNumber</span><br><br>	ecx1 = eax1;<br>	eax1 = (<span class="hljs-type">int</span>)eax1 * (<span class="hljs-type">int</span>)absDivisor;			<span class="hljs-comment">// imul eax, edi</span><br>	edx1 = EXP31 - eax1;				<span class="hljs-comment">// sub edx, eax</span><br><br>	<span class="hljs-comment">// loc_1075EB47</span><br>	<span class="hljs-comment">// LOOP_BEGIN</span><br>	<span class="hljs-keyword">do</span> &#123;<br>		<span class="hljs-comment">// mov eax, var_8</span><br>		<span class="hljs-comment">// inc eax</span><br>		<span class="hljs-comment">//eax1 = var_8 + 1;</span><br>		p += <span class="hljs-number">1</span>;<br>		ebx1 = ebx1 + ebx1;			<span class="hljs-comment">// add ebx, ebx</span><br>		ebp1 = ebp1 + ebp1;<br><br>		<span class="hljs-comment">//var_8 = eax1;</span><br>		<span class="hljs-keyword">if</span> (ebx1 &gt;= esi1) &#123;<br>			<span class="hljs-comment">// loc_1078F407</span><br>			ebp1++;<br>			ebx1 -= esi1;<br>		&#125;<br>		<span class="hljs-comment">// loc_1075EB5C</span><br>		edx1 += edx1;<br>		ecx1 += ecx1;<br>		<span class="hljs-keyword">if</span> (edx1 &gt;= absDivisor) &#123;	<span class="hljs-comment">//	cmp edx, edi</span><br>			ecx1++;<br>			edx1 -= absDivisor;<br>		&#125;<br>		<span class="hljs-comment">// loc_1075EB3F</span><br>		eax1 = absDivisor;<br>		eax1 -= edx1;<br>		<span class="hljs-comment">//if (ebp1 &lt; eax1)goto LOOP_BEGIN;</span><br>		<span class="hljs-comment">//if (ebp1 == eax1) &#123;</span><br>		<span class="hljs-comment">//	// loc_1078F40F</span><br>		<span class="hljs-comment">//	if (ebx1 == 0)goto LOOP_BEGIN;</span><br>		<span class="hljs-comment">//	break;</span><br>		<span class="hljs-comment">//&#125;</span><br>	&#125; <span class="hljs-keyword">while</span> ((ebp1 &lt; eax1) || (ebp1 == eax1 &amp;&amp; ebx1 == <span class="hljs-number">0</span>));<br>	<span class="hljs-comment">// loc_1075EB6F</span><br>	eax1 = ecx1 + <span class="hljs-number">1</span>;<br>	ecx1 = var_4;<br>	g_result.magicNumber = eax1;	<span class="hljs-comment">// mov ds:dword_1079F090, eax</span><br>	<span class="hljs-keyword">if</span>((<span class="hljs-type">int</span>)ecx1 &lt; <span class="hljs-number">0</span>) &#123;<br>		<span class="hljs-comment">// loc_1078F41C</span><br>		eax1 = -(<span class="hljs-type">int</span>)eax1;<br>		g_result.magicNumber = eax1; <span class="hljs-comment">// mov ds : dword_1079F090, eax</span><br>	&#125;<br>	<span class="hljs-comment">// loc_1075EB87</span><br>	ecx1 = p;<br>	<span class="hljs-comment">// eax1 = (int) &amp; g_result; //mov eax, offset dword_1079F090;</span><br>	ecx1 += <span class="hljs-number">-32</span>; <span class="hljs-comment">//0x0FFFFFFE0</span><br>	g_result.expInc = ecx1; <span class="hljs-comment">// mov ds : dword_1079F094, ecx</span><br>	<span class="hljs-keyword">return</span> &amp;g_result;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+
+<h4 id="阶段二"><a href="#阶段二" class="headerlink" title="阶段二"></a>阶段二</h4><p>对代码进行整理，提取出关键变量并给其命名，对部分冗余的指令进行合并：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-keyword">struct</span> <span class="hljs-title class_">MagicInfo</span> g_result;<br><br><span class="hljs-keyword">struct</span> <span class="hljs-title class_">MagicInfo</span>* <span class="hljs-built_in">CalculateMagicInfo</span>(<span class="hljs-type">int</span> divisor) &#123;<br>	<span class="hljs-type">int</span> p = <span class="hljs-number">31</span>;<br>	<span class="hljs-keyword">if</span> (divisor &gt;= <span class="hljs-number">3</span> &amp;&amp; divisor &lt; <span class="hljs-number">13</span>) &#123;<br>		<span class="hljs-keyword">return</span> &amp;g_MagicInfoArray[divisor];<br>	&#125;<br><br>	<span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> q1, r1, q2, r2, nc, delta, absDivisor;<br><br>	absDivisor = <span class="hljs-built_in">abs</span>(divisor);<br>	nc = ((<span class="hljs-type">unsigned</span>)divisor &gt;&gt; <span class="hljs-number">31</span>) - EXP31;<br>	nc = nc - nc % absDivisor - <span class="hljs-number">1</span>;<br>	q1 = EXP31 / nc;<br>	r1 = EXP31 % nc;<br>	q2 = EXP31 / absDivisor;<br>	r2 = EXP31 % absDivisor;<br>	<span class="hljs-keyword">do</span> &#123;<br>		p += <span class="hljs-number">1</span>;<br>		r1 *= <span class="hljs-number">2</span>;<br>		q1 *= <span class="hljs-number">2</span>;<br>		<span class="hljs-keyword">if</span> (r1 &gt;= nc)&#123;<br>			q1 += <span class="hljs-number">1</span>;<br>			r1 -= nc;<br>		&#125;<br>		r2 *= <span class="hljs-number">2</span>;<br>		q2 *= <span class="hljs-number">2</span>;<br>		<span class="hljs-keyword">if</span> (r2 &gt;= absDivisor) &#123;<br>			q2 += <span class="hljs-number">1</span>;<br>			r2 -= absDivisor;<br>		&#125;<br>		delta = absDivisor - r2;<br>	&#125; <span class="hljs-keyword">while</span> ((q1 &lt; delta) || (q1 == delta &amp;&amp; r1 == <span class="hljs-number">0</span>));<br><br>	g_result.magicNumber = q2 + <span class="hljs-number">1</span>;<br>	<span class="hljs-keyword">if</span> (divisor &lt; <span class="hljs-number">0</span>) &#123;<br>		g_result.magicNumber = -g_result.magicNumber;<span class="hljs-comment">//~(q2 + 1) + 1;</span><br>	&#125;<br><br>	g_result.expInc = p - <span class="hljs-number">32</span>;<br>	<span class="hljs-keyword">return</span> &amp;g_result;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h4 id="MagicNumber正确性验证"><a href="#MagicNumber正确性验证" class="headerlink" title="MagicNumber正确性验证"></a>MagicNumber正确性验证</h4><p>判断逆向的算法是否正确，最好的办法就是将”赝品“和真品直接进行比较。本文中，我通过动态加载C2.dll函数库，直接调用计算Magic Number的原函数，并验证了整型范围内的所有除数输入，结果证明，两者的输出是一模一样的</p>
+<p><img src="/2023/01/10/%E8%BD%AF%E4%BB%B6%E9%80%86%E5%90%91%E8%AF%BE%E7%A8%8B%E8%AE%BE%E8%AE%A1/image-20220521180252802.png" srcset="/img/loading.gif" lazyload alt="image-20220521180252802"></p>
+<h4 id="除法正确性验证"><a href="#除法正确性验证" class="headerlink" title="除法正确性验证"></a>除法正确性验证</h4><p>本文又测试了INT_MIN除以所有整型的结果并和原结果进行比较，两者的输出同样是一模一样的</p>
+<p><img src="/2023/01/10/%E8%BD%AF%E4%BB%B6%E9%80%86%E5%90%91%E8%AF%BE%E7%A8%8B%E8%AE%BE%E8%AE%A1/image-20220521164513642.png" srcset="/img/loading.gif" lazyload alt="image-20220521164513642"></p>
+<p>验证代码见源项目。</p>
+<h2 id="算法证明"><a href="#算法证明" class="headerlink" title="算法证明"></a>算法证明</h2><p>本文只讨论有符号数除法的优化中MagicNumber的算法</p>
+<h3 id="前置定理"><a href="#前置定理" class="headerlink" title="前置定理"></a>前置定理</h3><p><strong>推导D2</strong><br>$$<br>\lfloor \frac{n}{d} \rfloor &#x3D; \lceil \frac{n - d + 1}{d} \rceil\ and\ \lceil \frac {n}{d} \rceil &#x3D; \lfloor \frac{n + d - 1}{d} \rfloor,\quad  for\ d &gt; 0<br>$$</p>
+<p>$$<br>\lfloor \frac{n}{d} \rfloor &#x3D; \lceil \frac{n - d - 1}{d} \rceil\ and\ \lceil \frac {n}{d} \rceil &#x3D; \lfloor \frac{n + d + 1}{d} \rfloor,\quad  for\ d &lt; 0<br>$$</p>
+<p><strong>推导D4</strong></p>
+<p>如果$d \neq 0$，$x \in R$，则有：<br>$$<br>\lfloor \frac {n}{d} + x \rfloor &#x3D; \lfloor \frac{n}{d} \rfloor\quad if\ 0 \leq x &lt; |\frac{1}{d}|\<br>\lceil \frac {n}{d} + x \rceil &#x3D; \lceil \frac{n}{d} \rceil\quad if\ -|\frac{1}{d}| &lt; x \leq 0<br>$$</p>
+<p>定义部分变量如下：</p>
+<p>$n$: 被除数</p>
+<p>$d$: 除数</p>
+<p>$q$: 商</p>
+<p>$r$: 余数</p>
+<p>$M$: Magic Number</p>
+<h3 id="情况1：-d-geq-2"><a href="#情况1：-d-geq-2" class="headerlink" title="情况1：$d \geq 2$"></a>情况1：$d \geq 2$</h3><p>设一个普通字的二进制位数为$W$，例如，32位整型的$W &#x3D; 32$，则有$2 \leq d &lt; 2^{W-1}$，我们希望找到一个最小的整数$m$和整数$p$使得</p>
+<p>$$<br>\lfloor \frac{mn}{2^p} \rfloor &#x3D; \lfloor \frac{n}{d} \rfloor, \quad for\ 0 \leq  n &lt; 2^{W - 1} \tag {1a}<br>$$</p>
+<p>$$<br>\lfloor \frac{mn}{2^p} \rfloor + 1 &#x3D; \lceil \frac{n}{d} \rceil, \quad for \ -2^{W - 1} \leq n \leq -1, \quad\ with\ 0 \leq m &lt; 2^W \ and\ p \geq W \tag{1b}<br>$$</p>
+<p>选用最小整数$m$的原因是，一个更小的乘数能够得到一个更小的移位数，同时$p \geq W$ 是因为生成的代码会在$mn$的低半部分产生移位，如32位情况下edx的内容就是乘法运算后右移32位的数据</p>
+<p>注意到，Magic Number是实际参与乘法指令运算的数字，记为$M$, 其与算法中表述的$m$之间的关系为：<br>$$<br>\begin{equation}<br>M&#x3D;<br>    \begin{cases}<br>    m, \quad\quad\quad\ \ if \ 0 \leq m &lt; 2^{W - 1},\<br>    m - 2^W, \quad if\ 2^{W - 1} \leq m &lt; 2^W\<br>    \end{cases}</p>
+<p>\end{equation}<br>$$<br>由于公式(1b)必须满足$n &#x3D; -d$，$\lfloor -md &#x2F; 2^p \rfloor + 1 &#x3D; -1$, 也就是：<br>$$<br>\frac{md}{2^p} &gt; 1 \tag2<br>$$<br>令$n_c$为$n$的最大整数，并且$n_c \equiv d - 1(mod\ d)$，$n_c$一定存在因为有$n_c &#x3D; d - 1$，且有<br>$$<br>n_c &#x3D; \lfloor 2^{W - 1}&#x2F;d \rfloor d- 1 &#x3D; 2^{W - 1} - 2^{W - 1}mod\ d - 1<br>$$<br>同时，$n_c$是$n$的最大可接受值，因此有：<br>$$<br>2^{W - 1} - d \leq n_c\leq 2^{W - 1} - 1 \tag{3a}<br>$$</p>
+<p>$$<br>n_c \geq d - 1 \tag{3b}<br>$$</p>
+<p>由于公式(1a)必须满足$n &#x3D; n_c$：<br>$$<br>\lfloor \frac{mn_c}{2^p} \rfloor &#x3D; \lfloor \frac{n_c}{d} \rfloor &#x3D; \frac{n_c - (d - 1)}{d}<br>$$<br>或者：<br>$$<br>\frac{mn_c}{2^p} &lt; \frac{n_c + 1}{d}<br>$$<br>结合公式(2)有：<br>$$<br>\frac{2^p}{d} &lt; m &lt; \frac{2^p}{d} \frac{n_c + 1}{n_c} \tag4<br>$$<br>因为$m$是满足(4)式的最小整数, 它也是大于$2^p&#x2F;d$的下一个整数，即：<br>$$<br>m &#x3D; \frac{2^p + d - 2^p\ mod \ d}{d} \tag5<br>$$<br>结合此式和(4)式的右部有：<br>$$<br>2^p &gt; n_c (d - 2^p\ mod\ d) \tag6<br>$$<br>由上述推导可知，该算法旨在找到Magic Number $M$ 和右移数$s$ 来计算$n_c$， 然后带入(6)式判断是否满足不等式，如果不满足则尝试更大的$p$和$n_c$。这里只讨论$p \geq W$的情况，该情况下，$m$可以通过(5)式直接计算得到</p>
+<p>然而，如果$p$和$m$是通过(6)和(5)式计算得到的，那么它们必须满足式(1a)和(1b)，根据(4)式将$n$划分成以下5种情况：<br>$$<br>0 \leq n \leq n_c\<br>n_c + 1 \leq n \leq n_c + d - 1\<br>-n_c \leq n \leq -1\<br>-n_c - d + 1 \leq n \leq -n_c - 1\<br>n &#x3D; -n_c - d<br>$$<br>根据式(4)，因为$m$为整数，有：<br>$$<br>\frac{2^p}{d} &lt; m \leq \frac{2^p(n_c + 1) - 1}{dn_c}<br>$$<br>两边同时乘以$n&#x2F;2^p$， 对于$n \geq 0$有：<br>$$<br>\frac{n}{d} \leq \frac{mn}{2^p} \leq \frac{2^p n(n_c + 1) - n}{2^p d n_c}<br>$$<br>因此有：<br>$$<br>\lfloor \frac{n}{d} \rfloor \leq \lfloor \frac{mn}{2^p}\rfloor \leq \lfloor \frac{n}{d} + \frac{(2^p - 1)n}{2^p d n_c} \rfloor<br>$$<br>对于$0 \leq n \leq n_c$，$0 \leq (2^p - 1)n&#x2F;(2^p d n_c) &lt; 1&#x2F;d$， 根据D4有：<br>$$<br>\lfloor \frac{n}{d} + \frac{(2^p - 1)n}{2^p d n_c} \rfloor &#x3D; \lfloor \frac{n}{d} \rfloor<br>$$<br>因此该情况下(1a)式满足</p>
+<p>对于$n &gt; n_c$， $n$被限制在范围：<br>$$<br>n_c + 1 \leq n \leq n_c + d - 1 \tag 9<br>$$<br>因为$n \geq n_c + d$ 和$n_c$的选择冲突，根据式(4)，对于$n\geq 0$,<br>$$<br>\frac{n}{d} &lt; \frac{mn}{2^p} &lt; \frac{n}{d} \frac{n_c + 1}{n_c}<br>$$<br>由四则运算推导得：<br>$$<br>\frac{n}{d} &lt; \frac{mn}{2^p} &lt; \frac{n_c + 1}{d} + \frac{(n - n_c)(n_c + 1)}{d n_c} \tag{10}<br>$$<br>根据(9)，$1\leq n - n_c \leq d - 1$，因此：<br>$$<br>0 &lt; \frac{(n - n_c)(n_c + 1)}{d n_c} \leq \frac{d - 1}{d} \frac{n_c + 1}{n_c}<br>$$<br>因为$n_c &gt; d - 1$ (3b) 并且 $(n_c + 1) &#x2F; n_c $取最大值时$n_c$取最小值，因此有：<br>$$<br>0 &lt; \frac{(n - n_c)(n_c + 1)}{d n_c} \leq \frac{d - 1}{d} \frac{d - 1 + 1}{d - 1} &#x3D; 1<br>$$<br>在(10)式中，$(n_c + 1)&#x2F;d$ 是一个整数，$(n - n_c)(n_c + 1)&#x2F;d n_c$ 小于或者等于1， 因此(10)式变为：<br>$$<br>\lfloor \frac{n}{d} \rfloor \leq \lfloor \frac{mn}{2^p} \rfloor \leq \frac{n_c + 1}{d}<br>$$<br>对于(9)式中的$n$，$\lfloor n&#x2F;d \rfloor &#x3D; (n_c + 1)&#x2F;d$，因此(1a)满足情况$(n_c + 1 \leq n \leq n_c + d - 1)$</p>
+<p>对于$n &lt; 0$, 从(4)式中我们有，因为$m$是一个整数，则：<br>$$<br>\frac{2^p + 1}{d} \leq m &lt; \frac{2^p}{d} \frac{n_c + 1}{n_c}<br>$$<br>乘以$n&#x2F;2^p$后，对于$n&lt;0$有：<br>$$<br>\frac{n}{d} \frac{n_c + 1}{n_c} &lt; \frac{mn}{2^p} \leq \frac{n}{d} \frac{2^p + 1}{2^p}<br>$$<br>或者：<br>$$<br>\lfloor \frac{n}{d} \frac{n_c + 1}{n_c} \rfloor + 1 &lt; \lfloor \frac{mn}{2^p} \rfloor + 1 \leq \lfloor \frac{n}{d} \frac{2^p + 1}{2^p} \rfloor + 1<br>$$<br>根据D2推导得到：<br>$$<br>\lceil \frac{n(n_c + 1) - d n_c + 1}{d n_c}  \rceil + 1 &lt; \lfloor \frac{mn}{2^p} \rfloor + 1 \leq \lceil \frac{n(2^p + 1) - 2^p d + 1}{2^p d} \rceil + 1\<br>\lceil \frac{n(n_c + 1) + 1}{d n_c}  \rceil &lt; \lfloor \frac{mn}{2^p} \rfloor + 1 \leq \lceil \frac{n(2^p + 1) + 1}{2^p d} \rceil<br>$$<br>由于$n + 1 \leq 0$, 右边的不等式可以被缩放，有：<br>$$<br>\lceil \frac{n}{d} + \frac{n + 1}{d n_c}  \rceil &lt; \lfloor \frac{mn}{2^p} \rfloor + 1 \leq \lceil \frac{n}{d} \rceil<br>$$<br>对于 $-n_c \leq n \leq -1 $，<br>$$<br>\frac{-n_c + 1}{d n_c} \leq \frac{n + 1}{d n_c} \leq 0, or\<br>-\frac{1}{d} &lt; \frac{n + 1}{d n_c} \leq 0<br>$$<br>因此根据D4有：<br>$$<br>\lceil \frac{n}{d} + \frac{n + 1}{d n_c} \rceil &#x3D; \lceil \frac{n}{d} \rceil \tag{11}<br>$$<br>因此该情况下满足(1b)</p>
+<p>对于$n &lt; -n_c $, $n$被限制在范围：<br>$$<br>-n_c - d \leq n \leq - n_c - 1 \tag{12}<br>$$<br>从(3a)式可知，$n &lt; -n_c - d$意味着$n &lt; -2^{W - 1}$， 这是不可能的情况。对(11)式的左部进一步运算得到：<br>$$<br>\lceil \frac{-n_c - 1}{d} + \frac{(n + n_c)(n_c + 1) + 1}{d n_c} \rceil \leq \lfloor \frac{mn}{2^p} \rfloor + 1 \leq \lceil \frac{n}{d} \rceil \tag{13}<br>$$<br>对于$-n_c - d + 1 \leq n \leq -n_c - 1$，<br>$$<br>\frac{(-d + 1)(n_c + 1)}{d n_c} + \frac{1}{dn_c} \leq \frac{(n + n_c)(n_c + 1) + 1}{d n_c} \leq \frac{-(n_c + 1) + 1}{d n_c} &#x3D; -\frac{1}{d}<br>$$<br>当$n_c$取最小值时，$(n_c + 1)&#x2F;n_c$取最大值，即$n_c &#x3D; d - 1$，因此有：<br>$$<br>\frac{(-d + 1)(d - 1 + 1)}{d(d-1)} + \frac{1}{d n_c} \leq \frac{(n + n_c)(n_c + 1) + 1}{d n_c} &lt; 0, or\<br>-1 &lt; \frac{(n + n_c)(n_c + 1) + 1}{d n_c} &lt; 0<br>$$<br>对于(13)式，因为$(-n_c - 1)&#x2F;d$是一个整数且它的增量在0到-1之间，则有：<br>$$<br>\frac{-n_c - 1}{d} \leq \lfloor \frac{mn}{2^p} \rfloor + 1 \leq \lceil \frac{n}{d} \rceil<br>$$<br>对于$-n_c - d + 1 \leq n \leq - n_c - 1$<br>$$<br>\lceil \frac{n}{d} \rceil &#x3D; \frac{-n_c - 1}{d}<br>$$<br>因此，$\lfloor mn&#x2F;2^p \rfloor + 1 &#x3D; \lceil n&#x2F;d \rceil $，(1b)式满足情况</p>
+<p>对于最后一种情况，$n_c &#x3D; -n_c - d$，只对部分$d$的值出现，由(3a)可知，$-n_c - d \leq -2^{W - 1}$，所以如果$n$取到这个值，我们一定有$n &#x3D; -n_c - d &#x3D; -2^{W - 1}$, 因此$n_c &#x3D; 2^{W - 1} - d$, 因此，$2^{W - 1} \ mod\ d &#x3D; (n_c + d)\ mod\ d &#x3D; d - 1 $，即$d$除以$2^{W - 1} + 1$</p>
+<p>对于$(n &#x3D; -n_c - d)$, (6)式有解$p &#x3D; W - 1$， 即$p$的最小可能值，<br>$$<br>n_c (d - 2^p\ mod\ d) &#x3D; (2^{W - 1} - d)(d - 2^{W - 1}\ mod\ d)\<br>&#x3D; (2^{W - 1} - d)(d - (d - 1)) &#x3D; 2^{W - 1} - d &lt; 2^{W - 1} &#x3D; 2^p<br>$$<br>由(5)式有：<br>$$<br>m &#x3D; \frac{2^{W - 1} +d - 2^{W - 1}\ mod\ d }{d} &#x3D; \frac{2^{W - 1} + d - (d - 1)}{d} &#x3D; \frac{2^{W - 1} + 1}{d}<br>$$<br>因此：<br>$$<br>\lfloor \frac{mn}{2^n} \rfloor +1 &#x3D; \lfloor \frac{2^{W - 1} + 1}{d} \frac{-2^{W - 1}}{2^{W - 1}} \rfloor + 1 \&#x3D; \lfloor \frac{-2^{W - 1} - 1}{d} \rfloor + 1<br>\&#x3D; \lceil \frac{-2^{W - 1} - d}{d} \rceil + 1\ &#x3D; \lceil \frac{-2^{W - 1}}{d} \rceil &#x3D; \lceil \frac{n}{d} \rceil<br>$$<br>满足(1b)式</p>
+<h3 id="情况2：-d-leq-2"><a href="#情况2：-d-leq-2" class="headerlink" title="情况2：$d \leq -2$"></a>情况2：$d \leq -2$</h3><p>因为有符号除法满足$n&#x2F;(-d) &#x3D; -n&#x2F;d$，因此可以计算$n &#x2F; |d|$来间接得到结果，但如果想要避免使用neg指令的话，也可以进行类似于情况1的推导</p>
+<p>对于$W \geq 3$并且$-2^{W - 1} \leq d \leq -2$，我们希望找到在绝对值上最小的整数$m$和整数$p$使得：<br>$$<br>\lfloor \frac{mn}{2^p} \rfloor &#x3D; \lfloor \frac{n}{d} \rfloor,\quad for\ -2^{W - 1} \leq n \leq 0 \tag{14a}<br>$$</p>
+<p>$$<br>\lfloor \frac{mn}{2^n} \rfloor + 1 &#x3D; \lceil \frac{n}{d} \rceil, \quad for\ 1 \leq n &lt; 2^{W - 1} \tag{14b}<br>$$</p>
+<p>$$<br>-2^W \leq m \leq 0, p \geq W<br>$$</p>
+<p>令$n_c &#x3D; kd + 1, k \in Z_+$, 此时$n_c$是对于$|d|$的可接受的$n$值，因此：<br>$$<br>-2^{W - 1} \leq n_c \leq -2^{W - 1} - d - 1 \tag{15a}<br>$$</p>
+<p>$$<br>n_c \leq d + 1 \tag{15b}<br>$$</p>
+<p>因为(14b)式必须满足$n &#x3D; -d$, 且(14a)式必须满足$n &#x3D; n_c$， 类似于(4)式有：<br>$$<br>\frac{2^p}{d} \frac{n_c - 1}{n_c} &lt; m &lt; \frac{2^p}{d} \tag{16}<br>$$<br>因为$m$式满足(16)式的最大整数，因此它是比$2^p&#x2F;d$小的下一个整数，即：<br>$$<br>m &#x3D; \frac{2^p - d - 2^p\ mod\ d}{d} \tag{17}<br>$$<br>结合此式和(16)式的左部有：<br>$$<br>2^p &gt; n_c (d + 2^p\ mod\ d) \tag{18}<br>$$</p>
+<p>最后，为了把运算限制在$W$字长内，需要做一些额外的处理</p>
+<p>$n_c$能够通过下式计算得到：<br>$$<br>n_c &#x3D;<br>    \begin{cases}<br>    2^{W - 1} - 2^{W - 1}\ mod\ d - 1, \quad\quad\ \ if \ d &gt; 0,\<br>    -2^{W - 1} - (2^{W - 1}+1)\ mod\ d, \quad if\ d &lt; 0\<br>    \end{cases}<br>$$<br>因此有：<br>$$<br>t &#x3D; 2^{W - 1} + \begin{cases}<br>0,\quad if\ d &gt; 0,\<br>1,\quad if\ d &lt; 0<br>\end{cases}\  \tag{19}<br>|n_c| &#x3D; t - 1 - t\ mod\ |d|<br>$$<br>由(6)式和(18)式，$p$能够通过下式得到：<br>$$<br>2^p &gt; |n_c| (|d| - 2^p mod |d|)<br>$$<br>由(5)式和(17)式，$|m|$能够通过下式得到：<br>$$<br>|m| &#x3D; \frac{2^p + |d| - 2^p\ mod\ |d|}{|d|}<br>$$<br>为了不使用双字长计算$2^p\ mod\ |d|$, 可以令$q, r$分别为$2^p &#x2F; |d|, p &#x3D; W - 1$的商和余数，并且$q, r$随着$p$的增加而更新，具体方法如下：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs c++">q = <span class="hljs-number">2</span>*q;<br>r = <span class="hljs-number">2</span>*r;<br><span class="hljs-keyword">if</span>(r &gt;= <span class="hljs-built_in">abs</span>(d)) &#123;<br>    q = q + <span class="hljs-number">1</span>;<br>    r = r - <span class="hljs-built_in">abs</span>(d);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>由(4)式左部和(16)式右部以及$m$的范围可以得到$q &#x3D; \lfloor 2^p&#x2F;|d| \rfloor &lt; 2^W$，此时$0\leq r &lt; |d|$，两者都在$W$字长内</p>
+<p>接下来，计算$\delta &#x3D; |d| - r$，为了避免(19)式中的双字长乘法，将满足条件的式子重写为：<br>$$<br>\frac{2^p}{|n_c|} &gt; \delta<br>$$<br>为了计算$m$, 有：<br>$$<br>\frac{2^p + |d| - 2^p\ mod\ |d|}{|d|} &#x3D; \lfloor \frac{2^p}{|d|} \rfloor + 1 &#x3D; q + 1<br>$$<br>假设只有$q_1, r_1$能够满足条件，则$2^p&#x2F;|n_c| \leq \delta $可以表述为：<br>$$<br>q_1 &lt; \delta\ |\ (q_1 &#x3D; \delta\ &amp;\ r_1 &#x3D; 0)<br>$$<br>最后，把所有的情况汇总起来，算法可以写成如下形式：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-keyword">struct</span> <span class="hljs-title class_">ms</span> &#123;<br>    <span class="hljs-type">int</span> M; <span class="hljs-comment">// Magic Number</span><br>    <span class="hljs-type">int</span> s; <span class="hljs-comment">// shift amount</span><br>&#125;;<br><br><span class="hljs-comment">// 2 &lt;= d &lt;= 2**31 - 1 or -2**31 &lt;= d &lt;= -2</span><br><span class="hljs-keyword">struct</span> <span class="hljs-title class_">ms</span> <span class="hljs-built_in">magic</span>(<span class="hljs-type">int</span> d)<br>&#123;<br>    <span class="hljs-type">int</span> p;<br>    <span class="hljs-type">unsigned</span> ad, anc, delta, q1, r1, q2, r2, t;<br>    <span class="hljs-type">const</span> <span class="hljs-type">unsigned</span> two31 = <span class="hljs-number">0x8000&#x27;0000</span>; <span class="hljs-comment">//2**31</span><br>    <span class="hljs-keyword">struct</span> <span class="hljs-title class_">ms</span> = mag;<br>    <br>    ad = <span class="hljs-built_in">abs</span>(d);<br>    t = two31 + ((<span class="hljs-type">unsigned</span>)d &gt;&gt; <span class="hljs-number">31</span>);<br>    anc = t - <span class="hljs-number">1</span> - t%ad; <span class="hljs-comment">// absolute value of nc</span><br>    p = <span class="hljs-number">31</span>;				<span class="hljs-comment">// init p</span><br>    q1 = two31/anc;		<span class="hljs-comment">// init q1 = 2**p / |nc|</span><br>    r1 = two31 - q1*anc;<span class="hljs-comment">// init r1 = 2**p % |nc|</span><br>    q2 = two31/ad;		<span class="hljs-comment">// init q2 = 2**p / |d|</span><br>    r2 = two31 - q2*ad; <span class="hljs-comment">// init r2 = 2**p / |d|</span><br>    <span class="hljs-keyword">do</span><br>    &#123;<br>        p = p + <span class="hljs-number">1</span>;<br>        q1 = <span class="hljs-number">2</span>*q1;		<span class="hljs-comment">// update q1 = 2**p / |nc|</span><br>        r1 = <span class="hljs-number">2</span>*r1;		<span class="hljs-comment">// update r1 = 2**p % |nc|</span><br>        <span class="hljs-keyword">if</span>(r1 &gt;= anc)	<span class="hljs-comment">// must be an unsigned comparison</span><br>        &#123;<br>            q1 = q1 + <span class="hljs-number">1</span>;<br>            r1 = r1 - anc;<br>        &#125;<br>        a2 = <span class="hljs-number">2</span>*q2;		<span class="hljs-comment">// update q2 = 2**p / |d|</span><br>        r2 = <span class="hljs-number">2</span>*r2;		<span class="hljs-comment">// update r2 = 2**p % |d|</span><br>        <span class="hljs-keyword">if</span>(r2 &gt;= ad)	<span class="hljs-comment">// must be an unsigned comparison</span><br>        &#123;<br>            q2 = q2 + <span class="hljs-number">1</span>;<br>            r2 = r2 - ad;<br>        &#125;<br>        delta = ad - r2;<br>    &#125;<span class="hljs-keyword">while</span>(q1 &lt; delta || (q1 == delta &amp;&amp; r1 == <span class="hljs-number">0</span>));<br>    mag.M = q2 + <span class="hljs-number">1</span>;<br>    <span class="hljs-keyword">if</span>(d &lt; <span class="hljs-number">0</span>)mag.M = -mag.M;<br>    mag.s = p - <span class="hljs-number">32</span>;<br>    <span class="hljs-keyword">return</span> mag;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E9%80%86%E5%90%91%E5%88%86%E6%9E%90/" class="category-chain-item">逆向分析</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/C/">#C++</a>
+      
+        <a href="/tags/%E9%80%86%E5%90%91%E5%88%86%E6%9E%90/">#逆向分析</a>
+      
+        <a href="/tags/%E6%B1%87%E7%BC%96/">#汇编</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>逆向分析-除法优化MagicNumber算法逆向</div>
+      <div>http://example.com/2023/01/10/软件逆向课程设计/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Chen Shuwen</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年1月10日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2023/01/10/%E5%A4%A9%E9%99%85%E7%BA%BF%E9%97%AE%E9%A2%98/" title="天际线问题">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">天际线问题</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/01/10/%E5%85%A8%E9%83%A8%E6%9F%A5%E6%89%BE%E6%A0%91/" title="全部查找树">
+                        <span class="hidden-mobile">全部查找树</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

@@ -1,0 +1,957 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Chen Shuwen">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="PBRT-反射模型前置概念表面反射模型来源测量数据：测量得到的真实世界表面反射分布特性 现象学模型：试图描述真实世界表面定性特性的方程，往往具有修改其行为的直观参数 模拟：模拟来自微观几何的光散射以生成反射数据 物理光学：使用光的详细模型推导，计算成本往往很高 几何光学：与模拟方法一样，如果已知表面的低级散射和几何特性，有时可以直接从这些描述中导出封闭形式的反射模型 反射类别漫反射在所有表面上均匀">
+<meta property="og:type" content="article">
+<meta property="og:title" content="PBRT-反射模型">
+<meta property="og:url" content="http://example.com/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/index.html">
+<meta property="og:site_name" content="Chen Shuwen&#39;s Tech Site">
+<meta property="og:description" content="PBRT-反射模型前置概念表面反射模型来源测量数据：测量得到的真实世界表面反射分布特性 现象学模型：试图描述真实世界表面定性特性的方程，往往具有修改其行为的直观参数 模拟：模拟来自微观几何的光散射以生成反射数据 物理光学：使用光的详细模型推导，计算成本往往很高 几何光学：与模拟方法一样，如果已知表面的低级散射和几何特性，有时可以直接从这些描述中导出封闭形式的反射模型 反射类别漫反射在所有表面上均匀">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220803172709083.png">
+<meta property="og:image" content="http://example.com/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220803172825184-9518906.png">
+<meta property="og:image" content="http://example.com/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220803172943090.png">
+<meta property="og:image" content="http://example.com/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220803172956661.png">
+<meta property="og:image" content="http://example.com/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220803173503728.png">
+<meta property="og:image" content="http://example.com/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220803173552071.png">
+<meta property="og:image" content="http://example.com/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220803173642332.png">
+<meta property="og:image" content="http://example.com/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220803173657471.png">
+<meta property="og:image" content="http://example.com/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220804110253016.png">
+<meta property="og:image" content="http://example.com/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220804110803145.png">
+<meta property="og:image" content="http://example.com/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220804111432881.png">
+<meta property="og:image" content="http://example.com/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220804113537221.png">
+<meta property="og:image" content="http://example.com/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220804114405629.png">
+<meta property="og:image" content="http://example.com/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220804114641941.png">
+<meta property="og:image" content="http://example.com/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220804171832328.png">
+<meta property="og:image" content="http://example.com/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220804171844472.png">
+<meta property="og:image" content="http://example.com/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220804172352552.png">
+<meta property="og:image" content="http://example.com/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220804172645620.png">
+<meta property="og:image" content="http://example.com/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220804172808989.png">
+<meta property="og:image" content="http://example.com/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220804172826644.png">
+<meta property="og:image" content="http://example.com/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220804173105665.png">
+<meta property="og:image" content="http://example.com/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220804173223448.png">
+<meta property="og:image" content="http://example.com/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220804173245732.png">
+<meta property="og:image" content="http://example.com/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220804173331297.png">
+<meta property="og:image" content="http://example.com/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220804173428246.png">
+<meta property="og:image" content="http://example.com/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220804173624864.png">
+<meta property="og:image" content="http://example.com/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220804173800035.png">
+<meta property="og:image" content="http://example.com/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220804174610067.png">
+<meta property="og:image" content="http://example.com/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220804174546488.png">
+<meta property="og:image" content="http://example.com/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220804174729748.png">
+<meta property="og:image" content="http://example.com/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220804190931264.png">
+<meta property="og:image" content="http://example.com/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220804191901766.png">
+<meta property="og:image" content="http://example.com/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220804192501193.png">
+<meta property="og:image" content="http://example.com/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220804192539367.png">
+<meta property="og:image" content="http://example.com/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220804193937391.png">
+<meta property="og:image" content="http://example.com/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220804203737294.png">
+<meta property="og:image" content="http://example.com/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220804194211106.png">
+<meta property="og:image" content="http://example.com/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220804194636309.png">
+<meta property="og:image" content="http://example.com/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220804194850274.png">
+<meta property="og:image" content="http://example.com/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220804194926402.png">
+<meta property="og:image" content="http://example.com/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220804195536192.png">
+<meta property="og:image" content="http://example.com/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220804195828344.png">
+<meta property="og:image" content="http://example.com/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220804200910224.png">
+<meta property="og:image" content="http://example.com/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220804201034421.png">
+<meta property="og:image" content="http://example.com/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220804201057255.png">
+<meta property="og:image" content="http://example.com/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220804201408163.png">
+<meta property="og:image" content="http://example.com/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220804201746637.png">
+<meta property="og:image" content="http://example.com/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220804201838562.png">
+<meta property="og:image" content="http://example.com/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220804202341710.png">
+<meta property="og:image" content="http://example.com/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220804202547719.png">
+<meta property="og:image" content="http://example.com/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220804203018432.png">
+<meta property="og:image" content="http://example.com/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220804203104577.png">
+<meta property="og:image" content="http://example.com/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220804205025123.png">
+<meta property="og:image" content="http://example.com/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220804204832535.png">
+<meta property="og:image" content="http://example.com/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220804204933940.png">
+<meta property="og:image" content="http://example.com/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220804205243308.png">
+<meta property="og:image" content="http://example.com/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220804205313638.png">
+<meta property="og:image" content="http://example.com/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220804205335991.png">
+<meta property="og:image" content="http://example.com/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220804205418158.png">
+<meta property="og:image" content="http://example.com/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220804205522866.png">
+<meta property="og:image" content="http://example.com/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220804205549398.png">
+<meta property="og:image" content="http://example.com/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220804205625055.png">
+<meta property="og:image" content="http://example.com/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220805091117589.png">
+<meta property="og:image" content="http://example.com/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220805091157882.png">
+<meta property="og:image" content="http://example.com/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220805091325928.png">
+<meta property="og:image" content="http://example.com/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220805092310351.png">
+<meta property="og:image" content="http://example.com/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220805092553725.png">
+<meta property="og:image" content="http://example.com/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220805092710194.png">
+<meta property="og:image" content="http://example.com/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220805094239333.png">
+<meta property="og:image" content="http://example.com/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220805095117759.png">
+<meta property="article:published_time" content="2022-07-15T16:00:00.000Z">
+<meta property="article:modified_time" content="2023-01-10T13:13:21.804Z">
+<meta property="article:author" content="Chen Shuwen">
+<meta property="article:tag" content="CG">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://example.com/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220803172709083.png">
+  
+  
+  
+  <title>PBRT-反射模型 - Chen Shuwen&#39;s Tech Site</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Chen Shuwen&#39;s Tech Site</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="PBRT-反射模型"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2022-07-16 00:00" pubdate>
+          2022年7月16日 凌晨
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          5.5k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          46 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">PBRT-反射模型</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="PBRT-反射模型"><a href="#PBRT-反射模型" class="headerlink" title="PBRT-反射模型"></a>PBRT-反射模型</h1><h2 id="前置概念"><a href="#前置概念" class="headerlink" title="前置概念"></a>前置概念</h2><h3 id="表面反射模型来源"><a href="#表面反射模型来源" class="headerlink" title="表面反射模型来源"></a>表面反射模型来源</h3><p>测量数据：测量得到的真实世界表面反射分布特性</p>
+<p>现象学模型：试图描述真实世界表面定性特性的方程，往往具有修改其行为的直观参数</p>
+<p>模拟：模拟来自微观几何的光散射以生成反射数据</p>
+<p>物理光学：使用光的详细模型推导，计算成本往往很高</p>
+<p>几何光学：与模拟方法一样，如果已知表面的低级散射和几何特性，有时可以直接从这些描述中导出封闭形式的反射模型</p>
+<h3 id="反射类别"><a href="#反射类别" class="headerlink" title="反射类别"></a>反射类别</h3><h4 id="漫反射"><a href="#漫反射" class="headerlink" title="漫反射"></a>漫反射</h4><p>在所有表面上均匀散射光</p>
+<p><img src="/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220803172709083.png" srcset="/img/loading.gif" lazyload alt="image-20220803172709083"></p>
+<h4 id="光泽镜面反射"><a href="#光泽镜面反射" class="headerlink" title="光泽镜面反射"></a>光泽镜面反射</h4><p>优先在一组反射方向上散射光，它们显示其他对象的模糊反射，如塑料或高光涂料</p>
+<p><img src="/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220803172825184-9518906.png" srcset="/img/loading.gif" lazyload alt="image-20220803172825184"></p>
+<h4 id="完美镜面反射"><a href="#完美镜面反射" class="headerlink" title="完美镜面反射"></a>完美镜面反射</h4><p>将入射光散射到一个单一的出射方向，如镜子和玻璃</p>
+<p><img src="/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220803172943090.png" srcset="/img/loading.gif" lazyload alt="image-20220803172943090"></p>
+<h4 id="逆反射"><a href="#逆反射" class="headerlink" title="逆反射"></a>逆反射</h4><p>沿着入射光的方向散射光</p>
+<p><img src="/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220803172956661.png" srcset="/img/loading.gif" lazyload alt="image-20220803172956661"></p>
+<p>大多数反射分布函数是各向同性的，即入射光沿绕着一个点的法线轴进行旋转，其反射光的分布不会改变。对于各向异性而言，则会反射不同数量的光，比如拉丝金属、布和光盘</p>
+<h3 id="材质类别"><a href="#材质类别" class="headerlink" title="材质类别"></a>材质类别</h3><ul>
+<li>电介质，是不导电的材质。它们具有实数值的折射率并透射一部分入射光，如玻璃、矿物油、水、空气</li>
+<li>金属导体。材质是不透明的，并反射大部分照明，一部分光也传输到导体内部被吸收，在pbrt中忽略透射效应，只对导体的反射分量进行建模，导体具有复数值的折射率$\bar\eta &#x3D; \eta + i k$</li>
+<li>半导体。pbrt中不讨论这种材质</li>
+</ul>
+<h3 id="反射坐标系"><a href="#反射坐标系" class="headerlink" title="反射坐标系"></a>反射坐标系</h3><p>计算反射时使用的坐标系，由正交基向量$(s, t, n)$定义，在调用BSDF方法之前，世界空间中的$w$方向向量被转换到该坐标系中</p>
+<p><img src="/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220803173503728.png" srcset="/img/loading.gif" lazyload alt="image-20220803173503728"></p>
+<p>也可以使用球坐标来表示：</p>
+<p><img src="/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220803173552071.png" srcset="/img/loading.gif" lazyload alt="image-20220803173552071"></p>
+<p>其转换公式为：</p>
+<p><img src="/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220803173642332.png" srcset="/img/loading.gif" lazyload alt="image-20220803173642332"></p>
+<p><img src="/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220803173657471.png" srcset="/img/loading.gif" lazyload alt="image-20220803173657471"></p>
+<h3 id="反射率"><a href="#反射率" class="headerlink" title="反射率"></a>反射率</h3><p><strong>半球-方向反射率</strong>是一个2D函数，它在给定方向上由于在半球上的恒定照明而产生全反射，或者等效地，由于来自给定方向的光而在半球上产生全反射，他被定义为</p>
+<p><img src="/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220804110253016.png" srcset="/img/loading.gif" lazyload alt="image-20220804110253016"></p>
+<p>注意，该方程和散射方程相比少了入射辐射度那一项，即$L_i(p, w_i)$</p>
+<p>表面的<strong>半球-半球反射率</strong>公式如下：</p>
+<p><img src="/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220804110803145.png" srcset="/img/loading.gif" lazyload alt="image-20220804110803145"></p>
+<p>当入射光的方向相同时，它给出表面反射的入射光的分量。对于内层积分，得到的是给定入射方向下整个半球上的反射率，对于外层积分，得到的是所有入射方向得到的半球反射率的总和</p>
+<h2 id="镜面反射和透射"><a href="#镜面反射和透射" class="headerlink" title="镜面反射和透射"></a>镜面反射和透射</h2><p>出射方向和入射方向两者相对发现的夹角相同<br>$$<br>\theta_i &#x3D; \theta_o<br>$$<br>其中$\phi_o &#x3D; \phi_i + \pi$，对于透射而言，也有相同的$\phi$方程，输出方向$\theta_t$由<strong>斯涅尔(Snell)定律</strong>给出，折射率描述了光在特定介质中的传播速度比在真空中慢多少，Snell定律如下：</p>
+<p><img src="/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220804111432881.png" srcset="/img/loading.gif" lazyload alt="image-20220804111432881"></p>
+<p>一般来说，折射率随着光的波长而变化，入射光通常在两种不同介质之间的边界处向多个方向散射，这种效应称为色散。在图形学中往往忽略这种波长相关性</p>
+<h3 id="菲涅耳反射-Fresnel-Reflection"><a href="#菲涅耳反射-Fresnel-Reflection" class="headerlink" title="菲涅耳反射(Fresnel Reflection)"></a>菲涅耳反射(Fresnel Reflection)</h3><p>Snell定律给出了透射方向的计算方法，此时还需要计算被反射或透射的入射光比例</p>
+<p>给定折射率和入射光线与表面法线的夹角，菲涅耳方程指定了材质对入射照明的两种不同偏振态的相应反射比，pbrt中假设光是非偏振的，则反射比是平行和垂直偏振项的平方的平均值(注：这里的定义和维基百科中不同，后者定义为算数平均值)</p>
+<p>维基百科的解释：<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/zh-cn/%E8%8F%B2%E6%B6%85%E8%80%B3%E6%96%B9%E7%A8%8B">https://zh.wikipedia.org/zh-cn/%E8%8F%B2%E6%B6%85%E8%80%B3%E6%96%B9%E7%A8%8B</a></p>
+<p>注意区分折射率和透射比的区别</p>
+<p>折射率表，给出真空中光速与介质中光速之比</p>
+<p><img src="/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220804113537221.png" srcset="/img/loading.gif" lazyload alt="image-20220804113537221"></p>
+<p>电介质的菲涅耳反射比公式为</p>
+<p><img src="/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220804114405629.png" srcset="/img/loading.gif" lazyload alt="image-20220804114405629"></p>
+<p>两者分别为平行偏振光的反射比和垂直偏振光的反射比。余弦项应该全部大于或等于0，因此计算$cos\theta_i$和$cos\theta_t$时，几何法线应该分别翻转到与$w_i$和$w_t$的同一侧</p>
+<p>对于非偏振光，菲涅耳反射比为</p>
+<p><img src="/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220804114641941.png" srcset="/img/loading.gif" lazyload alt="image-20220804114641941"></p>
+<p>透射比为$1 - F_r$</p>
+<p>对于复折射率$\bar\eta &#x3D; \eta + i k$而言，其中一些入射光可能被材质吸收并转化为热量。其中$k$是吸收系数</p>
+<p>导体和电介质之间边界处的菲涅耳反射比由如下公式给出：</p>
+<p><img src="/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220804171832328.png" srcset="/img/loading.gif" lazyload alt="image-20220804171832328"></p>
+<p>其中</p>
+<p><img src="/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220804171844472.png" srcset="/img/loading.gif" lazyload alt="image-20220804171844472"></p>
+<h3 id="镜面反射"><a href="#镜面反射" class="headerlink" title="镜面反射"></a>镜面反射</h3><p>菲涅耳方程给出了反射光的分量，$F_r(w)$，我们需要一个BRDF使得</p>
+<p><img src="/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220804172352552.png" srcset="/img/loading.gif" lazyload alt="image-20220804172352552"></p>
+<p>其中$w_r &#x3D; R(w_0, n)$是$w_0$关于表面法线$n$反射的镜面反射向量</p>
+<p>由于镜面反射时，一个入射方向只会对应一个出射方向，因此使用冲激函数来表达BRDF，代换相关因子得</p>
+<p><img src="/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220804172645620.png" srcset="/img/loading.gif" lazyload alt="image-20220804172645620"></p>
+<p>反射向量$w_r$的计算方法为</p>
+<p><img src="/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220804172808989.png" srcset="/img/loading.gif" lazyload alt="image-20220804172808989"></p>
+<p><img src="/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220804172826644.png" srcset="/img/loading.gif" lazyload alt="image-20220804172826644"></p>
+<h3 id="镜面透射"><a href="#镜面透射" class="headerlink" title="镜面透射"></a>镜面透射</h3><p>使用$\tau$表示由菲涅耳方程给出的透射到出射方向的入射能量的分量，因此$\tau &#x3D; 1 - F_r(w_i)$，则透射的通量微分为</p>
+<p><img src="/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220804173105665.png" srcset="/img/loading.gif" lazyload alt="image-20220804173105665"></p>
+<p>根据定义有</p>
+<p><img src="/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220804173223448.png" srcset="/img/loading.gif" lazyload alt="image-20220804173223448"></p>
+<p>将立体角转化为球面角</p>
+<p><img src="/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220804173245732.png" srcset="/img/loading.gif" lazyload alt="image-20220804173245732"></p>
+<p>对斯涅尔定律关于$\theta$微分，则有</p>
+<p><img src="/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220804173331297.png" srcset="/img/loading.gif" lazyload alt="image-20220804173331297"></p>
+<p>综合上述2个方程有</p>
+<p><img src="/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220804173428246.png" srcset="/img/loading.gif" lazyload alt="image-20220804173428246"></p>
+<p>因为$\phi_i &#x3D; \phi_o + \pi $，因此$d\phi_i &#x3D; d\phi_o$，最终有出射辐射度关于入射辐射度、折射率、透射比的关系</p>
+<p><img src="/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220804173624864.png" srcset="/img/loading.gif" lazyload alt="image-20220804173624864"></p>
+<p>类似地，根据散射方程以及上式得到BTDF函数的表达式如下</p>
+<p><img src="/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220804173800035.png" srcset="/img/loading.gif" lazyload alt="image-20220804173800035"></p>
+<p>其中$T(w_o, n)$是镜面透射向量</p>
+<p>透射方向$w_t$的计算方法为</p>
+<p><img src="/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220804174610067.png" srcset="/img/loading.gif" lazyload alt="image-20220804174610067"></p>
+<p><img src="/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220804174546488.png" srcset="/img/loading.gif" lazyload alt="image-20220804174546488"></p>
+<p>其中，$w_i, w_o, n$都是单位向量，$n$朝向入射介质的一边</p>
+<p>$cos\theta_t$的计算公式为</p>
+<p><img src="/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220804174729748.png" srcset="/img/loading.gif" lazyload alt="image-20220804174729748"></p>
+<h2 id="兰伯特反射-Lambertian-Reflection"><a href="#兰伯特反射-Lambertian-Reflection" class="headerlink" title="兰伯特反射(Lambertian Reflection)"></a>兰伯特反射(Lambertian Reflection)</h2><p>Lambertian模型模拟了一个完美的漫反射表面，该表面在所有方向上均等地散射入射照明，其反射分布函数为$f &#x3D; R&#x2F;\pi$，其中$R$为散射的入射光的分量</p>
+<h2 id="微表面模型"><a href="#微表面模型" class="headerlink" title="微表面模型"></a>微表面模型</h2><p>许多基于几何光学的表面反射和透射建模都基于这样的方法，即粗糙表面可以建模为小的微表面的集合，由微表面组成的表面通常称为高度场，其在统计上描述平面方向的分布。在pbrt中，使用microsurface描述微表面，macrosurface来描述底层的平滑表面</p>
+<p>两种不同的微表面横截面如下</p>
+<p><img src="/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220804190931264.png" srcset="/img/loading.gif" lazyload alt="image-20220804190931264"></p>
+<p>基于微表面的BRDF模型通过对来自大量微表面的光散射进行统计建模来工作，假设被照亮的微分区域$dA$与单个微表面的面积相比大很多，则此时有大量的微表面将被照亮，并且它们的聚合行为决定了观察到的散射</p>
+<p>微表面模型的两个主要组成成分：</p>
+<ul>
+<li>微表面的分布</li>
+<li>描述光如何从单个微表面散射的BRDF</li>
+</ul>
+<p>考虑微表面的局部照明效果，主要是三种情况：</p>
+<ul>
+<li>微表面被另一个面阻挡</li>
+<li>位于相邻微表面的阴影中</li>
+<li>相互反射，导致微表面反射的光比直接光照和低级微表面BRDF预测的更多，因为有来自其他方向的光，见图c</li>
+</ul>
+<p><img src="/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220804191901766.png" srcset="/img/loading.gif" lazyload alt="image-20220804191901766"></p>
+<h3 id="Oren-Nayar漫反射"><a href="#Oren-Nayar漫反射" class="headerlink" title="Oren-Nayar漫反射"></a>Oren-Nayar漫反射</h3><p>Oren和Nayer发现粗糙表面通常随着照明方向接近观察方向而显得更亮，他们提出的反射模型通过V型微表面描述粗糙表面，该微表面由球形高斯分布描述，具有单个参数$\sigma$，即微表面方向角的标准差</p>
+<p>在V形假设下，可以通过仅考虑相邻的微表面来解释相互反射，因此，该模型推导出的BRDF对凹槽集合的聚合反射进行建模，结果考虑了微表面之间的阴影、遮蔽和相互反射，其近似公式为</p>
+<p><img src="/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220804192501193.png" srcset="/img/loading.gif" lazyload alt="image-20220804192501193"></p>
+<p>其中$\sigma$用弧度来表示，且有</p>
+<p><img src="/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220804192539367.png" srcset="/img/loading.gif" lazyload alt="image-20220804192539367"></p>
+<h3 id="微表面分布函数"><a href="#微表面分布函数" class="headerlink" title="微表面分布函数"></a>微表面分布函数</h3><p>微表面的一个重要特征使用分布函数$D(w_h)$表示，它给出了具有微表面法线$w_h$的微表面的微分面积</p>
+<p>微表面分布函数必须归一化以确保他们在物理上是合理的，如果我们考虑沿法线方向$n$在微表面上的入射光线，那么每条光线必须恰好与微表面相交一次。给定微表面的微分面积$dA$，那么该区域上方的微表面的投影面积必须等于$dA$</p>
+<p><img src="/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220804193937391.png" srcset="/img/loading.gif" lazyload alt="image-20220804193937391"></p>
+<p>注：这里暂时理解为，微表面上不能出现倒下的三角形，这种情况下一条光线可能与多个微表面相交，投影面积也会有重叠</p>
+<p>可以用公式表述为</p>
+<p><img src="/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220804203737294.png" srcset="/img/loading.gif" lazyload alt="image-20220804203737294"></p>
+<p>Beckmann和Spizzichino提出了一种广泛使用的基于微表面斜率高斯分布的微表面分布函数，它的传统定义是</p>
+<p><img src="/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220804194211106.png" srcset="/img/loading.gif" lazyload alt="image-20220804194211106"></p>
+<p>如果$\sigma$是微表面的均方根(RMS)斜率，则$\alpha &#x3D; \sqrt2 \sigma$</p>
+<p>如果是各向异性分布，其中的法线分布会随$w_h$的方位角方向而变化，例如，给定垂直于$x$轴的微表面的$\alpha_x$和$y$轴的$\alpha_y$，则中间方向的$\alpha$值可以通过这些值构造一个椭圆，相应的各向异性微表面分布函数为</p>
+<p><img src="/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220804194636309.png" srcset="/img/loading.gif" lazyload alt="image-20220804194636309"></p>
+<p>另一个有用的微表面分布函数来自Trowbridge和Reitz，其各向异性表达式由下式给出</p>
+<p><img src="/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220804194850274.png" srcset="/img/loading.gif" lazyload alt="image-20220804194850274"></p>
+<p>两者的函数图像如下，其中，横坐标为$\theta$的值，它是微表面法线$w_h$和宏表面法线$(0, 0, 1)$之间的夹角</p>
+<p><img src="/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220804194926402.png" srcset="/img/loading.gif" lazyload alt="image-20220804194926402"></p>
+<p>从图中可以看出，TR模型具有更高的尾部，对于远离表面法线的方向，它更慢地下降到0，该特性与许多真实世界表面非常匹配</p>
+<p>微表面模型可以这样理解，每个平面包含多个微平面，这些微平面的取向是各种各样的，但大致满足上述函数图像的分布，即和原始取向相似的微表面法线数目更多，不相似的更少。当表面完全光滑时，所有微表面取向一致，此时就是完美的镜面反射</p>
+<h3 id="遮蔽和阴影"><a href="#遮蔽和阴影" class="headerlink" title="遮蔽和阴影"></a>遮蔽和阴影</h3><p>现在考虑微表面的局部照明效果，使用遮蔽-阴影函数$G_1(w, w_h)$进行建模，它给出了具有法线$w_h$的微表面从$w$方向可见的分量(或比例)。通常情况下，微表面可见的概率与其方向$w_h$无关，因此可以写成$G_1(w)$</p>
+<p>从$w$方向看到的微表面面积为$dAcos\theta$，则$G_1$的归一化约束为</p>
+<p><img src="/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220804195536192.png" srcset="/img/loading.gif" lazyload alt="image-20220804195536192"></p>
+<p>换句话说，给定方向$w$的可见微表面的投影面积必须等于$(w \cdot n) &#x3D; cos\theta$乘以宏观表面的微分面积$dA$</p>
+<p><img src="/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220804195828344.png" srcset="/img/loading.gif" lazyload alt="image-20220804195828344"></p>
+<p>如果$A^+(w)$是从$w$方向看到的前向微表面的投影面积，而$A^-(w)$是来自方程[8.13]的后向微表面的投影面积，则$cos\theta &#x3D; A^+(w) - A^-(w)$，因此，我们可以将遮蔽阴影函数写为可见微表面面积与总前向微表面面积的比率：</p>
+<p><img src="/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220804200910224.png" srcset="/img/loading.gif" lazyload alt="image-20220804200910224"></p>
+<p>使用辅助函数$\Lambda (w)$表示每个可见微表面区域中，不可见遮蔽微表面面积：</p>
+<p><img src="/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220804201034421.png" srcset="/img/loading.gif" lazyload alt="image-20220804201034421"></p>
+<p>则遮蔽函数可以重新表述为</p>
+<p><img src="/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220804201057255.png" srcset="/img/loading.gif" lazyload alt="image-20220804201057255"></p>
+<p>在附近点高度不相关的假设下，各向同性BeckmannSpizzichino分布的$\Lambda(w)$为</p>
+<p><img src="/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220804201408163.png" srcset="/img/loading.gif" lazyload alt="image-20220804201408163"></p>
+<p>其中$a &#x3D; 1&#x2F;(\alpha tan\theta)$和$erf$是误差函数，$erf(x) &#x3D; 2&#x2F;\sqrt\pi \int_0^x e^{-{x^{‘}}^2} d x^{‘} $</p>
+<p>在不相关高度假设下，Trowbridge-Reitz分布的$\Lambda(w)$为</p>
+<p><img src="/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220804201746637.png" srcset="/img/loading.gif" lazyload alt="image-20220804201746637"></p>
+<p>其$G_1(w)$函数图像如下</p>
+<p><img src="/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220804201838562.png" srcset="/img/loading.gif" lazyload alt="image-20220804201838562"></p>
+<p>可以发现，增加表面的粗糙度会导致函数更快地下降到0，此时可见微表面更少，在视角垂直于微表面时，几乎所有微表面都不可见</p>
+<p>与微表面分布的几何特性相关的最后一个函数是$G(w_o, w_i)$，它给出了微分区域中从$w_o$和$w_i$方向都可以看到的微表面的比例。假设一个微表面从两个方向都可见的概率，等于它从每个方向独立可见的概率之积，则有</p>
+<p><img src="/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220804202341710.png" srcset="/img/loading.gif" lazyload alt="image-20220804202341710"></p>
+<p>实际中两者往往并不独立，这导致$G$被低估，另一个更准确的模型认为，微表面上的给定点越靠上，微表面的可见性就越高，该模型表述为</p>
+<p><img src="/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220804202547719.png" srcset="/img/loading.gif" lazyload alt="image-20220804202547719"></p>
+<h3 id="Torrance-Sparrow模型"><a href="#Torrance-Sparrow模型" class="headerlink" title="Torrance-Sparrow模型"></a>Torrance-Sparrow模型</h3><p>该微表面模型用于模拟金属表面，他们将表面建模为完美光滑的镜面微表面的集合，只有那些法线等于半角向量的微表面能导致完美镜面反射，即</p>
+<p><img src="/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220804203018432.png" srcset="/img/loading.gif" lazyload alt="image-20220804203018432"></p>
+<p><img src="/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220804203104577.png" srcset="/img/loading.gif" lazyload alt="image-20220804203104577"></p>
+<p>推导如下，各个符号的含义如下图</p>
+<p><img src="/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220804205025123.png" srcset="/img/loading.gif" lazyload alt="image-20220804205025123"></p>
+<p>考虑入射微表面的微分通量</p>
+<p><img src="/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220804204832535.png" srcset="/img/loading.gif" lazyload alt="image-20220804204832535"></p>
+<p>方向为$w_h$的微表面的微分面积为</p>
+<p><img src="/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220804204933940.png" srcset="/img/loading.gif" lazyload alt="image-20220804204933940"></p>
+<p>该乘积的前两项描述了每单位面积中，具有正确取向的平面的微分面积</p>
+<p>带入前一个式子有</p>
+<p><img src="/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220804205243308.png" srcset="/img/loading.gif" lazyload alt="image-20220804205243308"></p>
+<p>如果我们假设微表面根据菲涅耳定律单独反射光，则出射通量为</p>
+<p><img src="/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220804205313638.png" srcset="/img/loading.gif" lazyload alt="image-20220804205313638"></p>
+<p>再次使用辐射度的定义，反射出的辐射度为</p>
+<p><img src="/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220804205335991.png" srcset="/img/loading.gif" lazyload alt="image-20220804205335991"></p>
+<p>结合等式[8.16],[8.15]有</p>
+<p><img src="/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220804205418158.png" srcset="/img/loading.gif" lazyload alt="image-20220804205418158"></p>
+<p>镜面反射下，$dw_h, dw_o$有如下关系(在14章推导)</p>
+<p><img src="/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220804205522866.png" srcset="/img/loading.gif" lazyload alt="image-20220804205522866"></p>
+<p>带入前一个方程有</p>
+<p><img src="/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220804205549398.png" srcset="/img/loading.gif" lazyload alt="image-20220804205549398"></p>
+<p>最后，添加几何衰减项$G(w_0, w_i)$，得到Torrance-Sparrow BRDF:</p>
+<p><img src="/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220804205625055.png" srcset="/img/loading.gif" lazyload alt="image-20220804205625055"></p>
+<p>该模型的优点之一是其推导不依赖于所使用的特定微表面分布，也不依赖于具体的菲涅耳函数，因此可以用于导体和电介质</p>
+<p>对于BTDF，从折射率为$\eta_i$的介质到折射率为$\eta_o$的介质，其$dw_h$和$dw_o$的关系如下</p>
+<p><img src="/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220805091117589.png" srcset="/img/loading.gif" lazyload alt="image-20220805091117589"></p>
+<p>此时的BTDF为</p>
+<p><img src="/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220805091157882.png" srcset="/img/loading.gif" lazyload alt="image-20220805091157882"></p>
+<p>其中$\eta &#x3D; \eta_i &#x2F; \eta_o$，对于镜面透射，半角向量为</p>
+<p><img src="/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220805091325928.png" srcset="/img/loading.gif" lazyload alt="image-20220805091325928"></p>
+<h2 id="菲涅耳入射效应"><a href="#菲涅耳入射效应" class="headerlink" title="菲涅耳入射效应"></a>菲涅耳入射效应</h2><p>假设某个材质的表面是分层的，菲涅耳反射会减少到达分层对象的底层光量，考虑一张抛光的木桌或者涂有光泽油漆的墙壁，如果从正面看过去，主要看到的是本身颜料的颜色，即漫反射的分量；如果从倾斜的角度看过去，则看到的底层颜色较少，此时它被菲涅耳效应引起的更多的光泽反射所覆盖</p>
+<p>Ashikhmin和Shirley开发的BRDF模型模拟漫反射底层表面，其上方有光滑的镜面反射表面，漫反射表面的反射效果通过考虑菲涅耳效应后剩余的能量进行分配和调节。当入射光接近法线时，大部分光线透射到漫反射层，此时漫反射项占据主导地位。当入射光接近掠射时，光泽反射成为主要的反射模式</p>
+<p><img src="/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220805092310351.png" srcset="/img/loading.gif" lazyload alt="image-20220805092310351"></p>
+<p>该模型基于光泽镜面反射项和漫反射项的加权和，光泽镜面项导出为</p>
+<p><img src="/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220805092553725.png" srcset="/img/loading.gif" lazyload alt="image-20220805092553725"></p>
+<p>其中$D(w_h)$是微表面分布项，$F(w_o)$代表菲涅耳反射比</p>
+<p>Schlick将菲涅耳反射近似为</p>
+<p><img src="/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220805092710194.png" srcset="/img/loading.gif" lazyload alt="image-20220805092710194"></p>
+<p>其中$R$是表面在法向入射时的反射率，可以看到，入射角度越大，即视角越倾斜，反射率的值越大，反射所占的分量越多</p>
+<p>最后，以下等式中的漫反射项以物理上合理的方式模拟了基于菲涅耳入射效应：</p>
+<p><img src="/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220805094239333.png" srcset="/img/loading.gif" lazyload alt="image-20220805094239333"></p>
+<p>其中，$R_s$是镜面反射的反射率，$R_d$是漫反射的反射率</p>
+<h2 id="傅里叶基BSDF"><a href="#傅里叶基BSDF" class="headerlink" title="傅里叶基BSDF"></a>傅里叶基BSDF</h2><p>该模型使用傅里叶基表示具有缩放余弦项和的BSDF，对于某些具有逆反射性的材质来说处理较好</p>
+<p>其BSDF公式如下：</p>
+<p><img src="/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/image-20220805095117759.png" srcset="/img/loading.gif" lazyload alt="image-20220805095117759"></p>
+<p>其中，$\mu$是天顶角，$\phi$是方位角，$a_k(\mu_i, \mu_o)$表示一对特定天顶角余弦的傅里叶级数，这主要通过查表来得到</p>
+<p>推导以及计算$a_k$的方法见原书8.6节</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/CG/" class="category-chain-item">CG</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/CG/">#CG</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>PBRT-反射模型</div>
+      <div>http://example.com/2022/07/16/PBRT-反射模型/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Chen Shuwen</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2022年7月16日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2022/11/13/Unity-%E6%95%B0%E6%8D%AE%E4%BF%9D%E5%AD%98%E5%92%8C%E5%8A%A0%E8%BD%BD/" title="Unity-数据保存和加载">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Unity-数据保存和加载</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2022/07/15/PBRT-%E9%87%87%E6%A0%B7%E5%92%8C%E9%87%8D%E5%BB%BA/" title="PBRT-采样和重建">
+                        <span class="hidden-mobile">PBRT-采样和重建</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

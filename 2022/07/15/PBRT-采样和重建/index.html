@@ -1,0 +1,886 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Chen Shuwen">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="PBRT-采样和重建理想采样和重建采样和重建的过程可以概括为： 连续时间信号$x(t)$ -&gt; 高采样率采样 -&gt; 离散时间信号$x[n]$ -&gt; 重建滤波，去除高频 -&gt; 连续时间信号$\tilde{x}(t)$ -&gt; 低采样率像素采样 -&gt; 最终离散时间像素值$\tilde{x}[n]$  使用脉冲列函数对原始图像采样：   这些采样值可以用于通过选择重建过">
+<meta property="og:type" content="article">
+<meta property="og:title" content="PBRT-采样和重建">
+<meta property="og:url" content="http://example.com/2022/07/15/PBRT-%E9%87%87%E6%A0%B7%E5%92%8C%E9%87%8D%E5%BB%BA/index.html">
+<meta property="og:site_name" content="Chen Shuwen&#39;s Tech Site">
+<meta property="og:description" content="PBRT-采样和重建理想采样和重建采样和重建的过程可以概括为： 连续时间信号$x(t)$ -&gt; 高采样率采样 -&gt; 离散时间信号$x[n]$ -&gt; 重建滤波，去除高频 -&gt; 连续时间信号$\tilde{x}(t)$ -&gt; 低采样率像素采样 -&gt; 最终离散时间像素值$\tilde{x}[n]$  使用脉冲列函数对原始图像采样：   这些采样值可以用于通过选择重建过">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2022/07/15/PBRT-%E9%87%87%E6%A0%B7%E5%92%8C%E9%87%8D%E5%BB%BA/image-20220712100636304.png">
+<meta property="og:image" content="http://example.com/2022/07/15/PBRT-%E9%87%87%E6%A0%B7%E5%92%8C%E9%87%8D%E5%BB%BA/image-20220712100653700.png">
+<meta property="og:image" content="http://example.com/2022/07/15/PBRT-%E9%87%87%E6%A0%B7%E5%92%8C%E9%87%8D%E5%BB%BA/image-20220712100812303.png">
+<meta property="og:image" content="http://example.com/2022/07/15/PBRT-%E9%87%87%E6%A0%B7%E5%92%8C%E9%87%8D%E5%BB%BA/image-20220712100825911.png">
+<meta property="og:image" content="http://example.com/2022/07/15/PBRT-%E9%87%87%E6%A0%B7%E5%92%8C%E9%87%8D%E5%BB%BA/image-20220712101136331.png">
+<meta property="og:image" content="http://example.com/2022/07/15/PBRT-%E9%87%87%E6%A0%B7%E5%92%8C%E9%87%8D%E5%BB%BA/image-20220712101216862.png">
+<meta property="og:image" content="http://example.com/2022/07/15/PBRT-%E9%87%87%E6%A0%B7%E5%92%8C%E9%87%8D%E5%BB%BA/image-20220712101301504.png">
+<meta property="og:image" content="http://example.com/2022/07/15/PBRT-%E9%87%87%E6%A0%B7%E5%92%8C%E9%87%8D%E5%BB%BA/image-20220712090553607.png">
+<meta property="og:image" content="http://example.com/2022/07/15/PBRT-%E9%87%87%E6%A0%B7%E5%92%8C%E9%87%8D%E5%BB%BA/image-20220712091028454.png">
+<meta property="og:image" content="http://example.com/2022/07/15/PBRT-%E9%87%87%E6%A0%B7%E5%92%8C%E9%87%8D%E5%BB%BA/image-20220712092122464.png">
+<meta property="og:image" content="http://example.com/2022/07/15/PBRT-%E9%87%87%E6%A0%B7%E5%92%8C%E9%87%8D%E5%BB%BA/image-20220712093512656.png">
+<meta property="og:image" content="http://example.com/2022/07/15/PBRT-%E9%87%87%E6%A0%B7%E5%92%8C%E9%87%8D%E5%BB%BA/image-20220712095302167.png">
+<meta property="og:image" content="http://example.com/2022/07/15/PBRT-%E9%87%87%E6%A0%B7%E5%92%8C%E9%87%8D%E5%BB%BA/image-20220712101805788.png">
+<meta property="og:image" content="http://example.com/2022/07/15/PBRT-%E9%87%87%E6%A0%B7%E5%92%8C%E9%87%8D%E5%BB%BA/image-20220712103239528.png">
+<meta property="og:image" content="http://example.com/2022/07/15/PBRT-%E9%87%87%E6%A0%B7%E5%92%8C%E9%87%8D%E5%BB%BA/image-20220712104446339.png">
+<meta property="og:image" content="http://example.com/2022/07/15/PBRT-%E9%87%87%E6%A0%B7%E5%92%8C%E9%87%8D%E5%BB%BA/image-20220712104557273.png">
+<meta property="og:image" content="http://example.com/2022/07/15/PBRT-%E9%87%87%E6%A0%B7%E5%92%8C%E9%87%8D%E5%BB%BA/image-20220712105448101.png">
+<meta property="og:image" content="http://example.com/2022/07/15/PBRT-%E9%87%87%E6%A0%B7%E5%92%8C%E9%87%8D%E5%BB%BA/image-20220712105516577.png">
+<meta property="og:image" content="http://example.com/2022/07/15/PBRT-%E9%87%87%E6%A0%B7%E5%92%8C%E9%87%8D%E5%BB%BA/image-20220712105720214-7594641.png">
+<meta property="og:image" content="http://example.com/2022/07/15/PBRT-%E9%87%87%E6%A0%B7%E5%92%8C%E9%87%8D%E5%BB%BA/image-20220712113739902.png">
+<meta property="og:image" content="http://example.com/2022/07/15/PBRT-%E9%87%87%E6%A0%B7%E5%92%8C%E9%87%8D%E5%BB%BA/image-20220712160321093.png">
+<meta property="og:image" content="http://example.com/2022/07/15/PBRT-%E9%87%87%E6%A0%B7%E5%92%8C%E9%87%8D%E5%BB%BA/image-20220712160752598.png">
+<meta property="og:image" content="http://example.com/2022/07/15/PBRT-%E9%87%87%E6%A0%B7%E5%92%8C%E9%87%8D%E5%BB%BA/image-20220805202438221.png">
+<meta property="og:image" content="http://example.com/2022/07/15/PBRT-%E9%87%87%E6%A0%B7%E5%92%8C%E9%87%8D%E5%BB%BA/image-20220805202624002.png">
+<meta property="og:image" content="http://example.com/2022/07/15/PBRT-%E9%87%87%E6%A0%B7%E5%92%8C%E9%87%8D%E5%BB%BA/image-20220805202809281.png">
+<meta property="og:image" content="http://example.com/2022/07/15/PBRT-%E9%87%87%E6%A0%B7%E5%92%8C%E9%87%8D%E5%BB%BA/image-20220805203250598.png">
+<meta property="og:image" content="http://example.com/2022/07/15/PBRT-%E9%87%87%E6%A0%B7%E5%92%8C%E9%87%8D%E5%BB%BA/image-20220805203422430.png">
+<meta property="og:image" content="http://example.com/2022/07/15/PBRT-%E9%87%87%E6%A0%B7%E5%92%8C%E9%87%8D%E5%BB%BA/image-20220805203500064.png">
+<meta property="og:image" content="http://example.com/2022/07/15/PBRT-%E9%87%87%E6%A0%B7%E5%92%8C%E9%87%8D%E5%BB%BA/image-20220805204104575.png">
+<meta property="og:image" content="http://example.com/2022/07/15/PBRT-%E9%87%87%E6%A0%B7%E5%92%8C%E9%87%8D%E5%BB%BA/image-20220805204237122.png">
+<meta property="og:image" content="http://example.com/2022/07/15/PBRT-%E9%87%87%E6%A0%B7%E5%92%8C%E9%87%8D%E5%BB%BA/image-20220805204327422.png">
+<meta property="og:image" content="http://example.com/2022/07/15/PBRT-%E9%87%87%E6%A0%B7%E5%92%8C%E9%87%8D%E5%BB%BA/image-20220805204500888.png">
+<meta property="og:image" content="http://example.com/2022/07/15/PBRT-%E9%87%87%E6%A0%B7%E5%92%8C%E9%87%8D%E5%BB%BA/image-20220805205156854.png">
+<meta property="og:image" content="http://example.com/2022/07/15/PBRT-%E9%87%87%E6%A0%B7%E5%92%8C%E9%87%8D%E5%BB%BA/image-20220805205428633.png">
+<meta property="og:image" content="http://example.com/2022/07/15/PBRT-%E9%87%87%E6%A0%B7%E5%92%8C%E9%87%8D%E5%BB%BA/image-20220712164554084.png">
+<meta property="og:image" content="http://example.com/2022/07/15/PBRT-%E9%87%87%E6%A0%B7%E5%92%8C%E9%87%8D%E5%BB%BA/image-20220712165437263.png">
+<meta property="og:image" content="http://example.com/2022/07/15/PBRT-%E9%87%87%E6%A0%B7%E5%92%8C%E9%87%8D%E5%BB%BA/image-20220712165534267.png">
+<meta property="og:image" content="http://example.com/2022/07/15/PBRT-%E9%87%87%E6%A0%B7%E5%92%8C%E9%87%8D%E5%BB%BA/image-20220712223514396.png">
+<meta property="og:image" content="http://example.com/2022/07/15/PBRT-%E9%87%87%E6%A0%B7%E5%92%8C%E9%87%8D%E5%BB%BA/image-20220712165955287.png">
+<meta property="og:image" content="http://example.com/2022/07/15/PBRT-%E9%87%87%E6%A0%B7%E5%92%8C%E9%87%8D%E5%BB%BA/image-20220712225759090.png">
+<meta property="og:image" content="http://example.com/2022/07/15/PBRT-%E9%87%87%E6%A0%B7%E5%92%8C%E9%87%8D%E5%BB%BA/image-20220712225850701.png">
+<meta property="article:published_time" content="2022-07-14T16:00:00.000Z">
+<meta property="article:modified_time" content="2023-01-10T13:14:04.317Z">
+<meta property="article:author" content="Chen Shuwen">
+<meta property="article:tag" content="CG">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://example.com/2022/07/15/PBRT-%E9%87%87%E6%A0%B7%E5%92%8C%E9%87%8D%E5%BB%BA/image-20220712100636304.png">
+  
+  
+  
+  <title>PBRT-采样和重建 - Chen Shuwen&#39;s Tech Site</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Chen Shuwen&#39;s Tech Site</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="PBRT-采样和重建"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2022-07-15 00:00" pubdate>
+          2022年7月15日 凌晨
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          6.1k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          51 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">PBRT-采样和重建</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="PBRT-采样和重建"><a href="#PBRT-采样和重建" class="headerlink" title="PBRT-采样和重建"></a>PBRT-采样和重建</h1><h2 id="理想采样和重建"><a href="#理想采样和重建" class="headerlink" title="理想采样和重建"></a>理想采样和重建</h2><p>采样和重建的过程可以概括为：</p>
+<p>连续时间信号$x(t)$ -&gt; 高采样率采样 -&gt; 离散时间信号$x[n]$ -&gt; 重建滤波，去除高频 -&gt; 连续时间信号$\tilde{x}(t)$ -&gt; 低采样率像素采样 -&gt; 最终离散时间像素值$\tilde{x}[n]$ </p>
+<p>使用脉冲列函数对原始图像采样：</p>
+<p><img src="/2022/07/15/PBRT-%E9%87%87%E6%A0%B7%E5%92%8C%E9%87%8D%E5%BB%BA/image-20220712100636304.png" srcset="/img/loading.gif" lazyload alt="image-20220712100636304"></p>
+<p><img src="/2022/07/15/PBRT-%E9%87%87%E6%A0%B7%E5%92%8C%E9%87%8D%E5%BB%BA/image-20220712100653700.png" srcset="/img/loading.gif" lazyload alt="image-20220712100653700"></p>
+<p>这些采样值可以用于通过选择重建过滤器函数$r(x)$并计算卷积来定义重建函数$\tilde{f}$</p>
+<p><img src="/2022/07/15/PBRT-%E9%87%87%E6%A0%B7%E5%92%8C%E9%87%8D%E5%BB%BA/image-20220712100812303.png" srcset="/img/loading.gif" lazyload alt="image-20220712100812303"></p>
+<p><img src="/2022/07/15/PBRT-%E9%87%87%E6%A0%B7%E5%92%8C%E9%87%8D%E5%BB%BA/image-20220712100825911.png" srcset="/img/loading.gif" lazyload alt="image-20220712100825911"></p>
+<p>选择理想滤波器box函数的定义为：</p>
+<p><img src="/2022/07/15/PBRT-%E9%87%87%E6%A0%B7%E5%92%8C%E9%87%8D%E5%BB%BA/image-20220712101136331.png" srcset="/img/loading.gif" lazyload alt="image-20220712101136331"></p>
+<p>在频域下，理想采样和重建可以用如下公式表述：</p>
+<p><img src="/2022/07/15/PBRT-%E9%87%87%E6%A0%B7%E5%92%8C%E9%87%8D%E5%BB%BA/image-20220712101216862.png" srcset="/img/loading.gif" lazyload alt="image-20220712101216862"></p>
+<p><img src="/2022/07/15/PBRT-%E9%87%87%E6%A0%B7%E5%92%8C%E9%87%8D%E5%BB%BA/image-20220712101301504.png" srcset="/img/loading.gif" lazyload alt="image-20220712101301504"></p>
+<h2 id="抗锯齿"><a href="#抗锯齿" class="headerlink" title="抗锯齿"></a>抗锯齿</h2><p>原始信号中的高频细节泄露到频谱的较低频率区域重建信号，这些新的低频伪像被称为<strong>锯齿(aliasing)</strong></p>
+<p><img src="/2022/07/15/PBRT-%E9%87%87%E6%A0%B7%E5%92%8C%E9%87%8D%E5%BB%BA/image-20220712090553607.png" srcset="/img/loading.gif" lazyload alt="image-20220712090553607"></p>
+<p>如上图，当采样率太低时，函数频谱的的副本重叠，导致在执行重建时产生锯齿</p>
+<h2 id="抗锯齿技术"><a href="#抗锯齿技术" class="headerlink" title="抗锯齿技术"></a>抗锯齿技术</h2><p>预锯齿：采样形成的伪像</p>
+<p>后锯齿：重建形成的伪像</p>
+<h3 id="非均匀采样"><a href="#非均匀采样" class="headerlink" title="非均匀采样"></a>非均匀采样</h3><p>可以通过以非均匀方式改变采样之间的间距来减少锯齿的视觉影响，令$\xi$ 表示0到1之间的随机数，则基于脉冲串的非均匀采样集为</p>
+<p><img src="/2022/07/15/PBRT-%E9%87%87%E6%A0%B7%E5%92%8C%E9%87%8D%E5%BB%BA/image-20220712091028454.png" srcset="/img/loading.gif" lazyload alt="image-20220712091028454"></p>
+<p>非均匀采样往往会将规则的锯齿伪像变成噪声，这对人类视觉系统的干扰较小。在频域空间中，采样信号的副本也会随机移位，这样在执行重建时，结果是随机误差而不是相干锯齿</p>
+<h3 id="自适应采样"><a href="#自适应采样" class="headerlink" title="自适应采样"></a>自适应采样</h3><p>如果可以识别频率高于Nyquist极限（信号中最大频率的两倍，即完美重建的最小采样频率）的信号区域，我们可以在这些区域采集额外的采样，而无需到处增加采样频率的计算费用。然而，找到所有需要超采样的地方是困难的</p>
+<h3 id="预过滤"><a href="#预过滤" class="headerlink" title="预过滤"></a>预过滤</h3><p>过滤（即模糊）原始函数，这样就不会保留在所使用的采样率下无法准确捕获的高频。过滤后的重建不再受到大量高频信号的干扰，因此在低频区域的重建效果要比直接重建要好。这也说明，只有先模糊后采样能够达到抗锯齿的效果</p>
+<h2 id="在图像合成中的应用"><a href="#在图像合成中的应用" class="headerlink" title="在图像合成中的应用"></a>在图像合成中的应用</h2><p>可以将图像视为$2D(x, y)$位置到辐射值$L$的函数：</p>
+<p><img src="/2022/07/15/PBRT-%E9%87%87%E6%A0%B7%E5%92%8C%E9%87%8D%E5%BB%BA/image-20220712092122464.png" srcset="/img/loading.gif" lazyload alt="image-20220712092122464"></p>
+<p>由于在采样之前，通常不可能对$f$进行预过滤以从中去除高频，因此可以采取另外两种策略：</p>
+<p>在最终图像中将采样率提高到超出基本像素间距</p>
+<p>使用非均匀分布采样以将锯齿转化为噪声</p>
+<p>对于特定图像的位置，该点的辐射通常会随着时间（如果场景中有移动物体）和镜头上的位置（如果相机具有有限光圈镜头）而变化，因此，场景函数还取决于时间$t$和$(u, v)$镜头位置</p>
+<p>若使用统计技术来估计沿给定光线的辐射度，当重复给定同一光线时，它们可能返回不同的辐射值，如果进一步扩展场景辐射函数以包括积分采样器使用的采样值，可以将其表示为更高维的图像函数：</p>
+<p><img src="/2022/07/15/PBRT-%E9%87%87%E6%A0%B7%E5%92%8C%E9%87%8D%E5%BB%BA/image-20220712093512656.png" srcset="/img/loading.gif" lazyload alt="image-20220712093512656"></p>
+<p>采样在每个维度上的分布和在不同维度上的分布都会影响到图像的质量。例如，如果能够确保图像$(x, y)$位置往往在镜头上具有不同的$(u, v)$位置，则生成的渲染图像将具有较小误差，因为每个采样更有可能考虑其相邻采样没有的场景信息</p>
+<h2 id="渲染中的锯齿来源"><a href="#渲染中的锯齿来源" class="headerlink" title="渲染中的锯齿来源"></a>渲染中的锯齿来源</h2><p>几何图形是渲染采样中出现锯齿最常见的原因之一。当几何物体投影到图像平面上时，对象的边界会形成阶跃函数，该函数具有无限的频率内容，使用完美的重建过滤器进行锯齿采样时会导致ringing伪像，这种效应称为Gibbs现象</p>
+<p><img src="/2022/07/15/PBRT-%E9%87%87%E6%A0%B7%E5%92%8C%E9%87%8D%E5%BB%BA/image-20220712095302167.png" srcset="/img/loading.gif" lazyload alt="image-20220712095302167"></p>
+<p>如上图，当阶跃函数使用sinc过滤器重建锯齿采样时，重建的函数将具有”ringing”伪像，它在真实函数周围震荡</p>
+<p>场景中非常小的对象也会导致几何锯齿。当几何体足够小时，它可能落在图像平面上的采样点之间而消失在图像上，或者在动画的多个帧中重新出现</p>
+<p>另一个锯齿来源可能来自对象的纹理和材质。未正确过滤的纹理贴图或闪亮表面上的小高光可能会导致着色锯齿，当采样率不足以对这些特征进行充分采样，就会导致锯齿。</p>
+<h2 id="像素"><a href="#像素" class="headerlink" title="像素"></a>像素</h2><p>构成图像的像素是图像平面上离散点处图像函数的点采样</p>
+<p>将连续坐标$c$截断为离散坐标$d$：<br>$$<br>d &#x3D; \lfloor c \rfloor<br>$$<br>将离散坐标转换为连续坐标：<br>$$<br>c &#x3D; d + 1&#x2F;2<br>$$<br>则离散范围$[x_0, x_1]$的连续坐标范围是$[x_0, x_1 + 1)$</p>
+<p><img src="/2022/07/15/PBRT-%E9%87%87%E6%A0%B7%E5%92%8C%E9%87%8D%E5%BB%BA/image-20220712101805788.png" srcset="/img/loading.gif" lazyload alt="image-20220712101805788"></p>
+<h2 id="评估采样模式：采样差异-Discrepancy"><a href="#评估采样模式：采样差异-Discrepancy" class="headerlink" title="评估采样模式：采样差异(Discrepancy)"></a>评估采样模式：采样差异(Discrepancy)</h2><p>差异(discrepancy)可用于计算n维采样位置模式(pattern)的质量，分布良好的模式具有低差异值，因此采样模式生成问题可以被认为是寻找合适的低差异点模式之一。</p>
+<p>差异的基本思想是，n维空间域$[0, 1)^n$中的一组点的质量可以通过该域的信息来计算：对每个区域内部的点进行计数，并将每个区域的容量与其内部的采样点数目进行比较。给定的容量比例应该和其中的采样点数的比例大致相同</p>
+<p><img src="/2022/07/15/PBRT-%E9%87%87%E6%A0%B7%E5%92%8C%E9%87%8D%E5%BB%BA/image-20220712103239528.png" srcset="/img/loading.gif" lazyload alt="image-20220712103239528"></p>
+<p>上图表示给定采样点的着色盒子的差异。其中，落在盒子区域的采样点比例为$1&#x2F;4$，盒子的容量为$0.3 \times 0.3 &#x3D; 0.09$，因此该特殊盒子的差异为$0.16$。通常，我们感兴趣的是找到所有可能的盒子(或其他形状)的最大差异来衡量采样的质量。</p>
+<p>一个感性的理解是，如果采样点较少，大容量盒子包含的采样点少，差异大；采样点分布不均匀，则在采样稀疏的地方，大盒子包含少量采样点，在采样密集的地方，小盒子包含大量采样点，都会导致差异增大</p>
+<p>为了计算一组点的差异，可以选择一组形状$B$，它们是$[0, 1)^n$的子集，如选择形状为盒子，且限定其一个角落在原点，则有</p>
+<p><img src="/2022/07/15/PBRT-%E9%87%87%E6%A0%B7%E5%92%8C%E9%87%8D%E5%BB%BA/image-20220712104446339.png" srcset="/img/loading.gif" lazyload alt="image-20220712104446339"></p>
+<p>其中$0 \leq v_i &lt; 1$，给定采样点序列$P &#x3D; x_1, …, x_N$，则$P$相对于$B$的差异是</p>
+<p><img src="/2022/07/15/PBRT-%E9%87%87%E6%A0%B7%E5%92%8C%E9%87%8D%E5%BB%BA/image-20220712104557273.png" srcset="/img/loading.gif" lazyload alt="image-20220712104557273"></p>
+<p>其中，$#{x_i \in b}$表示在形状$b$中的采样点的个数，$V(b)$表示$b$的容量</p>
+<p>当形状集合$B$是角落在原点的盒子时，该值被称为带星差异$D^*_N(P)$</p>
+<p>考虑一维点集</p>
+<p><img src="/2022/07/15/PBRT-%E9%87%87%E6%A0%B7%E5%92%8C%E9%87%8D%E5%BB%BA/image-20220712105448101.png" srcset="/img/loading.gif" lazyload alt="image-20220712105448101"></p>
+<p>此时$x_i$的星差为</p>
+<p><img src="/2022/07/15/PBRT-%E9%87%87%E6%A0%B7%E5%92%8C%E9%87%8D%E5%BB%BA/image-20220712105516577.png" srcset="/img/loading.gif" lazyload alt="image-20220712105516577"></p>
+<p>例如，当$b$为$[0, 3&#x2F;2N)$时，仅包含采样点$x_1$，则$D &#x3D; 3&#x2F;2N - 1&#x2F;N &#x3D; 1&#x2F;2N$</p>
+<p>一维中一系列点的星形差异的边界已经被证明为</p>
+<p><img src="/2022/07/15/PBRT-%E9%87%87%E6%A0%B7%E5%92%8C%E9%87%8D%E5%BB%BA/image-20220712105720214-7594641.png" srcset="/img/loading.gif" lazyload alt="image-20220712105720214"></p>
+<p>根据低差异度量，1D中的这种均匀序列是最佳的，这不利于不规则抖动模式产生噪声。幸运的是，更高维度的低差异模式远不如一维的均匀，换句话说，高维情况下具有伪随机变化的模式相对于均匀模式具有更低的差异性，这有利于我们使用随机采样。</p>
+<p>最小距离模式：计算一组点中任意两个采样点之间的最小距离也可以被用来度量采样模式的质量。这有助于弥补差异度量的弊端：一些低差异点集表现出一些采样聚集，这些过近的采样点提供有用信息的可能性更小</p>
+<p>泊松盘模式：该模式下，没有两个点比某个距离$d$更近。该模式对于$2D$图像采样非常有效，但是在更复杂的渲染情况下进行高维采样时不如更好的低差异模式有效</p>
+<h2 id="图像采样"><a href="#图像采样" class="headerlink" title="图像采样"></a>图像采样</h2><h3 id="分层采样"><a href="#分层采样" class="headerlink" title="分层采样"></a>分层采样</h3><p>分层采样将像素区域细分为矩形区域，并在每个区域内生成单个采样，这些区域被称为层(strata)</p>
+<p>分层背后的关键思想是，通过将采样区域细分为互不重叠的区域并从每个区域中抽取一个采样，我们不太可能完全错过图像的重要特征，大部分情况下，它们不会全部挤在像素的某个角落。从信号处理的角度看，我们隐式地定义了一个整体采样率，即层越小，拥有的层越多，采样率越高</p>
+<p>分层采样器通过将层的中心点随机抖动到层宽度和高度的一半，将每个采样放置在层内的随机点，这种抖动导致的非均匀性有助于将锯齿转化为噪声</p>
+<p>直接将分层应用于高维采样会导致维度灾难，例如在五个维度上各分四层采样，此时每一层的每一次采样都要生成一个采样点，则每个像素的采样总数为$4^5 &#x3D; 1024$。一种解决办法是，我们可能希望每个像素只取4个采样，但是仍然要在所有维度上对采样进行分层，即独立地生成4个二维分层图像采样、4个一维分层时间采样和4个二维分层镜头采样，然后我们随机地讲时间和镜头采样值与每个图像采样相关联，结果是每个像素都有采样，这些采样一起具有良好的采样空间覆盖。下图展示了独立采样和相互关联的一个例子：</p>
+<p><img src="/2022/07/15/PBRT-%E9%87%87%E6%A0%B7%E5%92%8C%E9%87%8D%E5%BB%BA/image-20220712113739902.png" srcset="/img/loading.gif" lazyload alt="image-20220712113739902"></p>
+<p><strong>分层采样的局限性</strong></p>
+<p>采样数组存在的问题：</p>
+<p>数组中的采样本身最好在2D中分布良好，这里的分层将提高每个单独采样向量的计算结果的质量</p>
+<p>最好确保一个图像采样的数组中的每个采样与图像附近采样的任何采样值不太相似。相反，我们希望这些点相对于它们的邻居分布得很好，这样在单个像素周围的区域上，整个采样空间都有很好的覆盖</p>
+<p>若要求每个图像有任意数量的采样数，可以只生成$n \times 1$或$1 \times n$的分层模式，但这样不能保证另一个维度的良好模式</p>
+<p><strong>拉丁超立方体采样(LHS)</strong></p>
+<p>LHS可以生成任意数量维度的采样，并且具有相当好的分布</p>
+<p>LHS将每个维度的轴均匀划分成$n$个区域，并在每个$n$区域沿着对角线生成抖动采样，然后这些采样在每个维度上随机打乱，创建一个分布良好的模式</p>
+<p><img src="/2022/07/15/PBRT-%E9%87%87%E6%A0%B7%E5%92%8C%E9%87%8D%E5%BB%BA/image-20220712160321093.png" srcset="/img/loading.gif" lazyload alt="image-20220712160321093"></p>
+<p>如上图，LHS选择的采样使得网格的每行和每列中仅存在一个样本。LHS可以通过沿着对角线在单元格中生成随机采样，然后随机排列它们的坐标来完成</p>
+<p>并且，当样本投影到采样尺寸的任何轴上时，它可以最大限度地减少样本聚集。例如，分层采样时可能将点投影到某个轴的附近</p>
+<p><img src="/2022/07/15/PBRT-%E9%87%87%E6%A0%B7%E5%92%8C%E9%87%8D%E5%BB%BA/image-20220712160752598.png" srcset="/img/loading.gif" lazyload alt="image-20220712160752598"></p>
+<p>LHS的弊端在于，它很容易导致采样点共线，且大面积采样域附近没有采样，例如，当原始采样的排列唯一时，它们将全部留在开始的地方。随着$n$的增加，LHS的效果会越来越差</p>
+<h3 id="Halton采样"><a href="#Halton采样" class="headerlink" title="Halton采样"></a>Halton采样</h3><p>Halton算法基于直接生成低差异点集的算法，它不仅保证生成的点不会聚集在一起太近，而且生成同时在采样向量的所有维度上分布良好的点</p>
+<h4 id="Hammersley和Halton序列"><a href="#Hammersley和Halton序列" class="headerlink" title="Hammersley和Halton序列"></a>Hammersley和Halton序列</h4><p>Halton和Hammersley序列是两个密切相关的低差异点集，两者都基于radical inverse构造</p>
+<p><strong>radical inversion</strong></p>
+<p>对于正整数a, 他可以表示为基数为b的数字序列：</p>
+<p><img src="/2022/07/15/PBRT-%E9%87%87%E6%A0%B7%E5%92%8C%E9%87%8D%E5%BB%BA/image-20220805202438221.png" srcset="/img/loading.gif" lazyload alt="image-20220805202438221"></p>
+<p>其中$d_i(a)$的范围是$[0, b - 1]$</p>
+<p>基数b的radical inverse函数$\Phi_b(a)$通过反映关于小数点的这些数字，将非负整数a转化为$[0, 1)$中的小数：</p>
+<p><img src="/2022/07/15/PBRT-%E9%87%87%E6%A0%B7%E5%92%8C%E9%87%8D%E5%BB%BA/image-20220805202624002.png" srcset="/img/loading.gif" lazyload alt="image-20220805202624002"></p>
+<p>因此，数字$d_i(a)$对radical inverse的贡献是$d_i(a)&#x2F;b^i$</p>
+<p><strong>van der Corput序列</strong></p>
+<p>该序列是最简单的低差异序列之一，它是由基数为2的radical inverse函数给出的一维序列</p>
+<p><img src="/2022/07/15/PBRT-%E9%87%87%E6%A0%B7%E5%92%8C%E9%87%8D%E5%BB%BA/image-20220805202809281.png" srcset="/img/loading.gif" lazyload alt="image-20220805202809281"></p>
+<p>序列的部分例子如下，注意Base和$\Phi$都是二进制的值</p>
+<p><img src="/2022/07/15/PBRT-%E9%87%87%E6%A0%B7%E5%92%8C%E9%87%8D%E5%BB%BA/image-20220805203250598.png" srcset="/img/loading.gif" lazyload alt="image-20220805203250598"></p>
+<p>注意序列间的值尽量保证合理良好的最小距离</p>
+<p>该序列的差异是</p>
+<p><img src="/2022/07/15/PBRT-%E9%87%87%E6%A0%B7%E5%92%8C%E9%87%8D%E5%BB%BA/image-20220805203422430.png" srcset="/img/loading.gif" lazyload alt="image-20220805203422430"></p>
+<p>它与$n$维中的无限差异序列获得的最佳差异相匹配</p>
+<p><img src="/2022/07/15/PBRT-%E9%87%87%E6%A0%B7%E5%92%8C%E9%87%8D%E5%BB%BA/image-20220805203500064.png" srcset="/img/loading.gif" lazyload alt="image-20220805203500064"></p>
+<p>为了在n维Halton序列中生成点，可以对于每个模式的维度都设置不同的基b，基必须彼此互质，否则两个序列间具有相关性，表现出来的就是n维采样时坐标间的相关性，比如生成对角线分布的采样点</p>
+<p>选择使用前n个质数作为基，得到Halton序列</p>
+<p><img src="/2022/07/15/PBRT-%E9%87%87%E6%A0%B7%E5%92%8C%E9%87%8D%E5%BB%BA/image-20220805204104575.png" srcset="/img/loading.gif" lazyload alt="image-20220805204104575"></p>
+<p>Halton序列最有用的特性之一是，即使事先不知道所需要的采样数也可以使用它，序列的所有前缀均分布良好，因此在向序列中添加额外采样时，将依然保持低差异</p>
+<p>n维Halton序列的差异是</p>
+<p><img src="/2022/07/15/PBRT-%E9%87%87%E6%A0%B7%E5%92%8C%E9%87%8D%E5%BB%BA/image-20220805204237122.png" srcset="/img/loading.gif" lazyload alt="image-20220805204237122"></p>
+<p>该结果渐进最优</p>
+<p>如果采样数N固定，则可以使用Hammersley点集，从而使差异稍微降低，该点集定义为</p>
+<p><img src="/2022/07/15/PBRT-%E9%87%87%E6%A0%B7%E5%92%8C%E9%87%8D%E5%BB%BA/image-20220805204327422.png" srcset="/img/loading.gif" lazyload alt="image-20220805204327422"></p>
+<p>其中N是采样总数，$b_i$都是素数，下图分别显示了Halton序列的前216个点和Hammersley序列的前256个点</p>
+<p><img src="/2022/07/15/PBRT-%E9%87%87%E6%A0%B7%E5%92%8C%E9%87%8D%E5%BB%BA/image-20220805204500888.png" srcset="/img/loading.gif" lazyload alt="image-20220805204500888"></p>
+<p>Hammersley和Halton序列的缺点是，随着基数b的增加，采样值和b也会越接近，此时采样值会出现明显的规律，该问题可以使用加扰动的Halton和Hammersley序列来解决，其中在计算radical inverse时对数字应用置换：</p>
+<p><img src="/2022/07/15/PBRT-%E9%87%87%E6%A0%B7%E5%92%8C%E9%87%8D%E5%BB%BA/image-20220805205156854.png" srcset="/img/loading.gif" lazyload alt="image-20220805205156854"></p>
+<p>其中p是$(0, 1, …, b - 1)$的一个排列数，注意，对于每个数字a都使用相同的排列作用于给定基数b的所有采样点</p>
+<p>Halton序列的对比结果如下，选取的是$(\Phi_{29}(a), \Phi_{31}(a))$</p>
+<p><img src="/2022/07/15/PBRT-%E9%87%87%E6%A0%B7%E5%92%8C%E9%87%8D%E5%BB%BA/image-20220805205428633.png" srcset="/img/loading.gif" lazyload alt="image-20220805205428633"></p>
+<p>该部分还可参考文章：</p>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/20197323">https://zhuanlan.zhihu.com/p/20197323</a></p>
+<h3 id="0-2-序列采样"><a href="#0-2-序列采样" class="headerlink" title="(0, 2)序列采样"></a>(0, 2)序列采样</h3><p>该方法利用了某些低差异序列的显著特性，它使得我们能够满足采样的两个理想特性：为像素值的图像样本生成样本向量，使得每个像素采样的采样值相对彼此良好分布，同时使得像素中所有像素采样的采样值的集合整体良好分布</p>
+<h3 id="最大化最小距离采样"><a href="#最大化最小距离采样" class="headerlink" title="最大化最小距离采样"></a>最大化最小距离采样</h3><p>该方法使用一对不同的生成器矩阵，它们不仅生成(0, 2)序列，而且还专门设计用于最大化采样之间的距离</p>
+<h3 id="Sobol采样"><a href="#Sobol采样" class="headerlink" title="Sobol采样"></a>Sobol采样</h3><p>Sobol采样器基于$Sobol^{‘}$ 的一系列生成器矩阵，这些矩阵生成的序列对应的样本在生成效率和实现上都非常出色，它完全基于基数2计算，同时在采样向量的所有$n$个维度上分布良好</p>
+<p>该算法的弊端是，它们在收敛之前容易出现结构网格伪像</p>
+<h2 id="图像重建"><a href="#图像重建" class="headerlink" title="图像重建"></a>图像重建</h2><p>给定精心选择的图像采样，我们需要将采样及其计算出的辐射值转换为像素值以供显示或存储。通过以下步骤计算输出图像中每个像素的最终值：</p>
+<ol>
+<li>从图像采样集合重建一个连续的图像函数$\tilde{L}$</li>
+<li>对函数$\tilde{L}$进行预过滤，以去除像素间距超过Nyquist极限的任何频率</li>
+<li>在像素位置采样$\tilde{L}$以计算最终像素值</li>
+</ol>
+<p>其中，前两个步骤可以通过单个过滤器函数组合起来，没有必要显式表达连续图像函数</p>
+<p>为了重建像素值，考虑在特定像素附近插入采样的问题，为了计算像素$I(x, y)$的最终值，插值会导致计算加权平均值</p>
+<p><img src="/2022/07/15/PBRT-%E9%87%87%E6%A0%B7%E5%92%8C%E9%87%8D%E5%BB%BA/image-20220712164554084.png" srcset="/img/loading.gif" lazyload alt="image-20220712164554084"></p>
+<p>其中：</p>
+<p>$L(x_i, y_i)$是位于$(x_i, y_i)$的第$i$个采样的辐射值</p>
+<p>$w(x_i, y_i)$是$Camera$返回的采样贡献权重，计算这些权重的方式决定了胶片测量的辐射量</p>
+<p>$f$是过滤函数，和像素点到采样点的距离有关</p>
+<h3 id="Box过滤器"><a href="#Box过滤器" class="headerlink" title="Box过滤器"></a>Box过滤器</h3><p>box过滤器对图像正方形区域内的所有采样进行同等加权，效率高，效果差，可能导致后锯齿(重建过程中产生的伪像)</p>
+<p><img src="/2022/07/15/PBRT-%E9%87%87%E6%A0%B7%E5%92%8C%E9%87%8D%E5%BB%BA/image-20220712165437263.png" srcset="/img/loading.gif" lazyload alt="image-20220712165437263"></p>
+<h3 id="三角过滤器"><a href="#三角过滤器" class="headerlink" title="三角过滤器"></a>三角过滤器</h3><p>权重在过滤器的方形范围内从过滤器中心线性下降</p>
+<p><img src="/2022/07/15/PBRT-%E9%87%87%E6%A0%B7%E5%92%8C%E9%87%8D%E5%BB%BA/image-20220712165534267.png" srcset="/img/loading.gif" lazyload alt="image-20220712165534267"></p>
+<h3 id="Gaussian过滤器"><a href="#Gaussian过滤器" class="headerlink" title="Gaussian过滤器"></a>Gaussian过滤器</h3><p>此过滤器应用以像素为中心并且围绕其镜像对称的高斯凹凸，从过滤器中减去其范围末尾的高斯值，以使其在极限处变为0。高斯过滤器会导致轻微模糊，但这可以帮助掩盖图像中任何剩余的锯齿</p>
+<p>半径为$r$的一维高斯滤波函数为</p>
+<p><img src="/2022/07/15/PBRT-%E9%87%87%E6%A0%B7%E5%92%8C%E9%87%8D%E5%BB%BA/image-20220712223514396.png" srcset="/img/loading.gif" lazyload alt="image-20220712223514396"></p>
+<p>其中，$\alpha$控制过滤器的衰减率，值越小，衰减越慢，图像越模糊。第二项保证高斯函数在其范围结束时为0，而不是突然出现下降</p>
+<h3 id="Mitchell过滤器"><a href="#Mitchell过滤器" class="headerlink" title="Mitchell过滤器"></a>Mitchell过滤器</h3><p>该过滤器倾向于在ringing(图像中实际边缘旁边的幻觉边缘)和模糊(主要是过度模糊)之间进行权衡，这两者也是来自效果较差的重建过滤器产生的两种常见伪像</p>
+<p>在实践中，Mitchell过滤器的负瓣提高了边缘的清晰度，然而，如果它们变得太大，ringing往往开始进入图像，此外，由于最终像素值可能因此变为负值，因此最终需要将其限制在合法的输出范围内</p>
+<p><img src="/2022/07/15/PBRT-%E9%87%87%E6%A0%B7%E5%92%8C%E9%87%8D%E5%BB%BA/image-20220712165955287.png" srcset="/img/loading.gif" lazyload alt="image-20220712165955287"></p>
+<p>如上图，左边为高斯过滤器，右边为Mitchell过滤器，高斯过滤器给出的图像往往有些模糊，而Mitchell过滤器的负瓣有助于突出和锐化最终图像的边缘</p>
+<h3 id="Windowed-Sinc过滤器"><a href="#Windowed-Sinc过滤器" class="headerlink" title="Windowed Sinc过滤器"></a>Windowed Sinc过滤器</h3><p>该过滤器的其中一部分是sinc函数的变体，它会在一段距离后变为0，附加参数$\tau$控制sinc函数在被截取(clamp)到0之前经过的周期数；另一部分是Lanczos窗口函数，Lanczos窗口只是sinc函数的中心瓣，通过缩放来覆盖$\tau$ 周期：</p>
+<p><img src="/2022/07/15/PBRT-%E9%87%87%E6%A0%B7%E5%92%8C%E9%87%8D%E5%BB%BA/image-20220712225759090.png" srcset="/img/loading.gif" lazyload alt="image-20220712225759090"></p>
+<p><img src="/2022/07/15/PBRT-%E9%87%87%E6%A0%B7%E5%92%8C%E9%87%8D%E5%BB%BA/image-20220712225850701.png" srcset="/img/loading.gif" lazyload alt="image-20220712225850701"></p>
+<p>左图为截断的sinc函数和Lanczos窗口函数，右图为两个函数的乘积</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/CG/" class="category-chain-item">CG</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/CG/">#CG</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>PBRT-采样和重建</div>
+      <div>http://example.com/2022/07/15/PBRT-采样和重建/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Chen Shuwen</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2022年7月15日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2022/07/16/PBRT-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B/" title="PBRT-反射模型">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">PBRT-反射模型</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2022/07/14/PBRT-%E9%87%87%E6%A0%B7%E5%89%8D%E7%BD%AE%E7%9F%A5%E8%AF%86/" title="PBRT-采样前置知识">
+                        <span class="hidden-mobile">PBRT-采样前置知识</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

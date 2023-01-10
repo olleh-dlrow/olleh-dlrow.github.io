@@ -1,0 +1,894 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Chen Shuwen">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="PBRT-辐射度量学概述辐射度量学是对辐射能量传递的现象学研究，假设几何光学(geometric optics)是描述光和光散射的合适模型，这引申出一些关于光行为的基本假设：  线性：光学系统的两个输入的组合效果等于每个单独输入效果的总和  能量守恒：当光从表面或参与介质散射时，散射事件永远不会产生比开始时更多的能量  无极化：忽略电磁场的极化，因此，光的唯一相关属性是按照波长(或频率)的分布">
+<meta property="og:type" content="article">
+<meta property="og:title" content="PBRT-辐射度量学">
+<meta property="og:url" content="http://example.com/2022/07/13/PBRT-%E8%BE%90%E5%B0%84%E5%BA%A6%E9%87%8F%E5%AD%A6/index.html">
+<meta property="og:site_name" content="Chen Shuwen&#39;s Tech Site">
+<meta property="og:description" content="PBRT-辐射度量学概述辐射度量学是对辐射能量传递的现象学研究，假设几何光学(geometric optics)是描述光和光散射的合适模型，这引申出一些关于光行为的基本假设：  线性：光学系统的两个输入的组合效果等于每个单独输入效果的总和  能量守恒：当光从表面或参与介质散射时，散射事件永远不会产生比开始时更多的能量  无极化：忽略电磁场的极化，因此，光的唯一相关属性是按照波长(或频率)的分布">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2022/07/13/PBRT-%E8%BE%90%E5%B0%84%E5%BA%A6%E9%87%8F%E5%AD%A6/image-20220703121631858.png">
+<meta property="og:image" content="http://example.com/2022/07/13/PBRT-%E8%BE%90%E5%B0%84%E5%BA%A6%E9%87%8F%E5%AD%A6/image-20220703122116769.png">
+<meta property="og:image" content="http://example.com/2022/07/13/PBRT-%E8%BE%90%E5%B0%84%E5%BA%A6%E9%87%8F%E5%AD%A6/image-20220703122451893.png">
+<meta property="og:image" content="http://example.com/2022/07/13/PBRT-%E8%BE%90%E5%B0%84%E5%BA%A6%E9%87%8F%E5%AD%A6/image-20220703133655140.png">
+<meta property="og:image" content="http://example.com/2022/07/13/PBRT-%E8%BE%90%E5%B0%84%E5%BA%A6%E9%87%8F%E5%AD%A6/image-20220703133748372.png">
+<meta property="og:image" content="http://example.com/2022/07/13/PBRT-%E8%BE%90%E5%B0%84%E5%BA%A6%E9%87%8F%E5%AD%A6/image-20220703134022262.png">
+<meta property="og:image" content="http://example.com/2022/07/13/PBRT-%E8%BE%90%E5%B0%84%E5%BA%A6%E9%87%8F%E5%AD%A6/image-20220703134438343.png">
+<meta property="og:image" content="http://example.com/2022/07/13/PBRT-%E8%BE%90%E5%B0%84%E5%BA%A6%E9%87%8F%E5%AD%A6/image-20220703134516094.png">
+<meta property="og:image" content="http://example.com/2022/07/13/PBRT-%E8%BE%90%E5%B0%84%E5%BA%A6%E9%87%8F%E5%AD%A6/image-20220703135150876.png">
+<meta property="og:image" content="http://example.com/2022/07/13/PBRT-%E8%BE%90%E5%B0%84%E5%BA%A6%E9%87%8F%E5%AD%A6/image-20220703135454437.png">
+<meta property="og:image" content="http://example.com/2022/07/13/PBRT-%E8%BE%90%E5%B0%84%E5%BA%A6%E9%87%8F%E5%AD%A6/image-20220703141013497.png">
+<meta property="og:image" content="http://example.com/2022/07/13/PBRT-%E8%BE%90%E5%B0%84%E5%BA%A6%E9%87%8F%E5%AD%A6/image-20220703141131215.png">
+<meta property="og:image" content="http://example.com/2022/07/13/PBRT-%E8%BE%90%E5%B0%84%E5%BA%A6%E9%87%8F%E5%AD%A6/image-20220703141527384.png">
+<meta property="og:image" content="http://example.com/2022/07/13/PBRT-%E8%BE%90%E5%B0%84%E5%BA%A6%E9%87%8F%E5%AD%A6/image-20220703142028432.png">
+<meta property="og:image" content="http://example.com/2022/07/13/PBRT-%E8%BE%90%E5%B0%84%E5%BA%A6%E9%87%8F%E5%AD%A6/image-20220703142445640.png">
+<meta property="og:image" content="http://example.com/2022/07/13/PBRT-%E8%BE%90%E5%B0%84%E5%BA%A6%E9%87%8F%E5%AD%A6/image-20220703142900072.png">
+<meta property="og:image" content="http://example.com/2022/07/13/PBRT-%E8%BE%90%E5%B0%84%E5%BA%A6%E9%87%8F%E5%AD%A6/image-20220703144752653.png">
+<meta property="og:image" content="http://example.com/2022/07/13/PBRT-%E8%BE%90%E5%B0%84%E5%BA%A6%E9%87%8F%E5%AD%A6/image-20220703144837046.png">
+<meta property="og:image" content="http://example.com/2022/07/13/PBRT-%E8%BE%90%E5%B0%84%E5%BA%A6%E9%87%8F%E5%AD%A6/image-20220703145902417.png">
+<meta property="og:image" content="http://example.com/2022/07/13/PBRT-%E8%BE%90%E5%B0%84%E5%BA%A6%E9%87%8F%E5%AD%A6/image-20220703150027546.png">
+<meta property="og:image" content="http://example.com/2022/07/13/PBRT-%E8%BE%90%E5%B0%84%E5%BA%A6%E9%87%8F%E5%AD%A6/image-20220703152353711.png">
+<meta property="og:image" content="http://example.com/2022/07/13/PBRT-%E8%BE%90%E5%B0%84%E5%BA%A6%E9%87%8F%E5%AD%A6/image-20220703152653085.png">
+<meta property="og:image" content="http://example.com/2022/07/13/PBRT-%E8%BE%90%E5%B0%84%E5%BA%A6%E9%87%8F%E5%AD%A6/image-20220703152737061.png">
+<meta property="og:image" content="http://example.com/2022/07/13/PBRT-%E8%BE%90%E5%B0%84%E5%BA%A6%E9%87%8F%E5%AD%A6/image-20220703153213813.png">
+<meta property="og:image" content="http://example.com/2022/07/13/PBRT-%E8%BE%90%E5%B0%84%E5%BA%A6%E9%87%8F%E5%AD%A6/image-20220703155345346.png">
+<meta property="og:image" content="http://example.com/2022/07/13/PBRT-%E8%BE%90%E5%B0%84%E5%BA%A6%E9%87%8F%E5%AD%A6/image-20220703155818477.png">
+<meta property="og:image" content="http://example.com/2022/07/13/PBRT-%E8%BE%90%E5%B0%84%E5%BA%A6%E9%87%8F%E5%AD%A6/image-20220703155923039.png">
+<meta property="og:image" content="http://example.com/2022/07/13/PBRT-%E8%BE%90%E5%B0%84%E5%BA%A6%E9%87%8F%E5%AD%A6/image-20220703160330231.png">
+<meta property="og:image" content="http://example.com/2022/07/13/PBRT-%E8%BE%90%E5%B0%84%E5%BA%A6%E9%87%8F%E5%AD%A6/image-20220703160514874.png">
+<meta property="og:image" content="http://example.com/2022/07/13/PBRT-%E8%BE%90%E5%B0%84%E5%BA%A6%E9%87%8F%E5%AD%A6/image-20220703160815860.png">
+<meta property="og:image" content="http://example.com/2022/07/13/PBRT-%E8%BE%90%E5%B0%84%E5%BA%A6%E9%87%8F%E5%AD%A6/image-20220703160830417.png">
+<meta property="og:image" content="http://example.com/2022/07/13/PBRT-%E8%BE%90%E5%B0%84%E5%BA%A6%E9%87%8F%E5%AD%A6/image-20220703160919500.png">
+<meta property="og:image" content="http://example.com/2022/07/13/PBRT-%E8%BE%90%E5%B0%84%E5%BA%A6%E9%87%8F%E5%AD%A6/image-20220703160942798.png">
+<meta property="og:image" content="http://example.com/2022/07/13/PBRT-%E8%BE%90%E5%B0%84%E5%BA%A6%E9%87%8F%E5%AD%A6/image-20220703161641814.png">
+<meta property="og:image" content="http://example.com/2022/07/13/PBRT-%E8%BE%90%E5%B0%84%E5%BA%A6%E9%87%8F%E5%AD%A6/image-20220703163240560.png">
+<meta property="og:image" content="http://example.com/2022/07/13/PBRT-%E8%BE%90%E5%B0%84%E5%BA%A6%E9%87%8F%E5%AD%A6/image-20220703164240627.png">
+<meta property="og:image" content="http://example.com/2022/07/13/PBRT-%E8%BE%90%E5%B0%84%E5%BA%A6%E9%87%8F%E5%AD%A6/image-20220703164254749.png">
+<meta property="og:image" content="http://example.com/2022/07/13/PBRT-%E8%BE%90%E5%B0%84%E5%BA%A6%E9%87%8F%E5%AD%A6/image-20220703165218050.png">
+<meta property="og:image" content="http://example.com/2022/07/13/PBRT-%E8%BE%90%E5%B0%84%E5%BA%A6%E9%87%8F%E5%AD%A6/image-20220703171943374.png">
+<meta property="og:image" content="http://example.com/2022/07/13/PBRT-%E8%BE%90%E5%B0%84%E5%BA%A6%E9%87%8F%E5%AD%A6/image-20220703172341460.png">
+<meta property="og:image" content="http://example.com/2022/07/13/PBRT-%E8%BE%90%E5%B0%84%E5%BA%A6%E9%87%8F%E5%AD%A6/image-20220703172504235.png">
+<meta property="og:image" content="http://example.com/2022/07/13/PBRT-%E8%BE%90%E5%B0%84%E5%BA%A6%E9%87%8F%E5%AD%A6/image-20220703172630681.png">
+<meta property="og:image" content="http://example.com/2022/07/13/PBRT-%E8%BE%90%E5%B0%84%E5%BA%A6%E9%87%8F%E5%AD%A6/image-20220703173137690.png">
+<meta property="og:image" content="http://example.com/2022/07/13/PBRT-%E8%BE%90%E5%B0%84%E5%BA%A6%E9%87%8F%E5%AD%A6/image-20220703173508264.png">
+<meta property="og:image" content="http://example.com/2022/07/13/PBRT-%E8%BE%90%E5%B0%84%E5%BA%A6%E9%87%8F%E5%AD%A6/image-20220703173819880.png">
+<meta property="og:image" content="http://example.com/2022/07/13/PBRT-%E8%BE%90%E5%B0%84%E5%BA%A6%E9%87%8F%E5%AD%A6/image-20220703174353181.png">
+<meta property="og:image" content="http://example.com/2022/07/13/PBRT-%E8%BE%90%E5%B0%84%E5%BA%A6%E9%87%8F%E5%AD%A6/image-20220703184721537.png">
+<meta property="article:published_time" content="2022-07-12T16:00:00.000Z">
+<meta property="article:modified_time" content="2023-01-10T13:13:43.451Z">
+<meta property="article:author" content="Chen Shuwen">
+<meta property="article:tag" content="CG">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://example.com/2022/07/13/PBRT-%E8%BE%90%E5%B0%84%E5%BA%A6%E9%87%8F%E5%AD%A6/image-20220703121631858.png">
+  
+  
+  
+  <title>PBRT-辐射度量学 - Chen Shuwen&#39;s Tech Site</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Chen Shuwen&#39;s Tech Site</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="PBRT-辐射度量学"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2022-07-13 00:00" pubdate>
+          2022年7月13日 凌晨
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          5.9k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          50 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">PBRT-辐射度量学</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="PBRT-辐射度量学"><a href="#PBRT-辐射度量学" class="headerlink" title="PBRT-辐射度量学"></a>PBRT-辐射度量学</h1><h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>辐射度量学是对辐射能量传递的现象学研究，假设几何光学(geometric optics)是描述光和光散射的合适模型，这引申出一些关于光行为的基本假设：</p>
+<ul>
+<li><p>线性：光学系统的两个输入的组合效果等于每个单独输入效果的总和</p>
+</li>
+<li><p>能量守恒：当光从表面或参与介质散射时，散射事件永远不会产生比开始时更多的能量</p>
+</li>
+<li><p>无极化：忽略电磁场的极化，因此，光的唯一相关属性是按照波长(或频率)的分布</p>
+</li>
+<li><p>无荧光或磷光：</p>
+<p>  荧光是指物体吸收其他不可见波长的辐射时进入激发态，并且退激发并发出出射光，持续时间短，注意该定义与一般情况下定义的微弱的光亮有区别</p>
+<p>  磷光是指轰击辐射停止后持续存在的荧光</p>
+<p>  无荧光或磷光是指一个波长的光行为完全独立于其他波长或时间的光行为。与极化一样，包含这些影响并不困难，但是他们对系统的实用价值相对较小</p>
+</li>
+<li><p>稳态：假设环境中的光已经达到平衡，因此其辐射分布不会随着时间变化，现实场景中，这几乎是在光线下瞬间发生的，因此在实践中不受限制，磷光违反稳态假设</p>
+</li>
+<li><p>采用几何光学模型无法考虑衍射和干涉效应</p>
+</li>
+</ul>
+<h2 id="基本量"><a href="#基本量" class="headerlink" title="基本量"></a>基本量</h2><p>渲染核心的四个辐射量：通量(flux)、辐照度(irradiance)或辐射出射度(radiant exitance)、强度(intensity)和辐射度(radiance)。它们都可以通过在时间、面积和方向上依次取极限来从能量中导出。所有这些辐射量一般都依赖于波长</p>
+<h3 id="能量-Energy"><a href="#能量-Energy" class="headerlink" title="能量(Energy)"></a>能量(Energy)</h3><p>单位：焦耳($J$)</p>
+<p>照明源发射光子，每个光子都处于特定波长，并且携带特定数量的能量。所有基本的辐射量都是测量光子的有效方法，波长为$\lambda$ 的光子携带能量为：</p>
+<p><img src="/2022/07/13/PBRT-%E8%BE%90%E5%B0%84%E5%BA%A6%E9%87%8F%E5%AD%A6/image-20220703121631858.png" srcset="/img/loading.gif" lazyload alt="image-20220703121631858"></p>
+<p>$c$是光速，$299,472,458m&#x2F;s$，$h$是普朗克常数，$h \approx 6.626 \times 10^{-34} m^2 kg &#x2F; s $</p>
+<h3 id="通量-Flux"><a href="#通量-Flux" class="headerlink" title="通量(Flux)"></a>通量(Flux)</h3><p>单位：焦耳&#x2F;秒($J&#x2F;s$)或瓦特($W$)</p>
+<p>辐射通量，也称为功率，是单位时间内通过表面区域或空间区域的总能量。辐射通量可以通过对每个微分时间的微分能量的极限求得：</p>
+<p><img src="/2022/07/13/PBRT-%E8%BE%90%E5%B0%84%E5%BA%A6%E9%87%8F%E5%AD%A6/image-20220703122116769.png" srcset="/img/loading.gif" lazyload alt="image-20220703122116769"></p>
+<p>相反，给定作为时间函数的通量，我们可以对一系列时间进行积分以计算总能量：</p>
+<p><img src="/2022/07/13/PBRT-%E8%BE%90%E5%B0%84%E5%BA%A6%E9%87%8F%E5%AD%A6/image-20220703122451893.png" srcset="/img/loading.gif" lazyload alt="image-20220703122451893"></p>
+<p>光源的总发射量(emission)通常用通量来表示，对于点光源来说，通过任何一个球面的通量是相同的</p>
+<p>注意，考虑通量的时候不关心面积，即不需要知道光照面积的大小，只关心某个时间内能量的大小</p>
+<h3 id="辐照度和辐射出射度-Irradiance-and-Radiant-Exitance"><a href="#辐照度和辐射出射度-Irradiance-and-Radiant-Exitance" class="headerlink" title="辐照度和辐射出射度(Irradiance and Radiant Exitance)"></a>辐照度和辐射出射度(Irradiance and Radiant Exitance)</h3><p>单位：瓦特&#x2F;平方米($W&#x2F;m^2$)</p>
+<p>任何通量测量都需要一个区域，在该区域上测量单位时间的光子。给定一个有限区域$A$，我们可以通过$E &#x3D; \Phi &#x2F; A$定义该区域的平均功率密度。这个量要么是辐照度($E$)，即到达表面的通量的面积密度，要么是辐射出射度($M$)，即离开表面的通量的面积密度。有时辐照度也可以指离开表面的通量</p>
+<p>可以通过在点$p$处取每个微分区域的微分功率极限，来定义辐照度和辐射出射度：</p>
+<p><img src="/2022/07/13/PBRT-%E8%BE%90%E5%B0%84%E5%BA%A6%E9%87%8F%E5%AD%A6/image-20220703133655140.png" srcset="/img/loading.gif" lazyload alt="image-20220703133655140"></p>
+<p>可以积分一个区域的辐照度来计算功率：</p>
+<p><img src="/2022/07/13/PBRT-%E8%BE%90%E5%B0%84%E5%BA%A6%E9%87%8F%E5%AD%A6/image-20220703133748372.png" srcset="/img/loading.gif" lazyload alt="image-20220703133748372"></p>
+<p>以点光源为例，外球体上一点的辐照度小于内球体上一点的辐照度，如果点光源在所有方向上照射相同数量的照明，那么对于此配置中具有半径$r$的球体：</p>
+<p><img src="/2022/07/13/PBRT-%E8%BE%90%E5%B0%84%E5%BA%A6%E9%87%8F%E5%AD%A6/image-20220703134022262.png" srcset="/img/loading.gif" lazyload alt="image-20220703134022262"></p>
+<p>这解释了一个点从光接收到的能量会随着光的平方距离而下降</p>
+<p>当光线照射到物体表面时，如果光线与表面成一定角度，则接收到光的表面积更大，相应地每单位的光通量(即辐照度)会更小。如果$A$很小，则接收通量的区域$A_2$大约为$A&#x2F;cos\theta$，对于$A_2$内的点，其辐照度为：</p>
+<p><img src="/2022/07/13/PBRT-%E8%BE%90%E5%B0%84%E5%BA%A6%E9%87%8F%E5%AD%A6/image-20220703134438343.png" srcset="/img/loading.gif" lazyload alt="image-20220703134438343"></p>
+<p><img src="/2022/07/13/PBRT-%E8%BE%90%E5%B0%84%E5%BA%A6%E9%87%8F%E5%AD%A6/image-20220703134516094.png" srcset="/img/loading.gif" lazyload alt="image-20220703134516094"></p>
+<h3 id="立体角和强度-Solid-Angle-and-Intensity"><a href="#立体角和强度-Solid-Angle-and-Intensity" class="headerlink" title="立体角和强度(Solid Angle and Intensity)"></a>立体角和强度(Solid Angle and Intensity)</h3><p>立体角单位：球面度(steradians, $sr$)</p>
+<p>立体角是平面中的2D角度到球体角度的延伸。平面角指的是某个物体相对于某个位置所对的总角度，考虑点$p$周围的单位圆，如果将阴影对象投影到该圆上，圆$s$的某个长度将被其投影覆盖，$s$的弧长等于物体对向的弧度</p>
+<p><img src="/2022/07/13/PBRT-%E8%BE%90%E5%B0%84%E5%BA%A6%E9%87%8F%E5%AD%A6/image-20220703135150876.png" srcset="/img/loading.gif" lazyload alt="image-20220703135150876"></p>
+<p>从$p$点看到的物体的平面角等于它从$p$看到的对角，等效于单位球面上弧$s$的长度。即$1 radians$对应弧长$1 r$</p>
+<p>立体角将2D单位圆扩展为3D单位球体，总面积$s$是物体所对的立体角。立体角以球面度$sr$测量，整个球面对着$4\pi sr$的立体角，半球对应$2\pi sr$，$1 steradians$对应弧面积$1r^2$</p>
+<p><img src="/2022/07/13/PBRT-%E8%BE%90%E5%B0%84%E5%BA%A6%E9%87%8F%E5%AD%A6/image-20220703135454437.png" srcset="/img/loading.gif" lazyload alt="image-20220703135454437"></p>
+<p>通过将$c$投影到单位球体上，并测量其投影面积来计算物体$c$在三个维度上所对的立体角$s$</p>
+<p>强度单位：瓦特&#x2F;球面度($W&#x2F;sr$)</p>
+<p>考虑发射光子的无穷小光源，如果我们将该光源置于单位球体的中心，我们就可以计算出发射功率的角密度，这就是强度(Intensity)，用字母$I$表示，在整个方向范围内，我们有：</p>
+<p><img src="/2022/07/13/PBRT-%E8%BE%90%E5%B0%84%E5%BA%A6%E9%87%8F%E5%AD%A6/image-20220703141013497.png" srcset="/img/loading.gif" lazyload alt="image-20220703141013497"></p>
+<p>一般来说，我们更关心取方向微分椎体(differential cone)的极限：</p>
+<p><img src="/2022/07/13/PBRT-%E8%BE%90%E5%B0%84%E5%BA%A6%E9%87%8F%E5%AD%A6/image-20220703141131215.png" srcset="/img/loading.gif" lazyload alt="image-20220703141131215"></p>
+<p>其中，$w$表示以$p$为中心的单位球面上的点指向$p$的归一化向量</p>
+<p>可以通过积分一系列立体角的强度来得到通量：给定强度作为方向的函数$I(w)$，我们可以在有限的一组方向 $\Omega$ 上积分以得到通量</p>
+<p><img src="/2022/07/13/PBRT-%E8%BE%90%E5%B0%84%E5%BA%A6%E9%87%8F%E5%AD%A6/image-20220703141527384.png" srcset="/img/loading.gif" lazyload alt="image-20220703141527384"></p>
+<p>强度描述了光的方向分布，它只对光源有意义</p>
+<h3 id="辐射度-Radiance"><a href="#辐射度-Radiance" class="headerlink" title="辐射度(Radiance)"></a>辐射度(Radiance)</h3><p>单位：瓦特&#x2F;球面度·平方米( $W&#x2F;m^2sr$ )</p>
+<p>辐照度和辐射出射度为我们提供了点$p$处每个微分区域的微分功率，但他们不区分功率的方向分布。辐射度执行最后一步，并测量相对于立体角的辐照度或辐射出射度，它定义为</p>
+<p><img src="/2022/07/13/PBRT-%E8%BE%90%E5%B0%84%E5%BA%A6%E9%87%8F%E5%AD%A6/image-20220703142028432.png" srcset="/img/loading.gif" lazyload alt="image-20220703142028432"></p>
+<p>使用$E_w$表示垂直于$w$方向的表面的辐照度，换句话说，辐射度不是根据入射在$p$表面的辐照度来测量的。测量区域的这种变化有助于消除辐射定义中的$cos \theta$项</p>
+<p>辐射度是每单位面积、每单位立体角的通量密度，他被定义为</p>
+<p><img src="/2022/07/13/PBRT-%E8%BE%90%E5%B0%84%E5%BA%A6%E9%87%8F%E5%AD%A6/image-20220703142445640.png" srcset="/img/loading.gif" lazyload alt="image-20220703142445640"></p>
+<p>其中$dA^{\perp}$是$dA$在垂直于$w$的假设表面上的投影面积，因此，当关注的入射方向锥$dw$变得非常小，表面上关注的局部区域$dA$也变得非常小</p>
+<p><img src="/2022/07/13/PBRT-%E8%BE%90%E5%B0%84%E5%BA%A6%E9%87%8F%E5%AD%A6/image-20220703142900072.png" srcset="/img/loading.gif" lazyload alt="image-20220703142900072"></p>
+<p>如果给定辐射度，所有其他值都可以根据面积和方向上辐射度积分计算。辐射度的另一个很好的特性是穿过真空的光线保持恒定，因此它是使用光线追踪的自然量</p>
+<h2 id="入射和出射辐射函数-Incident-and-Exitant-Radiance-Functions"><a href="#入射和出射辐射函数-Incident-and-Exitant-Radiance-Functions" class="headerlink" title="入射和出射辐射函数(Incident and Exitant Radiance Functions)"></a>入射和出射辐射函数(Incident and Exitant Radiance Functions)</h2><p>当光线与场景中的表面相互作用时，辐射函数$L$通常跨表面边界不连续，在最极端的完全不透明表面(如镜子)下，略高于表面和略低于表面的辐射函数可能完全无关，此时的辐射度函数定义为方程(5.3)：</p>
+<p><img src="/2022/07/13/PBRT-%E8%BE%90%E5%B0%84%E5%BA%A6%E9%87%8F%E5%AD%A6/image-20220703144752653.png" srcset="/img/loading.gif" lazyload alt="image-20220703144752653"></p>
+<p>但是，我们更愿意使用到达该点的辐射(例如，由于光源的照明)和离开该点的辐射(例如，由于表面反射)来进行区分</p>
+<p>使用$L_i(p, w)$表示入射辐射度，这里的$w$指向远离表面的方向，也有些书上方向相反。注意，$L_i(p, -w)$表示到达表面另一侧的辐射</p>
+<p>使用$L_o(p, w)$表示出射辐射度，$w$指向远离表面的方向</p>
+<p><img src="/2022/07/13/PBRT-%E8%BE%90%E5%B0%84%E5%BA%A6%E9%87%8F%E5%AD%A6/image-20220703144837046.png" srcset="/img/loading.gif" lazyload alt="image-20220703144837046"></p>
+<p>这些更直观的入射和出射辐射函数与方程(5.3)的单边限制之间存在简单的关系：</p>
+<p><img src="/2022/07/13/PBRT-%E8%BE%90%E5%B0%84%E5%BA%A6%E9%87%8F%E5%AD%A6/image-20220703145902417.png" srcset="/img/loading.gif" lazyload alt="image-20220703145902417"></p>
+<p>注意，这里的$L^+(p, w)$表示从光源射向$p$点外表面的光线的辐射度，尽管$w$依然是远离表面的($w \cdot \boldsymbol{n_p} &gt; 0$)，所以需要取反来保持方向一致。$L^-(p, w)$同理</p>
+<p>对于空间中不存在表面的那些点，$L$是连续的，因此$L^+ &#x3D; L^-$，即</p>
+<p><img src="/2022/07/13/PBRT-%E8%BE%90%E5%B0%84%E5%BA%A6%E9%87%8F%E5%AD%A6/image-20220703150027546.png" srcset="/img/loading.gif" lazyload alt="image-20220703150027546"></p>
+<p>此时，$L_i$和$L_0$仅在方向上反转</p>
+<h2 id="亮度和光度学-Luminance-and-Photometry"><a href="#亮度和光度学-Luminance-and-Photometry" class="headerlink" title="亮度和光度学(Luminance and Photometry)"></a>亮度和光度学(Luminance and Photometry)</h2><p>单位：坎德拉&#x2F;平方米($cd&#x2F;m^2$)</p>
+<p>所有辐射测量都有相应的光度测量。光度学(Photometry)是根据人类视觉系统感知可见电磁辐射的研究，可以通过对光谱响应曲线$V(\lambda)$进行积分，将光谱辐射量转化为光度量，其中，$V(\lambda)$ 描述人眼对各种波长的灵敏度，例如，特定能量的光谱功率分布(SPD, Spectral Power Distribution)在绿色波长下比在蓝色波长下更亮</p>
+<p>使用$Y$表示亮度，计算公式为</p>
+<p><img src="/2022/07/13/PBRT-%E8%BE%90%E5%B0%84%E5%BA%A6%E9%87%8F%E5%AD%A6/image-20220703152353711.png" srcset="/img/loading.gif" lazyload alt="image-20220703152353711"></p>
+<p>选择CIE $Y(\lambda)$三色曲线和$V(\lambda)$成正比，使用颜色的$XYZ$表示(第5.2.1节)为</p>
+<p><img src="/2022/07/13/PBRT-%E8%BE%90%E5%B0%84%E5%BA%A6%E9%87%8F%E5%AD%A6/image-20220703152653085.png" srcset="/img/loading.gif" lazyload alt="image-20220703152653085"></p>
+<p>辐射度量和光度测量的单位对比：</p>
+<p><img src="/2022/07/13/PBRT-%E8%BE%90%E5%B0%84%E5%BA%A6%E9%87%8F%E5%AD%A6/image-20220703152737061.png" srcset="/img/loading.gif" lazyload alt="image-20220703152737061"></p>
+<h2 id="辐射积分-Radiometric-Integrals"><a href="#辐射积分-Radiometric-Integrals" class="headerlink" title="辐射积分(Radiometric Integrals)"></a>辐射积分(Radiometric Integrals)</h2><p>表面法线为$n$，点$p$处的辐照度是一组方向$\Omega$上的辐射度的积分</p>
+<p><img src="/2022/07/13/PBRT-%E8%BE%90%E5%B0%84%E5%BA%A6%E9%87%8F%E5%AD%A6/image-20220703153213813.png" srcset="/img/loading.gif" lazyload alt="image-20220703153213813"></p>
+<p>注意，这里的$cos\theta$项是由于辐射度定义里的$dA^{\perp }$产生的，$\theta$为$w$和$n$之间的夹角，显然有，$\theta$值越大，光线和表面越接近平行，此时单位面积上分得的通量更小，即光照度更小，如果写成$\frac{1}{|cos\theta|}$，则计算成了照射到的面积$A$上的通量</p>
+<p>辐照度通常计算在半球$H^2(n)$上</p>
+<p><img src="/2022/07/13/PBRT-%E8%BE%90%E5%B0%84%E5%BA%A6%E9%87%8F%E5%AD%A6/image-20220703155345346.png" srcset="/img/loading.gif" lazyload alt="image-20220703155345346"></p>
+<p>点p处的辐照度，由辐照度的积分乘以该点上方整个上半球入射方向余弦给出</p>
+<h3 id="投影立体角上的积分"><a href="#投影立体角上的积分" class="headerlink" title="投影立体角上的积分"></a>投影立体角上的积分</h3><p>投影立体角，是通过将物体投影到单位球面上得到单位球弧面，然后将所得形状向下投影到垂直于表面法线的单位圆盘上来得到</p>
+<p><img src="/2022/07/13/PBRT-%E8%BE%90%E5%B0%84%E5%BA%A6%E9%87%8F%E5%AD%A6/image-20220703155818477.png" srcset="/img/loading.gif" lazyload alt="image-20220703155818477"></p>
+<p>这样，对于余弦加权立体角方向上的半球积分被转化为投影立体角上的积分</p>
+<p><img src="/2022/07/13/PBRT-%E8%BE%90%E5%B0%84%E5%BA%A6%E9%87%8F%E5%AD%A6/image-20220703155923039.png" srcset="/img/loading.gif" lazyload alt="image-20220703155923039"></p>
+<p>半球上的积分变为</p>
+<p><img src="/2022/07/13/PBRT-%E8%BE%90%E5%B0%84%E5%BA%A6%E9%87%8F%E5%AD%A6/image-20220703160330231.png" srcset="/img/loading.gif" lazyload alt="image-20220703160330231"></p>
+<p>也可以通过在物体表面积$A$上的积分来计算从某个物体发射到发现周围半球的总通量</p>
+<p><img src="/2022/07/13/PBRT-%E8%BE%90%E5%B0%84%E5%BA%A6%E9%87%8F%E5%AD%A6/image-20220703160514874.png" srcset="/img/loading.gif" lazyload alt="image-20220703160514874"></p>
+<h3 id="球坐标上的积分"><a href="#球坐标上的积分" class="headerlink" title="球坐标上的积分"></a>球坐标上的积分</h3><p>方向向量和球面角之间的转化</p>
+<p><img src="/2022/07/13/PBRT-%E8%BE%90%E5%B0%84%E5%BA%A6%E9%87%8F%E5%AD%A6/image-20220703160815860.png" srcset="/img/loading.gif" lazyload alt="image-20220703160815860"></p>
+<p><img src="/2022/07/13/PBRT-%E8%BE%90%E5%B0%84%E5%BA%A6%E9%87%8F%E5%AD%A6/image-20220703160830417.png" srcset="/img/loading.gif" lazyload alt="image-20220703160830417"></p>
+<p>微分面积$dw$和球面角之间的关系</p>
+<p><img src="/2022/07/13/PBRT-%E8%BE%90%E5%B0%84%E5%BA%A6%E9%87%8F%E5%AD%A6/image-20220703160919500.png" srcset="/img/loading.gif" lazyload alt="image-20220703160919500"></p>
+<p><img src="/2022/07/13/PBRT-%E8%BE%90%E5%B0%84%E5%BA%A6%E9%87%8F%E5%AD%A6/image-20220703160942798.png" srcset="/img/loading.gif" lazyload alt="image-20220703160942798"></p>
+<p>解释：将微分面积看做长方形，其水平方向上的边长根据弧长公式$s &#x3D; \theta_0 r$给出，这里$\theta_0 &#x3D; d\phi, r &#x3D; 1 * sin\theta &#x3D; sin\theta$，垂直方向上的边长同样根据弧长公式计算，这里$\theta_0 &#x3D; d\theta, r &#x3D; 1 $ </p>
+<p>方程(5.4)和$\Omega &#x3D; H^2(n)$可以等价写为</p>
+<p><img src="/2022/07/13/PBRT-%E8%BE%90%E5%B0%84%E5%BA%A6%E9%87%8F%E5%AD%A6/image-20220703161641814.png" srcset="/img/loading.gif" lazyload alt="image-20220703161641814"></p>
+<p>注意$\theta$的增长方向是$+Z$到$-Z$，如果所有方向的辐射度都相同，则方程简化为<br>$$<br>E &#x3D; \int_0^{2\pi} \int_0^{\pi&#x2F;2}L_i cos\theta sin\theta, d\theta d\phi &#x3D; L_i \int_0^{2\pi} \int_0^{\pi&#x2F;2} \frac{1}{4} sin2\theta, d2\theta d\phi &#x3D; \frac{L_i}{4} \int_0^{2\pi}-cos2\theta \vert_0^{\pi&#x2F;2}, d\phi \<br>&#x3D; \frac{L_i}{2} \int_0^{2\pi} , d\phi &#x3D; \pi L_i<br>$$<br>方向向量到球面角的转换可以通过下式</p>
+<p><img src="/2022/07/13/PBRT-%E8%BE%90%E5%B0%84%E5%BA%A6%E9%87%8F%E5%AD%A6/image-20220703163240560.png" srcset="/img/loading.gif" lazyload alt="image-20220703163240560"></p>
+<h3 id="面积积分"><a href="#面积积分" class="headerlink" title="面积积分"></a>面积积分</h3><p>将微分面积$dA$和微分立体角$dw$之间的关系表示为</p>
+<p><img src="/2022/07/13/PBRT-%E8%BE%90%E5%B0%84%E5%BA%A6%E9%87%8F%E5%AD%A6/image-20220703164240627.png" srcset="/img/loading.gif" lazyload alt="image-20220703164240627"></p>
+<p><img src="/2022/07/13/PBRT-%E8%BE%90%E5%B0%84%E5%BA%A6%E9%87%8F%E5%AD%A6/image-20220703164254749.png" srcset="/img/loading.gif" lazyload alt="image-20220703164254749"></p>
+<p>解释：$r$是$p$到$dA$的距离，$\theta$是$dA$表面法线和到点$p$的向量之间的角度，$cos\theta$项将$dA$投影到其所在的球面上，令此时的面积$dA^{\perp} &#x3D; dA cos\theta $，则$dA^{\perp}$和$dw$所对的立体角相同，根据立体角公式$A_0 &#x3D; w_0 r^2$有<br>$$<br>\frac{dw}{1^2} &#x3D; \frac{dA^{\perp}}{r^2} \iff dw &#x3D; \frac{dA cos\theta}{r^2}<br>$$<br>此时可以将四边形光源的辐照度积分写为</p>
+<p><img src="/2022/07/13/PBRT-%E8%BE%90%E5%B0%84%E5%BA%A6%E9%87%8F%E5%AD%A6/image-20220703165218050.png" srcset="/img/loading.gif" lazyload alt="image-20220703165218050"></p>
+<p>$L$是四边形表面发射的辐射度，$\theta_i$是$p$处的表面法线与$p$到灯光上$p^{‘}$点的方向之间的角度，$\theta_0$是灯光上$p^{‘}$点的表面法线和从$p^{‘}$ 到$p$方向之间的角度</p>
+<h2 id="表面反射"><a href="#表面反射" class="headerlink" title="表面反射"></a>表面反射</h2><p>当光线入射到表面时，表面会散射光，并将其中一部分反射回环境，为了模拟这种反射，需要描述两种效应：反射光的光谱分布及其方向分布。描述这些光反射机制主要有两个抽象：</p>
+<ul>
+<li>BRDF：双向反射分布函数，描述了忽略次表面光传输影响的点处的表面反射，材质对其传输机制没有显著影响，实现高效</li>
+<li>BSSRDF：双向散射表面反射率分布函数，描述了半透明材质的光反射更泛化的配置</li>
+</ul>
+<h3 id="The-BRDF-Bidirectional-Reflectance-Distribution-Function"><a href="#The-BRDF-Bidirectional-Reflectance-Distribution-Function" class="headerlink" title="The BRDF(Bidirectional Reflectance Distribution Function)"></a>The BRDF(Bidirectional Reflectance Distribution Function)</h3><p>双向反射分布函数给出了描述表面反射的形式，我们想要知道沿着$w_i$方向的入射辐射度$L_i(p, w_i)$有多少辐射度$L_o(p, w_0)$离开表面，其模型如下图</p>
+<p><img src="/2022/07/13/PBRT-%E8%BE%90%E5%B0%84%E5%BA%A6%E9%87%8F%E5%AD%A6/image-20220703171943374.png" srcset="/img/loading.gif" lazyload alt="image-20220703171943374"></p>
+<p>该模型描述了沿$w_i$方向的入射光从表面沿$w_0$方向散射,如果$w_i$被认为是方向的微分锥体，则$p$处的微分辐照度为</p>
+<p><img src="/2022/07/13/PBRT-%E8%BE%90%E5%B0%84%E5%BA%A6%E9%87%8F%E5%AD%A6/image-20220703172341460.png" srcset="/img/loading.gif" lazyload alt="image-20220703172341460"></p>
+<p>根据几何光学的线性假设，反射的微分辐射度和辐照度成正比</p>
+<p><img src="/2022/07/13/PBRT-%E8%BE%90%E5%B0%84%E5%BA%A6%E9%87%8F%E5%AD%A6/image-20220703172504235.png" srcset="/img/loading.gif" lazyload alt="image-20220703172504235"></p>
+<p>比例常数定义特定方向$w_i$和$w_0$的表面BRDF</p>
+<p><img src="/2022/07/13/PBRT-%E8%BE%90%E5%B0%84%E5%BA%A6%E9%87%8F%E5%AD%A6/image-20220703172630681.png" srcset="/img/loading.gif" lazyload alt="image-20220703172630681"></p>
+<p>基于物理的BRDF有两个重要的约束</p>
+<ul>
+<li><p>交换性：对于所有的方向对$w_i, w_0$，有$f_r(p, w_i, w_0) &#x3D; f_r(p, w_0, w_i)$</p>
+</li>
+<li><p>能量守恒：反射光的总能量小于或等于入射光的能量。对于所有方向的$w_0$有</p>
+<p>  <img src="/2022/07/13/PBRT-%E8%BE%90%E5%B0%84%E5%BA%A6%E9%87%8F%E5%AD%A6/image-20220703173137690.png" srcset="/img/loading.gif" lazyload alt="image-20220703173137690"></p>
+</li>
+</ul>
+<p>表面的双向投射分布函数(BTDF, Bidirectional Transmittance Distribution Function)描述了透射光的分布，可以用类似于BRDF的方式来定义，BTDF表示为$f_t(p, w_0, w_i)$，其中$w_0$和$w_i$在$p$周围的相对半球位置。需要注意的是，BTDF不遵守交换性</p>
+<p>为了方便起见，将BRDF和BTDF一起考虑为$f(p, w_0, w_i)$，根据定义有</p>
+<p><img src="/2022/07/13/PBRT-%E8%BE%90%E5%B0%84%E5%BA%A6%E9%87%8F%E5%AD%A6/image-20220703173508264.png" srcset="/img/loading.gif" lazyload alt="image-20220703173508264"></p>
+<p>这里出射辐射度的微分是相对于入射立体角的微分。$cos\theta_i$的绝对值主要是遵循一致性约定，如“假设表面法线指向表面之外”，我们可以在$p$点周围的入射方向球面上积分这个方程，以根据入射亮度计算$w_0$方向的出射辐射度</p>
+<p><img src="/2022/07/13/PBRT-%E8%BE%90%E5%B0%84%E5%BA%A6%E9%87%8F%E5%AD%A6/image-20220703173819880.png" srcset="/img/loading.gif" lazyload alt="image-20220703173819880"></p>
+<p>这是渲染中的基本方程，它描述了如何根据表面的散射特性，将光线在某个点的入射分布转换为出射分布。当球体$S^2$是积分域时，它通常被称为<strong>散射方程</strong>，或者知识在上半球$H^2(n)$积分</p>
+<h3 id="The-BSSRDF-The-Bidirectional-Scattering-Surface-Reflectance-Distribution-Function"><a href="#The-BSSRDF-The-Bidirectional-Scattering-Surface-Reflectance-Distribution-Function" class="headerlink" title="The BSSRDF(The Bidirectional Scattering Surface Reflectance Distribution Function)"></a>The BSSRDF(The Bidirectional Scattering Surface Reflectance Distribution Function)</h3><p>双向散射表面反射率分布函数，是描述具有大量次表面光传输的材质散射的方程，它是如下的分布函数</p>
+<p><img src="/2022/07/13/PBRT-%E8%BE%90%E5%B0%84%E5%BA%A6%E9%87%8F%E5%AD%A6/image-20220703174353181.png" srcset="/img/loading.gif" lazyload alt="image-20220703174353181"></p>
+<p>该函数描述了$w_0$方向上$p_0$点的出射微分辐射度，与$w_i$方向上$p_i$点的入射微分通量之比</p>
+<p>BSSRDF散射方程的一般化需要对表面积和入射方向进行积分</p>
+<p><img src="/2022/07/13/PBRT-%E8%BE%90%E5%B0%84%E5%BA%A6%E9%87%8F%E5%AD%A6/image-20220703184721537.png" srcset="/img/loading.gif" lazyload alt="image-20220703184721537"></p>
+<p>随着点$p_i$和$p_0$之间的距离增加，$S$的值通常会减少，这一事实对次表面散射算法实现有很大帮助</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/CG/" class="category-chain-item">CG</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/CG/">#CG</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>PBRT-辐射度量学</div>
+      <div>http://example.com/2022/07/13/PBRT-辐射度量学/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Chen Shuwen</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2022年7月13日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2022/07/14/PBRT-%E9%87%87%E6%A0%B7%E5%89%8D%E7%BD%AE%E7%9F%A5%E8%AF%86/" title="PBRT-采样前置知识">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">PBRT-采样前置知识</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2021/07/23/UnityShader%20-%E6%A0%87%E5%87%86%E5%85%89%E7%85%A7Shader/" title="UnityShader-标准光照Shader">
+                        <span class="hidden-mobile">UnityShader-标准光照Shader</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
